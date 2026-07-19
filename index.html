@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V20 Dark Ages Character Scribe</title>
+  <style>
+    :root {
+      --bg-color: #12100e;
+      --parchment: #f4efe2;
+      --accent-red: #800000;
+      --text-dark: #2c2520;
+      --border-color: #8c7e6e;
+      --dot-filled: #800000;
+      --dot-empty: #d1c7bd;
+      --card-bg: #221d1a;
+      --text-light: #e5dec9;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-light);
+      font-family: 'Georgia', 'Times New Roman', serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* Dashboard Layout */
+    .app-container {
+      width: 100%;
+      max-width: 1000px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      border-bottom: 2px solid var(--accent-red);
+      padding-bottom: 15px;
+    }
+
+    header h1 {
+      color: var(--accent-red);
+      margin: 0;
+      font-size: 2.5rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+    }
+
+    header p {
+      margin: 5px 0 0 0;
+      font-style: italic;
+      color: #a89a8c;
+    }
+
+    /* Views */
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    /* Dashboard Grid */
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .char-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .char-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    }
+
+    .char-card h3 {
+      margin: 0 0 5px 0;
+      color: var(--accent-red);
+      font-size: 1.4rem;
+    }
+
+    .char-card p {
+      margin: 3px 0;
+      font-size: 0.9rem;
+      color: #c9bcac;
+    }
+
+    .char-card-meta {
+      border-bottom: 1px solid rgba(140, 126, 110, 0.3);
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+
+    .char-card-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Interactive Buttons */
+    .btn {
+      background-color: var(--accent-red);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      cursor: pointer;
+      font-family: inherit;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #b30000;
+    }
+
+    .btn-secondary {
+      background-color: #4a403a;
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background-color: #61544c;
+    }
+
+    .btn-danger {
+      background-color: #5c1d1d;
+    }
+
+    .btn-danger:hover {
+      background-color: #8c2b2b;
+    }
+
+    .btn-small {
+      padding: 5px 10px;
+      font-size: 0.75rem;
+    }
+
+    /* Sheet Container Overrides (Parchment look in edit mode) */
+    .sheet-container {
+      background-color: var(--parchment);
+      color: var(--text-dark);
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.9);
+      border: 3px double var(--border-color);
+      box-sizing: border-box;
+    }
+
+    .sheet-header-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      background: rgba(0,0,0,0.05);
+      padding: 10px 15px;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+    }
+
+    .autosave-status {
+      font-size: 0.85rem;
+      font-style: italic;
+      color: #6e5e50;
+    }
+
+    /* Core Character Sheet styling */
+    h2 {
+      font-size: 1.2rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 5px;
+      margin-top: 25px;
+      margin-bottom: 15px;
+      color: var(--accent-red);
+      text-transform: uppercase;
+    }
+
+    h3.column-header {
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent-red);
+      margin-top: 0;
+      font-size: 1rem;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .info-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info-group label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: bold;
+      color: #5a5045;
+      margin-bottom: 3px;
+    }
+
+    .info-group input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--border-color);
+      font-family: inherit;
+      font-size: 1rem;
+      padding: 3px 0;
+      color: var(--text-dark);
+    }
+
+    .info-group input:focus {
+      outline: none;
+      border-bottom-color: var(--accent-red);
+    }
+
+    .three-col-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+    }
+
+    @media (max-width: 768px) {
+      .three-col-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .column {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .trait {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .trait label {
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .dots-container {
+      display: flex;
+      gap: 3px;
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      border: 1px solid var(--accent-red);
+      background-color: transparent;
+      cursor: pointer;
+      display: inline-block;
+      box-sizing: border-box;
+    }
+
+    .dot.filled {
+      background-color: var(--dot-filled);
+    }
+
+    .dynamic-list {
+      margin-bottom: 15px;
+    }
+
+    .dynamic-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      gap: 10px;
+    }
+
+    .dynamic-row input[type="text"] {
+      flex-grow: 1;
+      background: transparent;
+      border: none;
+      border-bottom: 1px dashed var(--border-color);
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+
+    .dynamic-row input[type="text"]:focus {
+      outline: none;
+      border-bottom-color: var(--accent-red);
+    }
+
+    .delete-btn {
+      color: var(--accent-red);
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.1rem;
+      border: none;
+      background: none;
+      padding: 0 5px;
+    }
+
+    .status-section {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 25px;
+      margin-top: 25px;
+    }
+
+    @media (max-width: 768px) {
+      .status-section {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .health-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .health-table td {
+      padding: 4px 2px;
+      font-size: 0.9rem;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .health-table input[type="checkbox"] {
+      cursor: pointer;
+      width: 15px;
+      height: 15px;
+      accent-color: var(--accent-red);
+    }
+
+    .text-area-group {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .text-area-group label {
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      color: #5a5045;
+      margin-bottom: 5px;
+    }
+
+    .text-area-group textarea {
+      background: rgba(255, 255, 255, 0.4);
+      border: 1px solid var(--border-color);
+      font-family: inherit;
+      font-size: 0.95rem;
+      padding: 10px;
+      resize: vertical;
+      min-height: 100px;
+      color: var(--text-dark);
+    }
+
+    .text-area-group textarea:focus {
+      outline: none;
+      border-color: var(--accent-red);
+    }
+
+    #file-import {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <header>
+      <h1>Dark Ages Character Scribe</h1>
+      <p>V20 Dark Ages Interactive Web Application</p>
+    </header>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboard-view" class="view active">
+      <div class="dashboard-header">
+        <h2>My Chronicle Ledger</h2>
+        <div>
+          <button class="btn" onclick="createNewCharacter()">+ New Scribe</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('file-import').click()">Import JSON</button>
+          <input type="file" id="file-import" accept=".json" onchange="importCharacter(event)">
+        </div>
+      </div>
+      <div id="character-list" class="dashboard-grid">
+        <!-- Javascript will inject character cards here -->
+      </div>
+    </div>
+
+    <!-- SHEET EDITOR VIEW -->
+    <div id="editor-view" class="view">
+      <div class="sheet-container">
+        
+        <div class="sheet-header-nav">
+          <div>
+            <button class="btn btn-secondary btn-small" onclick="closeEditor()">&larr; Dashboard</button>
+            <button class="btn btn-small" onclick="triggerManualExport()">Export to JSON</button>
+          </div>
+          <span id="save-status" class="autosave-status">Draft Auto-Saved</span>
+        </div>
+
+        <!-- Character Info Header -->
+        <div class="info-grid">
+          <div class="info-group">
+            <label for="char-name">Name</label>
+            <input type="text" id="char-name" oninput="queueAutoSave()">
+          </div>
+          <div class="info-group">
+            <label for="char-clan">Clan / Lineage</label>
+            <input type="text" id="char-clan" oninput="queueAutoSave()">
+          </div>
+          <div class="info-group">
+            <label for="char-sire">Sire</label>
+            <input type="text" id="char-sire" oninput="queueAutoSave()">
+          </div>
+          <div class="info-group">
+            <label for="char-generation">Generation</label>
+            <input type="text" id="char-generation" oninput="queueAutoSave()">
+          </div>
+          <div class="info-group">
+            <label for="char-nature">Nature</label>
+            <input type="text" id="char-nature" oninput="queueAutoSave()">
+          </div>
+          <div class="info-group">
+            <label for="char-demeanor">Demeanor</label>
+            <input type="text" id="char-demeanor" oninput="queueAutoSave()">
+          </div>
+          <div class="info-group">
+            <label for="char-concept">Concept</label>
+            <input type="text" id="char-concept" oninput="queueAutoSave()">
+          </div>
+          <div class="info-group">
+            <label for="char-chronicle">Chronicle</label>
+            <input type="text" id="char-chronicle" oninput="queueAutoSave()">
+          </div>
+        </div>
+
+        <!-- Attributes -->
+        <h2>Attributes</h2>
+        <div class="three-col-grid">
+          <div class="column">
+            <h3 class="column-header">Physical</h3>
+            <div class="trait" data-id="strength" data-min="1" data-max="10" data-default="1">
+              <label>Strength</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="dexterity" data-min="1" data-max="10" data-default="1">
+              <label>Dexterity</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="stamina" data-min="1" data-max="10" data-default="1">
+              <label>Stamina</label>
+              <div class="dots-container"></div>
+            </div>
+          </div>
+          <div class="column">
+            <h3 class="column-header">Social</h3>
+            <div class="trait" data-id="charisma" data-min="1" data-max="10" data-default="1">
+              <label>Charisma</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="manipulation" data-min="1" data-max="10" data-default="1">
+              <label>Manipulation</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="appearance" data-min="1" data-max="10" data-default="1">
+              <label>Appearance</label>
+              <div class="dots-container"></div>
+            </div>
+          </div>
+          <div class="column">
+            <h3 class="column-header">Mental</h3>
+            <div class="trait" data-id="perception" data-min="1" data-max="10" data-default="1">
+              <label>Perception</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="intelligence" data-min="1" data-max="10" data-default="1">
+              <label>Intelligence</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="wits" data-min="1" data-max="10" data-default="1">
+              <label>Wits</label>
+              <div class="dots-container"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Abilities -->
+        <h2>Abilities</h2>
+        <div class="three-col-grid">
+          <div class="column">
+            <h3 class="column-header">Talents</h3>
+            <div class="trait" data-id="alertness" data-min="0" data-max="10" data-default="0">
+              <label>Alertness</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="athletics" data-min="0" data-max="10" data-default="0">
+              <label>Athletics</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="awareness" data-min="0" data-max="10" data-default="0">
+              <label>Awareness</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="brawl" data-min="0" data-max="10" data-default="0">
+              <label>Brawl</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="empathy" data-min="0" data-max="10" data-default="0">
+              <label>Empathy</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="expression" data-min="0" data-max="10" data-default="0">
+              <label>Expression</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="intimidation" data-min="0" data-max="10" data-default="0">
+              <label>Intimidation</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="leadership" data-min="0" data-max="10" data-default="0">
+              <label>Leadership</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="legerdemain" data-min="0" data-max="10" data-default="0">
+              <label>Legerdemain</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="subterfuge" data-min="0" data-max="10" data-default="0">
+              <label>Subterfuge</label>
+              <div class="dots-container"></div>
+            </div>
+          </div>
+          <div class="column">
+            <h3 class="column-header">Skills</h3>
+            <div class="trait" data-id="animal_ken" data-min="0" data-max="10" data-default="0">
+              <label>Animal Ken</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="archery" data-min="0" data-max="10" data-default="0">
+              <label>Archery</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="commerce" data-min="0" data-max="10" data-default="0">
+              <label>Commerce</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="crafts" data-min="0" data-max="10" data-default="0">
+              <label>Crafts</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="etiquette" data-min="0" data-max="10" data-default="0">
+              <label>Etiquette</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="melee" data-min="0" data-max="10" data-default="0">
+              <label>Melee</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="performance" data-min="0" data-max="10" data-default="0">
+              <label>Performance</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="ride" data-min="0" data-max="10" data-default="0">
+              <label>Ride</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="stealth" data-min="0" data-max="10" data-default="0">
+              <label>Stealth</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="survival" data-min="0" data-max="10" data-default="0">
+              <label>Survival</label>
+              <div class="dots-container"></div>
+            </div>
+          </div>
+          <div class="column">
+            <h3 class="column-header">Knowledges</h3>
+            <div class="trait" data-id="academics" data-min="0" data-max="10" data-default="0">
+              <label>Academics</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="hearth_wisdom" data-min="0" data-max="10" data-default="0">
+              <label>Hearth Wisdom</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="investigation" data-min="0" data-max="10" data-default="0">
+              <label>Investigation</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="law" data-min="0" data-max="10" data-default="0">
+              <label>Law</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="medicine" data-min="0" data-max="10" data-default="0">
+              <label>Medicine</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="occult" data-min="0" data-max="10" data-default="0">
+              <label>Occult</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="politics" data-min="0" data-max="10" data-default="0">
+              <label>Politics</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="seneschal" data-min="0" data-max="10" data-default="0">
+              <label>Seneschal</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="theology" data-min="0" data-max="10" data-default="0">
+              <label>Theology</label>
+              <div class="dots-container"></div>
+            </div>
+            <div class="trait" data-id="linguistics" data-min="0" data-max="10" data-default="0">
+              <label>Linguistics</label>
+              <div class="dots-container"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Advantages -->
+        <h2>Advantages</h2>
+        <div class="three-col-grid">
+          <div class="column">
+            <h3 class="column-header">Disciplines</h3>
+            <div id="disciplines-list" class="dynamic-list"></div>
+            <button class="btn btn-secondary btn-small" style="align-self: flex-start;" onclick="addDynamicRow('disciplines-list', 'discipline')">+ Add Discipline</button>
+          </div>
+          <div class="column">
+            <h3 class="column-header">Backgrounds</h3>
+            <div id="backgrounds-list" class="dynamic-list"></div>
+            <button class="btn btn-secondary btn-small" style="align-self: flex-start;" onclick="addDynamicRow('backgrounds-list', 'background')">+ Add Background</button>
+          </div>
+          <div class="column">
+            <h3 class="column-header">Virtues</h3>
+            <div style="display: flex; gap: 10px; margin-bottom: 5px;">
+              <select id="virtue-1-type" style="font-family: inherit; font-size: 0.8rem;" onchange="queueAutoSave()">
+                <option value="Conscience">Conscience</option>
+                <option value="Conviction">Conviction</option>
+              </select>
+            </div>
+            <div class="trait" data-id="virtue_1" data-min="1" data-max="5" data-default="1">
+              <label id="virtue-1-label">Rating</label>
+              <div class="dots-container"></div>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 5px; margin-top: 10px;">
+              <select id="virtue-2-type" style="font-family: inherit; font-size: 0.8rem;" onchange="queueAutoSave()">
+                <option value="Self-Control">Self-Control</option>
+                <option value="Instinct">Instinct</option>
+              </select>
+            </div>
+            <div class="trait" data-id="virtue_2" data-min="1" data-max="5" data-default="1">
+              <label id="virtue-2-label">Rating</label>
+              <div class="dots-container"></div>
+            </div>
+
+            <h4 style="margin: 15px 0 5px 0; font-size: 0.9rem; text-transform: uppercase;">Courage</h4>
+            <div class="trait" data-id="virtue_3" data-min="1" data-max="5" data-default="1">
+              <label>Courage</label>
+              <div class="dots-container"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Roads & Pools -->
+        <div class="status-section">
+          <div class="column">
+            <h2>Path & Mechanics</h2>
+            
+            <div style="border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+              <div class="info-group" style="margin-bottom: 10px;">
+                <label for="road-name">Road (Via) Name</label>
+                <input type="text" id="road-name" placeholder="e.g., Road of Humanity" oninput="queueAutoSave()">
+              </div>
+              <div class="trait" data-id="road-rating" data-min="0" data-max="10" data-default="0">
+                <label>Road Value</label>
+                <div class="dots-container"></div>
+              </div>
+              <div class="info-group" style="margin-top: 10px;">
+                <label for="aura-bearing">Aura (Bearing)</label>
+                <input type="text" id="aura-bearing" placeholder="e.g., Normalcy" oninput="queueAutoSave()">
+              </div>
+            </div>
+
+            <div style="border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+              <div class="trait" data-id="willpower-perm" data-min="0" data-max="10" data-default="0">
+                <label>Willpower (Rating)</label>
+                <div class="dots-container"></div>
+              </div>
+              <div class="info-group" style="margin-top: 10px;">
+                <label>Willpower (Temporary Pool)</label>
+                <div style="display: flex; gap: 5px; margin-top: 5px;" id="willpower-temp-pool"></div>
+              </div>
+            </div>
+
+            <div style="border: 1px solid var(--border-color); padding: 10px; border-radius: 4px;">
+              <div class="info-group">
+                <label style="margin-bottom: 5px;">Blood Pool</label>
+                <div style="display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px;" id="blood-pool"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="column">
+            <h2>Health & Status</h2>
+            <table class="health-table">
+              <tr><td>Bruised</td><td>No Penalty</td><td style="text-align: right;"><input type="checkbox" id="health-bruised" onchange="queueAutoSave()"></td></tr>
+              <tr><td>Hurt</td><td>-1</td><td style="text-align: right;"><input type="checkbox" id="health-hurt" onchange="queueAutoSave()"></td></tr>
+              <tr><td>Injured</td><td>-1</td><td style="text-align: right;"><input type="checkbox" id="health-injured" onchange="queueAutoSave()"></td></tr>
+              <tr><td>Wounded</td><td>-2</td><td style="text-align: right;"><input type="checkbox" id="health-wounded" onchange="queueAutoSave()"></td></tr>
+              <tr><td>Mauled</td><td>-2</td><td style="text-align: right;"><input type="checkbox" id="health-mauled" onchange="queueAutoSave()"></td></tr>
+              <tr><td>Crippled</td><td>-5</td><td style="text-align: right;"><input type="checkbox" id="health-crippled" onchange="queueAutoSave()"></td></tr>
+              <tr><td>Incapacitated</td><td>Cannot Act</td><td style="text-align: right;"><input type="checkbox" id="health-incapacitated" onchange="queueAutoSave()"></td></tr>
+            </table>
+            
+            <div class="text-area-group" style="margin-top: 15px;">
+              <label for="inventory">Inventory & Equipment</label>
+              <textarea id="inventory" placeholder="Weapons, sash, relics..." oninput="queueAutoSave()"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-area-group">
+          <label for="backstory">Backstory & Notes</label>
+          <textarea id="backstory" style="min-height: 150px;" placeholder="Wandering notes..." oninput="queueAutoSave()"></textarea>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let activeCharacterId = null;
+    let saveTimeout = null;
+    let dynamicRowId = 0;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      buildTempPools();
+      initializeStaticDots();
+      renderDashboard();
+    });
+
+    /* --- STORAGE & APP MANAGEMENT --- */
+    
+    // Gets index of characters stored in localStorage
+    function getCharacterList() {
+      const list = localStorage.getItem('v20_da_characters_index');
+      return list ? JSON.parse(list) : [];
+    }
+
+    function saveCharacterList(list) {
+      localStorage.setItem('v20_da_characters_index', JSON.stringify(list));
+    }
+
+    function renderDashboard() {
+      const list = getCharacterList();
+      const listContainer = document.getElementById('character-list');
+      listContainer.innerHTML = '';
+
+      if (list.length === 0) {
+        listContainer.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #8c7e6e; font-style: italic;">No characters in your chronicle. Begin a new scribe.</p>`;
+        return;
+      }
+
+      list.forEach(meta => {
+        const card = document.createElement('div');
+        card.className = 'char-card';
+        card.innerHTML = `
+          <div class="char-card-meta">
+            <h3>${meta.name || 'Unnamed Scribe'}</h3>
+            <p><strong>Clan:</strong> ${meta.clan || 'Unknown'}</p>
+            <p><strong>Road:</strong> ${meta.road || 'Unselected'}</p>
+            <p style="font-size: 0.75rem; color: #8c7e6e; margin-top: 8px;">Modified: ${new Date(meta.lastSaved).toLocaleDateString()}</p>
+          </div>
+          <div class="char-card-actions">
+            <button class="btn btn-small" onclick="openEditor('${meta.id}')">Edit</button>
+            <button class="btn btn-secondary btn-small" onclick="cloneCharacter('${meta.id}')">Clone</button>
+            <button class="btn btn-secondary btn-small" onclick="triggerManualExport('${meta.id}')">Export</button>
+            <button class="btn btn-danger btn-small" onclick="deleteCharacter('${meta.id}')">Delete</button>
+          </div>
+        `;
+        listContainer.appendChild(card);
+      });
+    }
+
+    function createNewCharacter() {
+      const charId = 'char_' + Date.now();
+      const initialSheet = {
+        id: charId,
+        meta: { name: 'New Character', clan: '', sire: '', generation: '12th', nature: '', demeanor: '', concept: '', chronicle: '' },
+        attributes: { strength: 1, dexterity: 1, stamina: 1, charisma: 1, manipulation: 1, appearance: 1, perception: 1, intelligence: 1, wits: 1 },
+        abilities: {},
+        virtues: { virtue_1_type: 'Conscience', virtue_1_val: 1, virtue_2_type: 'Self-Control', virtue_2_val: 1, virtue_3_val: 1 },
+        disciplines: [],
+        backgrounds: [],
+        mechanics: { roadName: '', roadValue: 0, auraValue: '', willpowerPerm: 0, willpowerTemp: Array(10).fill(false), bloodPoolTemp: Array(20).fill(false) },
+        health: { bruised: false, hurt: false, injured: false, wounded: false, mauled: false, crippled: false, incapacitated: false },
+        inventory: '',
+        backstory: ''
+      };
+
+      localStorage.setItem(charId, JSON.stringify(initialSheet));
+
+      const list = getCharacterList();
+      list.push({ id: charId, name: initialSheet.meta.name, clan: initialSheet.meta.clan, road: '', lastSaved: Date.now() });
+      saveCharacterList(list);
+
+      openEditor(charId);
+    }
+
+    function openEditor(id) {
+      activeCharacterId = id;
+      const sheetData = JSON.parse(localStorage.getItem(id));
+      if (!sheetData) return;
+
+      loadSheetIntoDOM(sheetData);
+
+      document.getElementById('dashboard-view').classList.remove('active');
+      document.getElementById('editor-view').classList.add('active');
+      setSaveStatus('Loaded Draft');
+    }
+
+    function closeEditor() {
+      if (saveTimeout) {
+        clearTimeout(saveTimeout);
+        saveCurrentCharacter();
+      }
+      activeCharacterId = null;
+      document.getElementById('editor-view').classList.remove('active');
+      document.getElementById('dashboard-view').classList.add('active');
+      renderDashboard();
+    }
+
+    function cloneCharacter(id) {
+      const source = JSON.parse(localStorage.getItem(id));
+      if (!source) return;
+
+      const newId = 'char_' + Date.now();
+      const clone = JSON.parse(JSON.stringify(source)); // Deep copy
+      clone.id = newId;
+      clone.meta.name = (clone.meta.name || 'Unnamed') + ' (Copy)';
+
+      localStorage.setItem(newId, JSON.stringify(clone));
+
+      const list = getCharacterList();
+      list.push({ id: newId, name: clone.meta.name, clan: clone.meta.clan, road: clone.mechanics.roadName || '', lastSaved: Date.now() });
+      saveCharacterList(list);
+
+      renderDashboard();
+    }
+
+    function deleteCharacter(id) {
+      if (confirm("Are you sure you want to permanently delete this character file? This cannot be undone.")) {
+        localStorage.removeItem(id);
+        let list = getCharacterList();
+        list = list.filter(item => item.id !== id);
+        saveCharacterList(list);
+        renderDashboard();
+      }
+    }
+
+    /* --- DOM RENDERING AND SELECTION LOGIC --- */
+
+    function initializeStaticDots() {
+      document.querySelectorAll('.trait').forEach(container => {
+        renderDots(container);
+      });
+    }
+
+    function renderDots(container) {
+      const dotsContainer = container.querySelector('.dots-container');
+      dotsContainer.innerHTML = '';
+      
+      const max = parseInt(container.getAttribute('data-max')) || 10;
+      const min = parseInt(container.getAttribute('data-min')) || 0;
+      const currentVal = parseInt(container.getAttribute('data-value')) ?? parseInt(container.getAttribute('data-default')) ?? min;
+      container.setAttribute('data-value', currentVal);
+
+      for (let i = 1; i <= max; i++) {
+        const dot = document.createElement('span');
+        dot.className = 'dot' + (i <= currentVal ? ' filled' : '');
+        dot.setAttribute('data-index', i);
+        dot.addEventListener('click', () => handleDotClick(container, i));
+        dotsContainer.appendChild(dot);
+      }
+    }
+
+    function handleDotClick(container, clickedIndex) {
+      const min = parseInt(container.getAttribute('data-min')) || 0;
+      let currentVal = parseInt(container.getAttribute('data-value')) || 0;
+
+      if (currentVal === clickedIndex) {
+        currentVal = Math.max(min, currentVal - 1);
+      } else {
+        currentVal = clickedIndex;
+      }
+
+      container.setAttribute('data-value', currentVal);
+      renderDots(container);
+      queueAutoSave();
+    }
+
+    function buildTempPools() {
+      const wpPool = document.getElementById('willpower-temp-pool');
+      wpPool.innerHTML = '';
+      for (let i = 1; i <= 10; i++) {
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.id = `wp-temp-${i}`;
+        cb.addEventListener('change', queueAutoSave);
+        wpPool.appendChild(cb);
+      }
+
+      const bpPool = document.getElementById('blood-pool');
+      bpPool.innerHTML = '';
+      for (let i = 1; i <= 20; i++) {
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.id = `bp-temp-${i}`;
+        cb.addEventListener('change', queueAutoSave);
+        bpPool.appendChild(cb);
+      }
+    }
+
+    function addDynamicRow(targetListId, type, initialName = '', initialVal = 0) {
+      const list = document.getElementById(targetListId);
+      const rowId = `dynamic-${type}-${dynamicRowId++}`;
+      
+      const row = document.createElement('div');
+      row.className = 'dynamic-row';
+      row.id = rowId;
+
+      row.innerHTML = `
+        <input type="text" class="dynamic-name" placeholder="Name..." value="${initialName}" oninput="queueAutoSave()">
+        <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="10" data-value="${initialVal}">
+          <div class="dots-container"></div>
+        </div>
+        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
+      `;
+
+      list.appendChild(row);
+      renderDots(row.querySelector('.trait'));
+      queueAutoSave();
+    }
+
+    /* --- AUTOSAVE ENGINE --- */
+
+    function queueAutoSave() {
+      setSaveStatus('Saving Changes...');
+      if (saveTimeout) clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(saveCurrentCharacter, 800); // Wait 800ms after last edit to write
+    }
+
+    function setSaveStatus(text) {
+      document.getElementById('save-status').innerText = text;
+    }
+
+    function saveCurrentCharacter() {
+      if (!activeCharacterId) return;
+
+      const data = compileSheetData();
+      localStorage.setItem(activeCharacterId, JSON.stringify(data));
+
+      // Update the main dashboard index listing
+      const list = getCharacterList();
+      const index = list.findIndex(item => item.id === activeCharacterId);
+      if (index !== -1) {
+        list[index].name = data.meta.name;
+        list[index].clan = data.meta.clan;
+        list[index].road = data.mechanics.roadName;
+        list[index].lastSaved = Date.now();
+        saveCharacterList(list);
+      }
+
+      setSaveStatus('Draft Auto-Saved');
+    }
+
+    function compileSheetData() {
+      const data = {
+        id: activeCharacterId,
+        meta: {
+          name: document.getElementById('char-name').value,
+          clan: document.getElementById('char-clan').value,
+          sire: document.getElementById('char-sire').value,
+          generation: document.getElementById('char-generation').value,
+          nature: document.getElementById('char-nature').value,
+          demeanor: document.getElementById('char-demeanor').value,
+          concept: document.getElementById('char-concept').value,
+          chronicle: document.getElementById('char-chronicle').value,
+        },
+        attributes: {},
+        abilities: {},
+        virtues: {
+          virtue_1_type: document.getElementById('virtue-1-type').value,
+          virtue_1_val: parseInt(document.querySelector('[data-id="virtue_1"]').getAttribute('data-value')),
+          virtue_2_type: document.getElementById('virtue-2-type').value,
+          virtue_2_val: parseInt(document.querySelector('[data-id="virtue_2"]').getAttribute('data-value')),
+          virtue_3_val: parseInt(document.querySelector('[data-id="virtue_3"]').getAttribute('data-value')),
+        },
+        disciplines: [],
+        backgrounds: [],
+        mechanics: {
+          roadName: document.getElementById('road-name').value,
+          roadValue: parseInt(document.querySelector('[data-id="road-rating"]').getAttribute('data-value')),
+          auraValue: document.getElementById('aura-bearing').value,
+          willpowerPerm: parseInt(document.querySelector('[data-id="willpower-perm"]').getAttribute('data-value')),
+          willpowerTemp: [],
+          bloodPoolTemp: []
+        },
+        health: {
+          bruised: document.getElementById('health-bruised').checked,
+          hurt: document.getElementById('health-hurt').checked,
+          injured: document.getElementById('health-injured').checked,
+          wounded: document.getElementById('health-wounded').checked,
+          mauled: document.getElementById('health-mauled').checked,
+          crippled: document.getElementById('health-crippled').checked,
+          incapacitated: document.getElementById('health-incapacitated').checked,
+        },
+        inventory: document.getElementById('inventory').value,
+        backstory: document.getElementById('backstory').value
+      };
+
+      const attributesList = ['strength', 'dexterity', 'stamina', 'charisma', 'manipulation', 'appearance', 'perception', 'intelligence', 'wits'];
+      attributesList.forEach(id => {
+        data.attributes[id] = parseInt(document.querySelector(`[data-id="${id}"]`).getAttribute('data-value'));
+      });
+
+      const abilitiesList = [
+        'alertness', 'athletics', 'awareness', 'brawl', 'empathy', 'expression', 'intimidation', 'leadership', 'legerdemain', 'subterfuge',
+        'animal_ken', 'archery', 'commerce', 'crafts', 'etiquette', 'melee', 'performance', 'ride', 'stealth', 'survival',
+        'academics', 'hearth_wisdom', 'investigation', 'law', 'medicine', 'occult', 'politics', 'seneschal', 'theology', 'linguistics'
+      ];
+      abilitiesList.forEach(id => {
+        data.abilities[id] = parseInt(document.querySelector(`[data-id="${id}"]`).getAttribute('data-value'));
+      });
+
+      document.querySelectorAll('#disciplines-list .dynamic-row').forEach(row => {
+        const name = row.querySelector('.dynamic-name').value;
+        const val = parseInt(row.querySelector('.trait').getAttribute('data-value'));
+        if (name || val > 0) {
+          data.disciplines.push({ name, rating: val });
+        }
+      });
+
+      document.querySelectorAll('#backgrounds-list .dynamic-row').forEach(row => {
+        const name = row.querySelector('.dynamic-name').value;
+        const val = parseInt(row.querySelector('.trait').getAttribute('data-value'));
+        if (name || val > 0) {
+          data.backgrounds.push({ name, rating: val });
+        }
+      });
+
+      for (let i = 1; i <= 10; i++) {
+        data.mechanics.willpowerTemp.push(document.getElementById(`wp-temp-${i}`).checked);
+      }
+
+      for (let i = 1; i <= 20; i++) {
+        data.mechanics.bloodPoolTemp.push(document.getElementById(`bp-temp-${i}`).checked);
+      }
+
+      return data;
+    }
+
+    function loadSheetIntoDOM(data) {
+      document.getElementById('char-name').value = data.meta.name || '';
+      document.getElementById('char-clan').value = data.meta.clan || '';
+      document.getElementById('char-sire').value = data.meta.sire || '';
+      document.getElementById('char-generation').value = data.meta.generation || '';
+      document.getElementById('char-nature').value = data.meta.nature || '';
+      document.getElementById('char-demeanor').value = data.meta.demeanor || '';
+      document.getElementById('char-concept').value = data.meta.concept || '';
+      document.getElementById('char-chronicle').value = data.meta.chronicle || '';
+
+      if (data.attributes) {
+        Object.keys(data.attributes).forEach(id => {
+          const el = document.querySelector(`[data-id="${id}"]`);
+          if (el) {
+            el.setAttribute('data-value', data.attributes[id]);
+            renderDots(el);
+          }
+        });
+      }
+
+      if (data.abilities) {
+        Object.keys(data.abilities).forEach(id => {
+          const el = document.querySelector(`[data-id="${id}"]`);
+          if (el) {
+            el.setAttribute('data-value', data.abilities[id] || 0);
+            renderDots(el);
+          }
+        });
+      }
+
+      if (data.virtues) {
+        document.getElementById('virtue-1-type').value = data.virtues.virtue_1_type || 'Conscience';
+        const v1 = document.querySelector('[data-id="virtue_1"]');
+        v1.setAttribute('data-value', data.virtues.virtue_1_val || 1);
+        renderDots(v1);
+
+        document.getElementById('virtue-2-type').value = data.virtues.virtue_2_type || 'Self-Control';
+        const v2 = document.querySelector('[data-id="virtue_2"]');
+        v2.setAttribute('data-value', data.virtues.virtue_2_val || 1);
+        renderDots(v2);
+
+        const v3 = document.querySelector('[data-id="virtue_3"]');
+        v3.setAttribute('data-value', data.virtues.virtue_3_val || 1);
+        renderDots(v3);
+      }
+
+      document.getElementById('disciplines-list').innerHTML = '';
+      if (data.disciplines && data.disciplines.length > 0) {
+        data.disciplines.forEach(disc => {
+          addDynamicRow('disciplines-list', 'discipline', disc.name, disc.rating);
+        });
+      } else {
+        addDynamicRow('disciplines-list', 'discipline');
+      }
+
+      document.getElementById('backgrounds-list').innerHTML = '';
+      if (data.backgrounds && data.backgrounds.length > 0) {
+        data.backgrounds.forEach(bg => {
+          addDynamicRow('backgrounds-list', 'background', bg.name, bg.rating);
+        });
+      } else {
+        addDynamicRow('backgrounds-list', 'background');
+      }
+
+      if (data.mechanics) {
+        document.getElementById('road-name').value = data.mechanics.roadName || '';
+        const roadVal = document.querySelector('[data-id="road-rating"]');
+        roadVal.setAttribute('data-value', data.mechanics.roadValue || 0);
+        renderDots(roadVal);
+
+        document.getElementById('aura-bearing').value = data.mechanics.auraValue || '';
+
+        const wpPerm = document.querySelector('[data-id="willpower-perm"]');
+        wpPerm.setAttribute('data-value', data.mechanics.willpowerPerm || 0);
+        renderDots(wpPerm);
+
+        if (data.mechanics.willpowerTemp) {
+          data.mechanics.willpowerTemp.forEach((val, i) => {
+            const cb = document.getElementById(`wp-temp-${i + 1}`);
+            if (cb) cb.checked = val;
+          });
+        }
+
+        if (data.mechanics.bloodPoolTemp) {
+          data.mechanics.bloodPoolTemp.forEach((val, i) => {
+            const cb = document.getElementById(`bp-temp-${i + 1}`);
+            if (cb) cb.checked = val;
+          });
+        }
+      }
+
+      if (data.health) {
+        Object.keys(data.health).forEach(level => {
+          const cb = document.getElementById(`health-${level}`);
+          if (cb) cb.checked = data.health[level];
+        });
+      }
+
+      document.getElementById('inventory').value = data.inventory || '';
+      document.getElementById('backstory').value = data.backstory || '';
+    }
+
+    /* --- EXTERNAL FILE IO --- */
+
+    function triggerManualExport(id) {
+      const exportId = id || activeCharacterId;
+      if (!exportId) return;
+
+      const charData = JSON.parse(localStorage.getItem(exportId));
+      if (!charData) return;
+
+      const filename = `${charData.meta.name || 'Unnamed'}_V20DA.json`;
+      const blob = new Blob([JSON.stringify(charData, null, 2)], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+    }
+
+    function importCharacter(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          
+          // Re-generate a fresh ID to avoid overwriting existing locally saved identical IDs
+          const newId = 'char_' + Date.now();
+          data.id = newId;
+
+          localStorage.setItem(newId, JSON.stringify(data));
+
+          const list = getCharacterList();
+          list.push({
+            id: newId,
+            name: data.meta.name || 'Imported Scribe',
+            clan: data.meta.clan || '',
+            road: data.mechanics ? data.mechanics.roadName : '',
+            lastSaved: Date.now()
+          });
+          saveCharacterList(list);
+
+          renderDashboard();
+          alert("Imported sheet successfully.");
+        } catch (err) {
+          alert("Could not parse file. Ensure it is a valid V20 Dark Ages JSON character sheet.");
+          console.error(err);
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    function clearSheet() {
+      if (confirm("Resetting active sheet...")) {
+        loadSheetIntoDOM({
+          meta: {}, attributes: { strength:1, dexterity:1, stamina:1, charisma:1, manipulation:1, appearance:1, perception:1, intelligence:1, wits:1 },
+          abilities: {}, virtues: {}, health: {}
+        });
+        queueAutoSave();
+      }
+    }
+  </script>
+</body>
+</html>
