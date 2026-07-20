@@ -477,7 +477,7 @@
 
   <div class="app-container">
     <header>
-      <h1>Dark Ages Character Scribe</h1>
+      <h2>Vampire: The Dark Ages</h2>
       <p>Sourcebook-Aligned V20 Dark Ages Interactive Web Application</p>
     </header>
 
@@ -509,9 +509,10 @@
         <!-- Page Tabs -->
         <div class="tabs-nav">
           <button class="tab-btn active" id="btn-page-1" onclick="switchTab('tab-page-1')">Page 1: Core</button>
-          <button class="tab-btn" id="btn-page-2" onclick="switchTab('tab-page-2')">Page 2: Traits & Combat</button>
-          <button class="tab-btn" id="btn-page-3" onclick="switchTab('tab-page-3')">Page 3: Possessions</button>
-          <button class="tab-btn" id="btn-page-4" onclick="switchTab('tab-page-4')">Page 4: History</button>
+          <button class="tab-btn" id="btn-page-2" onclick="switchTab('tab-page-2')">Page 2: Grimoire</button>
+          <button class="tab-btn" id="btn-page-3" onclick="switchTab('tab-page-3')">Page 3: Traits & Combat</button>
+          <button class="tab-btn" id="btn-page-4" onclick="switchTab('tab-page-4')">Page 4: Possessions</button>
+          <button class="tab-btn" id="btn-page-5" onclick="switchTab('tab-page-5')">Page 5: History</button>
         </div>
 
         <!-- PAGE 1: CORE -->
@@ -532,21 +533,21 @@
           <div class="three-col-grid">
             <div class="column">
               <h3 class="column-header">Physical</h3>
-              <div class="trait" data-id="strength" data-min="1" data-max="8" data-default="1"><label>Strength</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="dexterity" data-min="1" data-max="8" data-default="1"><label>Dexterity</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="stamina" data-min="1" data-max="8" data-default="1"><label>Stamina</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="strength" data-min="1" data-max="6" data-default="1"><label>Strength</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="dexterity" data-min="1" data-max="6" data-default="1"><label>Dexterity</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="stamina" data-min="1" data-max="6" data-default="1"><label>Stamina</label><div class="dots-container"></div></div>
             </div>
             <div class="column">
               <h3 class="column-header">Social</h3>
-              <div class="trait" data-id="charisma" data-min="1" data-max="8" data-default="1"><label>Charisma</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="manipulation" data-min="1" data-max="8" data-default="1"><label>Manipulation</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="appearance" data-min="1" data-max="8" data-default="1"><label>Appearance</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="charisma" data-min="1" data-max="6" data-default="1"><label>Charisma</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="manipulation" data-min="1" data-max="6" data-default="1"><label>Manipulation</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="appearance" data-min="1" data-max="6" data-default="1"><label>Appearance</label><div class="dots-container"></div></div>
             </div>
             <div class="column">
               <h3 class="column-header">Mental</h3>
-              <div class="trait" data-id="perception" data-min="1" data-max="8" data-default="1"><label>Perception</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="intelligence" data-min="1" data-max="8" data-default="1"><label>Intelligence</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="wits" data-min="1" data-max="8" data-default="1"><label>Wits</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="perception" data-min="1" data-max="6" data-default="1"><label>Perception</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="intelligence" data-min="1" data-max="6" data-default="1"><label>Intelligence</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="wits" data-min="1" data-max="6" data-default="1"><label>Wits</label><div class="dots-container"></div></div>
             </div>
           </div>
 
@@ -554,42 +555,42 @@
           <div class="three-col-grid">
             <div class="column">
               <h3 class="column-header">Talents</h3>
-              <div class="trait" data-id="alertness" data-min="0" data-max="8" data-default="0"><label>Alertness</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="athletics" data-min="0" data-max="8" data-default="0"><label>Athletics</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="awareness" data-min="0" data-max="8" data-default="0"><label>Awareness</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="brawl" data-min="0" data-max="8" data-default="0"><label>Brawl</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="empathy" data-min="0" data-max="8" data-default="0"><label>Empathy</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="expression" data-min="0" data-max="8" data-default="0"><label>Expression</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="intimidation" data-min="0" data-max="8" data-default="0"><label>Intimidation</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="leadership" data-min="0" data-max="8" data-default="0"><label>Leadership</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="legerdemain" data-min="0" data-max="8" data-default="0"><label>Legerdemain</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="subterfuge" data-min="0" data-max="8" data-default="0"><label>Subterfuge</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="alertness" data-min="0" data-max="6" data-default="0"><label>Alertness</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="athletics" data-min="0" data-max="6" data-default="0"><label>Athletics</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="awareness" data-min="0" data-max="6" data-default="0"><label>Awareness</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="brawl" data-min="0" data-max="6" data-default="0"><label>Brawl</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="empathy" data-min="0" data-max="6" data-default="0"><label>Empathy</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="expression" data-min="0" data-max="6" data-default="0"><label>Expression</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="intimidation" data-min="0" data-max="6" data-default="0"><label>Intimidation</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="leadership" data-min="0" data-max="6" data-default="0"><label>Leadership</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="legerdemain" data-min="0" data-max="6" data-default="0"><label>Legerdemain</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="subterfuge" data-min="0" data-max="6" data-default="0"><label>Subterfuge</label><div class="dots-container"></div></div>
             </div>
             <div class="column">
               <h3 class="column-header">Skills</h3>
-              <div class="trait" data-id="animal_ken" data-min="0" data-max="8" data-default="0"><label>Animal Ken</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="archery" data-min="0" data-max="8" data-default="0"><label>Archery</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="commerce" data-min="0" data-max="8" data-default="0"><label>Commerce</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="crafts" data-min="0" data-max="8" data-default="0"><label>Crafts</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="etiquette" data-min="0" data-max="8" data-default="0"><label>Etiquette</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="melee" data-min="0" data-max="8" data-default="0"><label>Melee</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="performance" data-min="0" data-max="8" data-default="0"><label>Performance</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="ride" data-min="0" data-max="8" data-default="0"><label>Ride</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="stealth" data-min="0" data-max="8" data-default="0"><label>Stealth</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="survival" data-min="0" data-max="8" data-default="0"><label>Survival</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="animal_ken" data-min="0" data-max="6" data-default="0"><label>Animal Ken</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="archery" data-min="0" data-max="6" data-default="0"><label>Archery</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="commerce" data-min="0" data-max="6" data-default="0"><label>Commerce</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="crafts" data-min="0" data-max="6" data-default="0"><label>Crafts</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="etiquette" data-min="0" data-max="6" data-default="0"><label>Etiquette</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="melee" data-min="0" data-max="6" data-default="0"><label>Melee</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="performance" data-min="0" data-max="6" data-default="0"><label>Performance</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="ride" data-min="0" data-max="6" data-default="0"><label>Ride</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="stealth" data-min="0" data-max="6" data-default="0"><label>Stealth</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="survival" data-min="0" data-max="6" data-default="0"><label>Survival</label><div class="dots-container"></div></div>
             </div>
             <div class="column">
               <h3 class="column-header">Knowledges</h3>
-              <div class="trait" data-id="academics" data-min="0" data-max="8" data-default="0"><label>Academics</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="enigmas" data-min="0" data-max="8" data-default="0"><label>Enigmas</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="hearth_wisdom" data-min="0" data-max="8" data-default="0"><label>Hearth Wisdom</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="investigation" data-min="0" data-max="8" data-default="0"><label>Investigation</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="law" data-min="0" data-max="8" data-default="0"><label>Law</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="medicine" data-min="0" data-max="8" data-default="0"><label>Medicine</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="occult" data-min="0" data-max="8" data-default="0"><label>Occult</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="politics" data-min="0" data-max="8" data-default="0"><label>Politics</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="seneschal" data-min="0" data-max="8" data-default="0"><label>Seneschal</label><div class="dots-container"></div></div>
-              <div class="trait" data-id="theology" data-min="0" data-max="8" data-default="0"><label>Theology</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="academics" data-min="0" data-max="6" data-default="0"><label>Academics</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="enigmas" data-min="0" data-max="6" data-default="0"><label>Enigmas</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="hearth_wisdom" data-min="0" data-max="6" data-default="0"><label>Hearth Wisdom</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="investigation" data-min="0" data-max="6" data-default="0"><label>Investigation</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="law" data-min="0" data-max="6" data-default="0"><label>Law</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="medicine" data-min="0" data-max="6" data-default="0"><label>Medicine</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="occult" data-min="0" data-max="6" data-default="0"><label>Occult</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="politics" data-min="0" data-max="6" data-default="0"><label>Politics</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="seneschal" data-min="0" data-max="6" data-default="0"><label>Seneschal</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="theology" data-min="0" data-max="6" data-default="0"><label>Theology</label><div class="dots-container"></div></div>
             </div>
           </div>
 
@@ -678,8 +679,29 @@
           </div>
         </div>
 
-        <!-- PAGE 2: TRAITS & COMBAT -->
+        <!-- PAGE 2: GRIMOIRE -->
         <div id="tab-page-2" class="tab-content">
+          <h2>Grimoire Ledger</h2>
+          <div class="two-col-grid">
+            <div class="column">
+              <h3>Paths of Sorcery (6 Dots)</h3>
+              <div id="paths-list" class="dynamic-list"></div>
+              <button class="btn btn-secondary btn-small" onclick="addPathRow('paths-list')">+ Add Path</button>
+            </div>
+            <div class="column">
+              <h3>Rituals (Level 1-5)</h3>
+              <div id="rituals-list" class="dynamic-list"></div>
+              <button class="btn btn-secondary btn-small" onclick="addRitualRow('rituals-list')">+ Add Ritual</button>
+            </div>
+          </div>
+          <div class="text-area-group" style="margin-top: 25px;">
+            <label>Sorcerous Notes & Theories</label>
+            <textarea id="grimoire-notes" style="min-height: 250px;" placeholder="Abyss Mysticism or Koldunic Sorcery drafting space..." oninput="queueAutoSave()"></textarea>
+          </div>
+        </div>
+
+        <!-- PAGE 3: TRAITS & COMBAT -->
+        <div id="tab-page-3" class="tab-content">
           <div class="two-col-grid">
             <div class="column">
               <h3>Merits</h3>
@@ -693,22 +715,9 @@
             </div>
           </div>
 
-          <h2>Other Traits (10 Dots)</h2>
+          <h2>Other Traits (6 Dots)</h2>
           <div id="other-traits-list" class="dynamic-list"></div>
           <button class="btn btn-secondary btn-small" onclick="addOtherTraitRow('other-traits-list')">+ Add Other Trait</button>
-
-          <div class="two-col-grid" style="margin-top: 20px;">
-            <div class="column">
-              <h3>Rituals (Level 1-5)</h3>
-              <div id="rituals-list" class="dynamic-list"></div>
-              <button class="btn btn-secondary btn-small" onclick="addRitualRow('rituals-list')">+ Add Ritual</button>
-            </div>
-            <div class="column">
-              <h3>Paths (5 Dots)</h3>
-              <div id="paths-list" class="dynamic-list"></div>
-              <button class="btn btn-secondary btn-small" onclick="addPathRow('paths-list')">+ Add Path</button>
-            </div>
-          </div>
 
           <h2>Combat Parameters</h2>
           <table class="combat-table" id="combat-attacks-table">
@@ -751,8 +760,8 @@
           </div>
         </div>
 
-        <!-- PAGE 3: POSSESSIONS -->
-        <div id="tab-page-3" class="tab-content">
+        <!-- PAGE 4: POSSESSIONS -->
+        <div id="tab-page-4" class="tab-content">
           <h2>Expanded Backgrounds</h2>
           <div class="three-col-grid">
             <div class="text-area-group"><label>Allies</label><textarea id="bg-allies" oninput="queueAutoSave()"></textarea></div>
@@ -781,8 +790,8 @@
           </div>
         </div>
 
-        <!-- PAGE 4: HISTORY -->
-        <div id="tab-page-4" class="tab-content">
+        <!-- PAGE 5: HISTORY -->
+        <div id="tab-page-5" class="tab-content">
           <h2>History & Narrative</h2>
           <div class="text-area-group"><label>Prelude</label><textarea id="narrative-prelude" style="min-height: 150px;" oninput="queueAutoSave()"></textarea></div>
           <div class="text-area-group"><label>Goals</label><textarea id="narrative-goals" style="min-height: 100px;" oninput="queueAutoSave()"></textarea></div>
@@ -921,6 +930,7 @@
         otherTraits: [],
         rituals: [],
         paths: [],
+        grimoire_notes: '',
         combatAttacks: [],
         armor: { class: '', rating: '', penalty: '', desc: '' },
         derangements: [],
@@ -933,7 +943,6 @@
         vis: { coterie: '', sketch: '' }
       };
 
-      // Push initial values both locally & via cloud if configured
       localStorage.setItem(charId, JSON.stringify(initialSheet));
       saveLocalIndex(charId, initialSheet.meta.name, initialSheet.meta.clan, '');
 
@@ -1042,7 +1051,6 @@
     async function deleteCharacter(id) {
       if (!confirm("Are you sure you want to permanently delete this character?")) return;
 
-      // Delete locally
       localStorage.removeItem(id);
       let localList = JSON.parse(localStorage.getItem('v20_da_characters_index') || '[]');
       localList = localList.filter(item => item.id !== id);
@@ -1074,7 +1082,7 @@
       const dotsContainer = container.querySelector('.dots-container');
       dotsContainer.innerHTML = '';
       
-      const max = parseInt(container.getAttribute('data-max')) || 8;
+      const max = parseInt(container.getAttribute('data-max')) || 6;
       const min = parseInt(container.getAttribute('data-min')) || 0;
       const currentVal = parseInt(container.getAttribute('data-value')) ?? parseInt(container.getAttribute('data-default')) ?? min;
       container.setAttribute('data-value', currentVal);
@@ -1137,7 +1145,7 @@
 
       row.innerHTML = `
         <input type="text" class="dynamic-name" placeholder="Name..." value="${initialName}" oninput="queueAutoSave()">
-        <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="8" data-value="${initialVal}">
+        <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${initialVal}">
           <div class="dots-container"></div>
         </div>
         <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
@@ -1179,7 +1187,7 @@
 
       row.innerHTML = `
         <input type="text" class="dynamic-name" placeholder="Other Trait..." value="${name}" oninput="queueAutoSave()">
-        <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="10" data-value="${val}">
+        <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${val}">
           <div class="dots-container"></div>
         </div>
         <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
@@ -1218,7 +1226,7 @@
 
       row.innerHTML = `
         <input type="text" class="dynamic-name" placeholder="Path Name..." value="${name}" oninput="queueAutoSave()">
-        <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="5" data-value="${val}">
+        <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${val}">
           <div class="dots-container"></div>
         </div>
         <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
@@ -1350,6 +1358,7 @@
         otherTraits: [],
         rituals: [],
         paths: [],
+        grimoire_notes: document.getElementById('grimoire-notes').value,
         combatAttacks: [],
         armor: {
           class: document.getElementById('armor-class').value,
@@ -1561,7 +1570,7 @@
         addDynamicRow('backgrounds-list', 'background');
       }
 
-      // Page 2 Lists
+      // Page 3 Lists
       document.getElementById('merits-list').innerHTML = '';
       if (data.merits) data.merits.forEach(m => addCustomRow('merits-list', 'merit', m.name, m.type, m.val));
 
@@ -1571,16 +1580,19 @@
       document.getElementById('other-traits-list').innerHTML = '';
       if (data.otherTraits) data.otherTraits.forEach(t => addOtherTraitRow('other-traits-list', t.name, t.val));
 
+      // Page 2 Grimoire Lists
       document.getElementById('rituals-list').innerHTML = '';
       if (data.rituals) data.rituals.forEach(r => addRitualRow('rituals-list', r.name, r.level));
 
       document.getElementById('paths-list').innerHTML = '';
       if (data.paths) data.paths.forEach(p => addPathRow('paths-list', p.name, p.val));
 
+      document.getElementById('grimoire-notes').value = data.grimoire_notes || '';
+
       document.getElementById('derangements-list').innerHTML = '';
       if (data.derangements) data.derangements.forEach(d => addDerangementRow('derangements-list', d.name));
 
-      // Page 2 Combat Attacks
+      // Page 3 Combat Attacks
       const combatBody = document.querySelector('#combat-attacks-table tbody');
       combatBody.innerHTML = '';
       if (data.combatAttacks) {
@@ -1640,7 +1652,7 @@
         document.getElementById('exp-spent-on').value = data.exp.spentOn || '';
       }
 
-      // Page 3 Expanded Backgrounds
+      // Page 4 Expanded Backgrounds
       if (data.backgrounds_expanded) {
         document.getElementById('bg-allies').value = data.backgrounds_expanded.allies || '';
         document.getElementById('bg-mentor').value = data.backgrounds_expanded.mentor || '';
@@ -1667,7 +1679,7 @@
         document.getElementById('haven-desc').value = data.haven.desc || '';
       }
 
-      // Page 4 History & Description
+      // Page 5 History & Description
       if (data.narrative) {
         document.getElementById('narrative-prelude').value = data.narrative.prelude || '';
         document.getElementById('narrative-goals').value = data.narrative.goals || '';
