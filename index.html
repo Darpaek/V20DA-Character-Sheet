@@ -6,15 +6,15 @@
   <title>V20 Dark Ages Scribe - Character Ledger</title>
   <style>
     :root {
-      --bg-color: #110f0d;
-      --parchment: #f6f0e2;
+      --bg-color: #12100e;
+      --parchment: #f5f0e6;
       --accent-red: #7c0b0b;
-      --text-dark: #2a221c;
+      --text-dark: #2c2520;
       --border-color: #8c7e6e;
       --dot-filled: #7c0b0b;
       --dot-empty: #d1c6b8;
-      --card-bg: #1f1a17;
-      --text-light: #e6dfcc;
+      --card-bg: #221d1a;
+      --text-light: #e5dec9;
     }
 
     body {
@@ -66,7 +66,7 @@
       display: block;
     }
 
-    /* Dashboard */
+    /* Dashboard Layout */
     .dashboard-header {
       display: flex;
       justify-content: space-between;
@@ -154,7 +154,7 @@
       font-size: 0.75rem;
     }
 
-    /* Interactive Sheet */
+    /* Sheet Container Styling */
     .sheet-container {
       background-color: var(--parchment);
       color: var(--text-dark);
@@ -182,7 +182,7 @@
       color: #6e5e50;
     }
 
-    /* Sourcebook Page Tabs */
+    /* Page Tabs */
     .tabs-nav {
       display: flex;
       border-bottom: 2px solid var(--border-color);
@@ -268,7 +268,14 @@
       padding-bottom: 3px;
     }
 
-    /* Elements */
+    /* Info Inputs */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
     .info-group {
       display: flex;
       flex-direction: column;
@@ -329,6 +336,11 @@
       background-color: var(--dot-filled);
     }
 
+    /* Dynamic inputs (lists) */
+    .dynamic-list {
+      margin-bottom: 15px;
+    }
+
     .dynamic-row {
       display: flex;
       align-items: center;
@@ -348,6 +360,29 @@
     .dynamic-row input[type="text"]:focus {
       outline: none;
       border-bottom-color: var(--accent-red);
+    }
+
+    .delete-btn {
+      color: var(--accent-red);
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.1rem;
+      border: none;
+      background: none;
+      padding: 0 5px;
+    }
+
+    .status-section {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 25px;
+      margin-top: 25px;
+    }
+
+    @media (max-width: 768px) {
+      .status-section {
+        grid-template-columns: 1fr;
+      }
     }
 
     .health-table {
@@ -595,7 +630,7 @@
 
           <div class="status-section">
             <div class="column">
-              <h2>Road & Pools</h2>
+              <h2>Path & Mechanics</h2>
               <div style="border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
                 <div class="info-group">
                   <label>Road / Path Name</label>
@@ -780,6 +815,15 @@
   </div>
 
   <script>
+    /*
+      ================================================================================
+      GOOGLE SHEETS SYNC SYSTEM (Deploy as web app using code below)
+      ================================================================================
+      Replace the API_URL below with your deployed Google Web App URL [1].
+      If left as "YOUR_DEPLOYED_URL_HERE", the app falls back entirely to LocalStorage [1].
+    */
+    const API_URL = "YOUR_DEPLOYED_URL_HERE";
+
     let activeCharacterId = null;
     let saveTimeout = null;
     let dynamicRowId = 0;
@@ -793,27 +837,48 @@
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      
       document.getElementById(tabId).classList.add('active');
       const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => btn.getAttribute('onclick').includes(tabId));
       if (activeBtn) activeBtn.classList.add('active');
     }
 
-    function getCharacterList() {
-      const list = localStorage.getItem('v20_da_characters_index');
-      return list ? JSON.parse(list) : [];
+    async function getCharacterList() {
+      if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+        const list = localStorage.getItem('v20_da_characters_index');
+        return list ? JSON.parse(list) : [];
+      }
+      try {
+        const response = await fetch(API_URL);
+        return await response.json();
+      } catch (err) {
+        console.warn("Cloud list fetch failed, falling back to LocalStorage:", err);
+        const list = localStorage.getItem('v20_da_characters_index');
+        return list ? JSON.parse(list) : [];
+      }
     }
 
-    function saveCharacterList(list) {
+    function saveLocalIndex(charId, name, clan, road) {
+      const list = JSON.parse(localStorage.getItem('v20_da_characters_index') || '[]');
+      const index = list.findIndex(item => item.id === charId);
+      if (index !== -1) {
+        list[index].name = name;
+        list[index].clan = clan;
+        list[index].road = road;
+        list[index].lastSaved = Date.now();
+      } else {
+        list.push({ id: charId, name, clan, road, lastSaved: Date.now() });
+      }
       localStorage.setItem('v20_da_characters_index', JSON.stringify(list));
     }
 
-    function renderDashboard() {
-      const list = getCharacterList();
+    async function renderDashboard() {
+      const list = await getCharacterList();
       const listContainer = document.getElementById('character-list');
       listContainer.innerHTML = '';
 
       if (list.length === 0) {
-        listContainer.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #8c7e6e; font-style: italic;">No chronicle records. Prepare a new scribe.</p>`;
+        listContainer.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #8c7e6e; font-style: italic;">No records found. Prepare a new scribe.</p>`;
         return;
       }
 
@@ -838,7 +903,7 @@
       });
     }
 
-    function createNewCharacter() {
+    async function createNewCharacter() {
       const charId = 'char_' + Date.now();
       const initialSheet = {
         id: charId,
@@ -868,32 +933,69 @@
         vis: { coterie: '', sketch: '' }
       };
 
+      // Push initial values both locally & via cloud if configured
       localStorage.setItem(charId, JSON.stringify(initialSheet));
+      saveLocalIndex(charId, initialSheet.meta.name, initialSheet.meta.clan, '');
 
-      const list = getCharacterList();
-      list.push({ id: charId, name: initialSheet.meta.name, clan: initialSheet.meta.clan, road: '', lastSaved: Date.now() });
-      saveCharacterList(list);
+      if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+        try {
+          await fetch(API_URL, {
+            method: "POST",
+            body: JSON.stringify(initialSheet)
+          });
+        } catch (err) {
+          console.warn("Cloud initialization failed, saved locally instead.");
+        }
+      }
 
       openEditor(charId);
     }
 
-    function openEditor(id) {
+    async function openEditor(id) {
       activeCharacterId = id;
-      const sheetData = JSON.parse(localStorage.getItem(id));
-      if (!sheetData) return;
+      setSaveStatus('Loading draft...');
 
-      loadSheetIntoDOM(sheetData);
+      if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+        const sheetData = JSON.parse(localStorage.getItem(id));
+        if (sheetData) {
+          loadSheetIntoDOM(sheetData);
+          document.getElementById('dashboard-view').classList.remove('active');
+          document.getElementById('editor-view').classList.add('active');
+          switchTab('tab-page-1');
+          setSaveStatus('Draft Loaded');
+        } else {
+          setSaveStatus('Draft not found');
+        }
+        return;
+      }
 
-      document.getElementById('dashboard-view').classList.remove('active');
-      document.getElementById('editor-view').classList.add('active');
-      switchTab('tab-page-1');
-      setSaveStatus('Draft Loaded');
+      try {
+        const response = await fetch(`${API_URL}?id=${id}`);
+        const sheetData = await response.json();
+        loadSheetIntoDOM(sheetData);
+        document.getElementById('dashboard-view').classList.remove('active');
+        document.getElementById('editor-view').classList.add('active');
+        switchTab('tab-page-1');
+        setSaveStatus('Draft Loaded (Cloud)');
+      } catch (err) {
+        console.warn("Cloud fetch failed, trying local fallback...", err);
+        const sheetData = JSON.parse(localStorage.getItem(id));
+        if (sheetData) {
+          loadSheetIntoDOM(sheetData);
+          document.getElementById('dashboard-view').classList.remove('active');
+          document.getElementById('editor-view').classList.add('active');
+          switchTab('tab-page-1');
+          setSaveStatus('Draft Loaded (Local Fallback)');
+        } else {
+          setSaveStatus('Failed to load draft');
+        }
+      }
     }
 
-    function closeEditor() {
+    async function closeEditor() {
       if (saveTimeout) {
         clearTimeout(saveTimeout);
-        saveCurrentCharacter();
+        await saveCurrentCharacter();
       }
       activeCharacterId = null;
       document.getElementById('editor-view').classList.remove('active');
@@ -901,33 +1003,66 @@
       renderDashboard();
     }
 
-    function cloneCharacter(id) {
-      const source = JSON.parse(localStorage.getItem(id));
-      if (!source) return;
+    async function cloneCharacter(id) {
+      setSaveStatus('Cloning...');
+      let sourceData = null;
+
+      if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+        sourceData = JSON.parse(localStorage.getItem(id));
+      } else {
+        try {
+          const response = await fetch(`${API_URL}?id=${id}`);
+          sourceData = await response.json();
+        } catch (err) {
+          sourceData = JSON.parse(localStorage.getItem(id));
+        }
+      }
+
+      if (!sourceData) return;
 
       const newId = 'char_' + Date.now();
-      const clone = JSON.parse(JSON.stringify(source));
+      const clone = JSON.parse(JSON.stringify(sourceData));
       clone.id = newId;
       clone.meta.name = (clone.meta.name || 'Unnamed') + ' (Copy)';
 
       localStorage.setItem(newId, JSON.stringify(clone));
+      saveLocalIndex(newId, clone.meta.name, clone.meta.clan, clone.mechanics.roadName || '');
 
-      const list = getCharacterList();
-      list.push({ id: newId, name: clone.meta.name, clan: clone.meta.clan, road: clone.mechanics.roadName || '', lastSaved: Date.now() });
-      saveCharacterList(list);
+      if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+        try {
+          await fetch(API_URL, { method: "POST", body: JSON.stringify(clone) });
+        } catch (err) {
+          console.warn("Cloud clone failed, retained locally.");
+        }
+      }
 
       renderDashboard();
     }
 
-    function deleteCharacter(id) {
-      if (confirm("Are you sure you want to permanently delete this character?")) {
-        localStorage.removeItem(id);
-        let list = getCharacterList();
-        list = list.filter(item => item.id !== id);
-        saveCharacterList(list);
-        renderDashboard();
+    async function deleteCharacter(id) {
+      if (!confirm("Are you sure you want to permanently delete this character?")) return;
+
+      // Delete locally
+      localStorage.removeItem(id);
+      let localList = JSON.parse(localStorage.getItem('v20_da_characters_index') || '[]');
+      localList = localList.filter(item => item.id !== id);
+      localStorage.setItem('v20_da_characters_index', JSON.stringify(localList));
+
+      if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+        try {
+          await fetch(API_URL, {
+            method: "POST",
+            body: JSON.stringify({ action: "delete", id: id })
+          });
+        } catch (err) {
+          console.warn("Cloud deletion failed.");
+        }
       }
+
+      renderDashboard();
     }
+
+    /* --- DOM DOTS SYSTEM --- */
 
     function initializeStaticDots() {
       document.querySelectorAll('.trait').forEach(container => {
@@ -990,7 +1125,8 @@
       }
     }
 
-    // Dynamic Lists System
+    /* --- DYNAMIC LIST ADDITIONS --- */
+
     function addDynamicRow(targetListId, type, initialName = '', initialVal = 0) {
       const list = document.getElementById(targetListId);
       const rowId = `dynamic-${type}-${dynamicRowId++}`;
@@ -1129,6 +1265,8 @@
       queueAutoSave();
     }
 
+    /* --- CORE SYNC ENGINE --- */
+
     function queueAutoSave() {
       setSaveStatus('Saving changes...');
       if (saveTimeout) clearTimeout(saveTimeout);
@@ -1139,23 +1277,30 @@
       document.getElementById('save-status').innerText = text;
     }
 
-    function saveCurrentCharacter() {
+    async function saveCurrentCharacter() {
       if (!activeCharacterId) return;
 
       const data = compileSheetData();
+      
+      // Always store backup in LocalStorage
       localStorage.setItem(activeCharacterId, JSON.stringify(data));
+      saveLocalIndex(activeCharacterId, data.meta.name, data.meta.clan, data.mechanics.roadName);
 
-      const list = getCharacterList();
-      const index = list.findIndex(item => item.id === activeCharacterId);
-      if (index !== -1) {
-        list[index].name = data.meta.name;
-        list[index].clan = data.meta.clan;
-        list[index].road = data.mechanics.roadName;
-        list[index].lastSaved = Date.now();
-        saveCharacterList(list);
+      if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+        setSaveStatus('Saved Locally (No Cloud URL)');
+        return;
       }
 
-      setSaveStatus('Draft Auto-Saved');
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify(data)
+        });
+        setSaveStatus('Auto-Saved to Cloud');
+      } catch (err) {
+        console.warn("Cloud save failed, falls back to local data:", err);
+        setSaveStatus('Offline - Saved locally');
+      }
     }
 
     function compileSheetData() {
@@ -1262,7 +1407,6 @@
         }
       };
 
-      // Collect Core Attributes & Abilities
       const attributesList = ['strength', 'dexterity', 'stamina', 'charisma', 'manipulation', 'appearance', 'perception', 'intelligence', 'wits'];
       attributesList.forEach(id => {
         data.attributes[id] = parseInt(document.querySelector(`[data-id="${id}"]`).getAttribute('data-value'));
@@ -1277,7 +1421,6 @@
         data.abilities[id] = parseInt(document.querySelector(`[data-id="${id}"]`).getAttribute('data-value'));
       });
 
-      // Collect Disciplines & Base Backgrounds
       document.querySelectorAll('#disciplines-list .dynamic-row').forEach(row => {
         const name = row.querySelector('.dynamic-name').value;
         const val = parseInt(row.querySelector('.trait').getAttribute('data-value'));
@@ -1290,7 +1433,6 @@
         if (name || val > 0) data.backgrounds.push({ name, rating: val });
       });
 
-      // Page 2 Lists
       document.querySelectorAll('#merits-list .dynamic-row').forEach(row => {
         data.merits.push({
           name: row.querySelector('.dynamic-name').value,
@@ -1332,7 +1474,6 @@
         data.derangements.push({ name: row.querySelector('.dynamic-name').value });
       });
 
-      // Combat Attacks
       document.querySelectorAll('#combat-attacks-table tbody tr').forEach(row => {
         data.combatAttacks.push({
           weapon: row.querySelector('.c-weapon').value,
@@ -1345,7 +1486,6 @@
         });
       });
 
-      // Temporary pools
       for (let i = 1; i <= 10; i++) {
         data.mechanics.willpowerTemp.push(document.getElementById(`wp-temp-${i}`).checked);
       }
@@ -1357,7 +1497,7 @@
     }
 
     function loadSheetIntoDOM(data) {
-      // Page 1 Header
+      // Info Header
       document.getElementById('char-name').value = data.meta.name || '';
       document.getElementById('char-clan').value = data.meta.clan || '';
       document.getElementById('char-sire').value = data.meta.sire || '';
@@ -1367,7 +1507,7 @@
       document.getElementById('char-concept').value = data.meta.concept || '';
       document.getElementById('char-chronicle').value = data.meta.chronicle || '';
 
-      // Attributes & Abilities
+      // Attributes
       if (data.attributes) {
         Object.keys(data.attributes).forEach(id => {
           const el = document.querySelector(`[data-id="${id}"]`);
@@ -1378,6 +1518,7 @@
         });
       }
 
+      // Abilities
       if (data.abilities) {
         Object.keys(data.abilities).forEach(id => {
           const el = document.querySelector(`[data-id="${id}"]`);
@@ -1405,7 +1546,7 @@
         renderDots(v3);
       }
 
-      // Dynamic Lists
+      // Disciplines & Backgrounds
       document.getElementById('disciplines-list').innerHTML = '';
       if (data.disciplines && data.disciplines.length > 0) {
         data.disciplines.forEach(d => addDynamicRow('disciplines-list', 'discipline', d.name, d.rating));
@@ -1552,6 +1693,8 @@
       }
     }
 
+    /* --- EXTERNAL FILE IO --- */
+
     function triggerManualExport(id) {
       const exportId = id || activeCharacterId;
       if (!exportId) return;
@@ -1572,28 +1715,30 @@
       if (!file) return;
 
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = async function(e) {
         try {
           const data = JSON.parse(e.target.result);
           const newId = 'char_' + Date.now();
           data.id = newId;
 
           localStorage.setItem(newId, JSON.stringify(data));
+          saveLocalIndex(newId, data.meta.name, data.meta.clan, data.mechanics ? data.mechanics.roadName : '');
 
-          const list = getCharacterList();
-          list.push({
-            id: newId,
-            name: data.meta.name || 'Imported Scribe',
-            clan: data.meta.clan || '',
-            road: data.mechanics ? data.mechanics.roadName : '',
-            lastSaved: Date.now()
-          });
-          saveCharacterList(list);
+          if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+            try {
+              await fetch(API_URL, {
+                method: "POST",
+                body: JSON.stringify(data)
+              });
+            } catch (err) {
+              console.warn("Cloud import failed, backed up locally.");
+            }
+          }
 
           renderDashboard();
-          alert("Imported sheet successfully.");
+          alert("Character imported successfully.");
         } catch (err) {
-          alert("Could not parse file. Ensure it is a valid V20 Dark Ages Aligned JSON character sheet.");
+          alert("Could not parse file.");
           console.error(err);
         }
       };
