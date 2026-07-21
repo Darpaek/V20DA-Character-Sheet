@@ -477,7 +477,7 @@
 
   <div class="app-container">
     <header>
-      <h1>Vampire: The Dark Ages</h1>
+      <h2>Vampire: The Dark Ages</h2>
       <p>Sourcebook-Aligned V20 Dark Ages Interactive Web Application</p>
     </header>
 
@@ -1417,7 +1417,7 @@
 
       container.setAttribute('data-value', currentVal);
       renderDots(container);
-      renderGrimoireDisciplines(); // Instantly update dynamic grimoire sheet rendering [1]
+      renderGrimoireDisciplines(); // Instantly synchronize Grimoire description updates [1]
       queueAutoSave();
     }
 
@@ -1652,7 +1652,7 @@
     /* --- CORE SYNC ENGINE --- */
 
     function queueAutoSave() {
-      if (isLoadingSheet) return; // Prevent loop saves during dynamic loading [1]
+      if (isLoadingSheet) return; // Prevent loops during DOM updates [1]
       setSaveStatus('Saving changes...');
       if (saveTimeout) clearTimeout(saveTimeout);
       saveTimeout = setTimeout(saveCurrentCharacter, 1000);
