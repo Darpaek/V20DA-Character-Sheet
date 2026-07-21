@@ -1,560 +1,583 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>V20 Dark Ages Scribe - Character Ledger</title>
-  <style>
-    :root {
-      --bg-color: #12100e;
-      --parchment: #f5f0e6;
-      --accent-red: #7c0b0b;
-      --text-dark: #2c2520;
-      --border-color: #8c7e6e;
-      --dot-filled: #7c0b0b;
-      --dot-empty: #d1c6b8;
-      --card-bg: #221d1a;
-      --text-light: #e5dec9;
-    }
-
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-light);
-      font-family: 'Georgia', 'Times New Roman', serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    .app-container {
-      width: 100%;
-      max-width: 1000px;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 25px;
-      border-bottom: 2px solid var(--accent-red);
-      padding-bottom: 15px;
-    }
-
-    header h1 {
-      color: var(--accent-red);
-      margin: 0;
-      font-size: 2.3rem;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-    }
-
-    header p {
-      margin: 5px 0 0 0;
-      font-style: italic;
-      color: #9c8e80;
-    }
-
-    /* Views */
-    .view {
-      display: none;
-    }
-
-    .view.active {
-      display: block;
-    }
-
-    /* Dashboard Layout */
-    .dashboard-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
-    }
-
-    .char-card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .char-card h3 {
-      margin: 0 0 5px 0;
-      color: var(--accent-red);
-      font-size: 1.3rem;
-    }
-
-    .char-card p {
-      margin: 3px 0;
-      font-size: 0.9rem;
-      color: #c9bcac;
-    }
-
-    .char-card-meta {
-      border-bottom: 1px solid rgba(140, 126, 110, 0.3);
-      padding-bottom: 10px;
-      margin-bottom: 15px;
-    }
-
-    .char-card-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    /* Buttons */
-    .btn {
-      background-color: var(--accent-red);
-      color: white;
-      border: none;
-      padding: 8px 15px;
-      cursor: pointer;
-      font-family: inherit;
-      text-transform: uppercase;
-      font-size: 0.8rem;
-      border-radius: 4px;
-      transition: background 0.2s;
-    }
-
-    .btn:hover {
-      background-color: #a31212;
-    }
-
-    .btn-secondary {
-      background-color: #3e3530;
-      border: 1px solid var(--border-color);
-    }
-
-    .btn-secondary:hover {
-      background-color: #524740;
-    }
-
-    .btn-danger {
-      background-color: #4f1414;
-    }
-
-    .btn-danger:hover {
-      background-color: #701c1c;
-    }
-
-    .btn-small {
-      padding: 5px 10px;
-      font-size: 0.75rem;
-    }
-
-    /* Sheet Container Styling */
-    .sheet-container {
-      background-color: var(--parchment);
-      color: var(--text-dark);
-      padding: 25px;
-      border-radius: 8px;
-      box-shadow: 0 0 25px rgba(0,0,0,0.9);
-      border: 3px double var(--border-color);
-      box-sizing: border-box;
-    }
-
-    .sheet-header-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      background: rgba(0,0,0,0.04);
-      padding: 10px 15px;
-      border-radius: 4px;
-      border: 1px solid var(--border-color);
-    }
-
-    .autosave-status {
-      font-size: 0.85rem;
-      font-style: italic;
-      color: #6e5e50;
-    }
-
-    /* Page Tabs */
-    .tabs-nav {
-      display: flex;
-      border-bottom: 2px solid var(--border-color);
-      margin-bottom: 20px;
-      gap: 5px;
-      overflow-x: auto;
-    }
-
-    .tab-btn {
-      background: none;
-      border: 1px solid var(--border-color);
-      border-bottom: none;
-      padding: 8px 16px;
-      font-family: inherit;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      cursor: pointer;
-      border-radius: 4px 4px 0 0;
-      color: #6e5e50;
-      background-color: rgba(0,0,0,0.03);
-    }
-
-    .tab-btn.active {
-      background-color: var(--parchment);
-      color: var(--accent-red);
-      font-weight: bold;
-      border-color: var(--border-color);
-      border-bottom: 2px solid var(--parchment);
-      margin-bottom: -2px;
-    }
-
-    .tab-content {
-      display: none;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    /* Grid Layouts */
-    .three-col-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-
-    .two-col-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-    }
-
-    @media (max-width: 768px) {
-      .three-col-grid, .two-col-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .column {
-      display: flex;
-      flex-direction: column;
-    }
-
-    h2 {
-      font-size: 1.15rem;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 5px;
-      margin-top: 25px;
-      margin-bottom: 15px;
-      color: var(--accent-red);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    h3.column-header {
-      text-align: center;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--accent-red);
-      margin-top: 0;
-      font-size: 0.95rem;
-      border-bottom: 1px dashed var(--border-color);
-      padding-bottom: 3px;
-    }
-
-    /* Info Inputs */
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin-bottom: 25px;
-    }
-
-    .info-group {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 10px;
-    }
-
-    .info-group label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      font-weight: bold;
-      color: #5a5045;
-      margin-bottom: 3px;
-    }
-
-    .info-group input {
-      background: transparent;
-      border: none;
-      border-bottom: 1px solid var(--border-color);
-      font-family: inherit;
-      font-size: 1rem;
-      padding: 3px 0;
-      color: var(--text-dark);
-    }
-
-    .info-group input:focus {
-      outline: none;
-      border-bottom-color: var(--accent-red);
-    }
-
-    .trait {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 7px;
-    }
-
-    .trait label {
-      font-size: 0.9rem;
-    }
-
-    .dots-container {
-      display: flex;
-      gap: 3px;
-    }
-
-    .dot {
-      width: 11px;
-      height: 11px;
-      border-radius: 50%;
-      border: 1px solid var(--accent-red);
-      background-color: transparent;
-      cursor: pointer;
-      display: inline-block;
-      box-sizing: border-box;
-    }
-
-    .dot.filled {
-      background-color: var(--dot-filled);
-    }
-
-    /* Dynamic inputs (lists) */
-    .dynamic-list {
-      margin-bottom: 15px;
-    }
-
-    .dynamic-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      gap: 10px;
-    }
-
-    .dynamic-row input[type="text"], .dynamic-row input[type="number"], .dynamic-row select {
-      background: transparent;
-      border: none;
-      border-bottom: 1px dashed var(--border-color);
-      font-family: inherit;
-      font-size: 0.9rem;
-    }
-
-    .dynamic-row input[type="text"]:focus, .dynamic-row select:focus {
-      outline: none;
-      border-bottom-color: var(--accent-red);
-    }
-
-    .delete-btn {
-      color: var(--accent-red);
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 1.1rem;
-      border: none;
-      background: none;
-      padding: 0 5px;
-    }
-
-    .status-section {
-      display: grid;
-      grid-template-columns: 1fr 1.5fr;
-      gap: 25px;
-      margin-top: 25px;
-    }
-
-    @media (max-width: 768px) {
-      .status-section {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .health-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .health-table td {
-      padding: 5px 2px;
-      font-size: 0.85rem;
-      border-bottom: 1px solid rgba(0,0,0,0.05);
-    }
-
-    .health-table input[type="checkbox"] {
-      cursor: pointer;
-      width: 14px;
-      height: 14px;
-      accent-color: var(--accent-red);
-    }
-
-    .text-area-group {
-      margin-top: 15px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .text-area-group label {
-      font-weight: bold;
-      text-transform: uppercase;
-      font-size: 0.75rem;
-      color: #5a5045;
-      margin-bottom: 4px;
-    }
-
-    .text-area-group textarea {
-      background: rgba(255, 255, 255, 0.4);
-      border: 1px solid var(--border-color);
-      font-family: inherit;
-      font-size: 0.9rem;
-      padding: 8px;
-      resize: vertical;
-      min-height: 80px;
-      color: var(--text-dark);
-    }
-
-    .text-area-group textarea:focus {
-      outline: none;
-      border-color: var(--accent-red);
-    }
-
-    /* Combat Table */
-    .combat-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 0.85rem;
-    }
-
-    .combat-table th, .combat-table td {
-      border: 1px solid var(--border-color);
-      padding: 4px;
-      text-align: left;
-    }
-
-    .combat-table th {
-      background-color: rgba(0,0,0,0.05);
-      font-size: 0.75rem;
-      text-transform: uppercase;
-    }
-
-    .combat-table input {
-      width: 100%;
-      border: none;
-      background: transparent;
-      font-family: inherit;
-      font-size: 0.85rem;
-      color: var(--text-dark);
-      box-sizing: border-box;
-    }
-
-    .combat-table input:focus {
-      outline: none;
-      background: rgba(255,255,255,0.3);
-    }
-
-    #file-import {
-      display: none;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V20 Dark Ages Scribe - Character Ledger</title>
+<style>
+:root {
+--bg-color: #12100e;
+--parchment: #f5f0e6;
+--accent-red: #7c0b0b;
+--text-dark: #2c2520;
+--border-color: #8c7e6e;
+--dot-filled: #7c0b0b;
+--dot-empty: #d1c6b8;
+--card-bg: #221d1a;
+--text-light: #e5dec9;
+}
+
+body {
+background-color: var(--bg-color);
+color: var(--text-light);
+font-family: 'Georgia', 'Times New Roman', serif;
+margin: 0;
+padding: 0;
+display: flex;
+flex-direction: column;
+align-items: center;
+min-height: 100vh;
+}
+
+.app-container {
+width: 100%;
+max-width: 1000px;
+padding: 20px;
+box-sizing: border-box;
+}
+
+header {
+text-align: center;
+margin-bottom: 25px;
+border-bottom: 2px solid var(--accent-red);
+padding-bottom: 15px;
+}
+
+header h1 {
+color: var(--accent-red);
+margin: 0;
+font-size: 2.3rem;
+text-transform: uppercase;
+letter-spacing: 3px;
+}
+
+header p {
+margin: 5px 0 0 0;
+font-style: italic;
+color: #9c8e80;
+}
+
+/* Views */
+.view {
+display: none;
+}
+
+.view.active {
+display: block;
+}
+
+/* Dashboard Layout */
+.dashboard-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 20px;
+}
+
+.dashboard-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+gap: 20px;
+}
+
+.char-card {
+background-color: var(--card-bg);
+border: 1px solid var(--border-color);
+border-radius: 6px;
+padding: 20px;
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+}
+
+.char-card h3 {
+margin: 0 0 5px 0;
+color: var(--accent-red);
+font-size: 1.3rem;
+}
+
+.char-card p {
+margin: 3px 0;
+font-size: 0.9rem;
+color: #c9bcac;
+}
+
+.char-card-meta {
+border-bottom: 1px solid rgba(140, 126, 110, 0.3);
+padding-bottom: 10px;
+margin-bottom: 15px;
+}
+
+.char-card-actions {
+display: flex;
+gap: 8px;
+flex-wrap: wrap;
+}
+
+/* Buttons */
+.btn {
+background-color: var(--accent-red);
+color: white;
+border: none;
+padding: 8px 15px;
+cursor: pointer;
+font-family: inherit;
+text-transform: uppercase;
+font-size: 0.8rem;
+border-radius: 4px;
+transition: background 0.2s;
+}
+
+.btn:hover {
+background-color: #a31212;
+}
+
+.btn-secondary {
+background-color: #3e3530;
+border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+background-color: #524740;
+}
+
+.btn-danger {
+background-color: #4f1414;
+}
+
+.btn-danger:hover {
+background-color: #701c1c;
+}
+
+.btn-small {
+padding: 5px 10px;
+font-size: 0.75rem;
+}
+
+/* Sheet Container Styling */
+.sheet-container {
+background-color: var(--parchment);
+color: var(--text-dark);
+padding: 25px;
+border-radius: 8px;
+box-shadow: 0 0 25px rgba(0,0,0,0.9);
+border: 3px double var(--border-color);
+box-sizing: border-box;
+}
+
+.sheet-header-nav {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 20px;
+background: rgba(0,0,0,0.04);
+padding: 10px 15px;
+border-radius: 4px;
+border: 1px solid var(--border-color);
+}
+
+.autosave-status {
+font-size: 0.85rem;
+font-style: italic;
+color: #6e5e50;
+}
+
+/* Page Tabs */
+.tabs-nav {
+display: flex;
+border-bottom: 2px solid var(--border-color);
+margin-bottom: 20px;
+gap: 5px;
+overflow-x: auto;
+}
+
+.tab-btn {
+background: none;
+border: 1px solid var(--border-color);
+border-bottom: none;
+padding: 8px 16px;
+font-family: inherit;
+font-size: 0.85rem;
+text-transform: uppercase;
+cursor: pointer;
+border-radius: 4px 4px 0 0;
+color: #6e5e50;
+background-color: rgba(0,0,0,0.03);
+}
+
+.tab-btn.active {
+background-color: var(--parchment);
+color: var(--accent-red);
+font-weight: bold;
+border-color: var(--border-color);
+border-bottom: 2px solid var(--parchment);
+margin-bottom: -2px;
+}
+
+.tab-content {
+display: none;
+}
+
+.tab-content.active {
+display: block;
+}
+
+/* Grid Layouts */
+.three-col-grid {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 20px;
+}
+
+.two-col-grid {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 20px;
+}
+
+@media (max-width: 768px) {
+.three-col-grid, .two-col-grid {
+grid-template-columns: 1fr;
+}
+}
+
+.column {
+display: flex;
+flex-direction: column;
+}
+
+h2 {
+font-size: 1.15rem;
+border-bottom: 1px solid var(--border-color);
+padding-bottom: 5px;
+margin-top: 25px;
+margin-bottom: 15px;
+color: var(--accent-red);
+text-transform: uppercase;
+letter-spacing: 1px;
+}
+
+h3.column-header {
+text-align: center;
+text-transform: uppercase;
+letter-spacing: 1px;
+color: var(--accent-red);
+margin-top: 0;
+font-size: 0.95rem;
+border-bottom: 1px dashed var(--border-color);
+padding-bottom: 3px;
+}
+
+/* Info Inputs */
+.info-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+gap: 15px;
+margin-bottom: 25px;
+}
+
+.info-group {
+display: flex;
+flex-direction: column;
+margin-bottom: 10px;
+}
+
+.info-group label {
+font-size: 0.75rem;
+text-transform: uppercase;
+font-weight: bold;
+color: #5a5045;
+margin-bottom: 3px;
+}
+
+.info-group input {
+background: transparent;
+border: none;
+border-bottom: 1px solid var(--border-color);
+font-family: inherit;
+font-size: 1rem;
+padding: 3px 0;
+color: var(--text-dark);
+}
+
+.info-group input:focus {
+outline: none;
+border-bottom-color: var(--accent-red);
+}
+
+.trait {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 7px;
+}
+
+.trait label {
+font-size: 0.9rem;
+}
+
+.dots-container {
+display: flex;
+gap: 3px;
+}
+
+.dot {
+width: 11px;
+height: 11px;
+border-radius: 50%;
+border: 1px solid var(--accent-red);
+background-color: transparent;
+cursor: pointer;
+display: inline-block;
+box-sizing: border-box;
+}
+
+.dot.filled {
+background-color: var(--dot-filled);
+}
+
+/* Dynamic inputs (lists) */
+.dynamic-list {
+margin-bottom: 15px;
+}
+
+.dynamic-row {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 8px;
+gap: 10px;
+}
+
+.dynamic-row input[type="text"], .dynamic-row input[type="number"] {
+background: transparent;
+border: none;
+border-bottom: 1px dashed var(--border-color);
+font-family: inherit;
+font-size: 0.9rem;
+}
+
+.dynamic-row input[type="text"]:focus {
+outline: none;
+border-bottom-color: var(--accent-red);
+}
+
+.delete-btn {
+color: var(--accent-red);
+cursor: pointer;
+font-weight: bold;
+font-size: 1.1rem;
+border: none;
+background: none;
+padding: 0 5px;
+}
+
+.status-section {
+display: grid;
+grid-template-columns: 1fr 1.5fr;
+gap: 25px;
+margin-top: 25px;
+}
+
+@media (max-width: 768px) {
+.status-section {
+grid-template-columns: 1fr;
+}
+}
+
+.health-table {
+width: 100%;
+border-collapse: collapse;
+}
+
+.health-table td {
+padding: 5px 2px;
+font-size: 0.85rem;
+border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.health-table input[type="checkbox"] {
+cursor: pointer;
+width: 14px;
+height: 14px;
+accent-color: var(--accent-red);
+}
+
+.text-area-group {
+margin-top: 15px;
+display: flex;
+flex-direction: column;
+}
+
+.text-area-group label {
+font-weight: bold;
+text-transform: uppercase;
+font-size: 0.75rem;
+color: #5a5045;
+margin-bottom: 4px;
+}
+
+.text-area-group textarea {
+background: rgba(255, 255, 255, 0.4);
+border: 1px solid var(--border-color);
+font-family: inherit;
+font-size: 0.9rem;
+padding: 8px;
+resize: vertical;
+min-height: 80px;
+color: var(--text-dark);
+}
+
+.text-area-group textarea:focus {
+outline: none;
+border-color: var(--accent-red);
+}
+
+/* Combat Table */
+.combat-table {
+width: 100%;
+border-collapse: collapse;
+margin-top: 10px;
+font-size: 0.85rem;
+}
+
+.combat-table th, .combat-table td {
+border: 1px solid var(--border-color);
+padding: 4px;
+text-align: left;
+}
+
+.combat-table th {
+background-color: rgba(0,0,0,0.05);
+font-size: 0.75rem;
+text-transform: uppercase;
+}
+
+.combat-table input {
+width: 100%;
+border: none;
+background: transparent;
+font-family: inherit;
+font-size: 0.85rem;
+color: var(--text-dark);
+box-sizing: border-box;
+}
+
+.combat-table input:focus {
+outline: none;
+background: rgba(255,255,255,0.3);
+}
+
+#file-import {
+display: none;
+}
+</style>
 </head>
 <body>
 
-  <div class="app-container">
-    <header>
+<div class="app-container">
+<header>
       <h1>Dark Ages Character Scribe</h1>
-      <p>Sourcebook-Aligned V20 Dark Ages Interactive Web Application</p>
-    </header>
+      <h2>Vampire: The Dark Ages</h2>
+<p>Sourcebook-Aligned V20 Dark Ages Interactive Web Application</p>
+</header>
 
-    <!-- DASHBOARD VIEW -->
-    <div id="dashboard-view" class="view active">
-      <div class="dashboard-header">
-        <h2>Chronicle Ledger</h2>
-        <div>
-          <button class="btn" onclick="createNewCharacter()">+ Create Scribe</button>
-          <button class="btn btn-secondary" onclick="document.getElementById('file-import').click()">Import JSON</button>
-          <input type="file" id="file-import" accept=".json" onchange="importCharacter(event)">
-        </div>
-      </div>
-      <div id="character-list" class="dashboard-grid"></div>
-    </div>
+<!-- DASHBOARD VIEW -->
+<div id="dashboard-view" class="view active">
+<div class="dashboard-header">
+<h2>Chronicle Ledger</h2>
+<div>
+<button class="btn" onclick="createNewCharacter()">+ Create Scribe</button>
+<button class="btn btn-secondary" onclick="document.getElementById('file-import').click()">Import JSON</button>
+<input type="file" id="file-import" accept=".json" onchange="importCharacter(event)">
+</div>
+</div>
+<div id="character-list" class="dashboard-grid"></div>
+</div>
 
-    <!-- SHEET EDITOR VIEW -->
-    <div id="editor-view" class="view">
-      <div class="sheet-container">
-        
-        <div class="sheet-header-nav">
-          <div>
-            <button class="btn btn-secondary btn-small" onclick="closeEditor()">&larr; Dashboard</button>
-            <button class="btn btn-small" onclick="triggerManualExport()">Export JSON</button>
-          </div>
-          <span id="save-status" class="autosave-status">Draft Loaded</span>
-        </div>
+<!-- SHEET EDITOR VIEW -->
+<div id="editor-view" class="view">
+<div class="sheet-container">
 
-        <!-- Page Tabs -->
-        <div class="tabs-nav">
-          <button class="tab-btn active" id="btn-page-1" onclick="switchTab('tab-page-1')">Page 1: Core</button>
+<div class="sheet-header-nav">
+<div>
+<button class="btn btn-secondary btn-small" onclick="closeEditor()">&larr; Dashboard</button>
+<button class="btn btn-small" onclick="triggerManualExport()">Export JSON</button>
+</div>
+<span id="save-status" class="autosave-status">Draft Loaded</span>
+</div>
+
+<!-- Page Tabs -->
+<div class="tabs-nav">
+<button class="tab-btn active" id="btn-page-1" onclick="switchTab('tab-page-1')">Page 1: Core</button>
+          <button class="tab-btn" id="btn-page-2" onclick="switchTab('tab-page-2')">Page 2: Traits & Combat</button>
+          <button class="tab-btn" id="btn-page-3" onclick="switchTab('tab-page-3')">Page 3: Possessions</button>
+          <button class="tab-btn" id="btn-page-4" onclick="switchTab('tab-page-4')">Page 4: History</button>
           <button class="tab-btn" id="btn-page-2" onclick="switchTab('tab-page-2')">Page 2: Grimoire</button>
           <button class="tab-btn" id="btn-page-3" onclick="switchTab('tab-page-3')">Page 3: Traits & Combat</button>
           <button class="tab-btn" id="btn-page-4" onclick="switchTab('tab-page-4')">Page 4: Possessions</button>
           <button class="tab-btn" id="btn-page-5" onclick="switchTab('tab-page-5')">Page 5: History</button>
-        </div>
+</div>
 
-        <!-- PAGE 1: CORE -->
-        <div id="tab-page-1" class="tab-content active">
-          <!-- Character Info Header -->
-          <div class="info-grid">
-            <div class="info-group"><label>Name</label><input type="text" id="char-name" oninput="queueAutoSave()"></div>
-            <div class="info-group"><label>Clan</label><input type="text" id="char-clan" oninput="queueAutoSave()"></div>
-            <div class="info-group"><label>Sire</label><input type="text" id="char-sire" oninput="queueAutoSave()"></div>
-            <div class="info-group"><label>Generation</label><input type="text" id="char-generation" oninput="queueAutoSave()"></div>
-            <div class="info-group"><label>Nature</label><input type="text" id="char-nature" oninput="queueAutoSave()"></div>
-            <div class="info-group"><label>Demeanor</label><input type="text" id="char-demeanor" oninput="queueAutoSave()"></div>
-            <div class="info-group"><label>Concept</label><input type="text" id="char-concept" oninput="queueAutoSave()"></div>
-            <div class="info-group"><label>Chronicle</label><input type="text" id="char-chronicle" oninput="queueAutoSave()"></div>
-          </div>
+<!-- PAGE 1: CORE -->
+<div id="tab-page-1" class="tab-content active">
+<!-- Character Info Header -->
+<div class="info-grid">
+<div class="info-group"><label>Name</label><input type="text" id="char-name" oninput="queueAutoSave()"></div>
+<div class="info-group"><label>Clan</label><input type="text" id="char-clan" oninput="queueAutoSave()"></div>
+<div class="info-group"><label>Sire</label><input type="text" id="char-sire" oninput="queueAutoSave()"></div>
+<div class="info-group"><label>Generation</label><input type="text" id="char-generation" oninput="queueAutoSave()"></div>
+<div class="info-group"><label>Nature</label><input type="text" id="char-nature" oninput="queueAutoSave()"></div>
+<div class="info-group"><label>Demeanor</label><input type="text" id="char-demeanor" oninput="queueAutoSave()"></div>
+<div class="info-group"><label>Concept</label><input type="text" id="char-concept" oninput="queueAutoSave()"></div>
+<div class="info-group"><label>Chronicle</label><input type="text" id="char-chronicle" oninput="queueAutoSave()"></div>
+</div>
 
-          <h2>Attributes</h2>
-          <div class="three-col-grid">
-            <div class="column">
-              <h3 class="column-header">Physical</h3>
+<h2>Attributes</h2>
+<div class="three-col-grid">
+<div class="column">
+<h3 class="column-header">Physical</h3>
+              <div class="trait" data-id="strength" data-min="1" data-max="8" data-default="1"><label>Strength</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="dexterity" data-min="1" data-max="8" data-default="1"><label>Dexterity</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="stamina" data-min="1" data-max="8" data-default="1"><label>Stamina</label><div class="dots-container"></div></div>
               <div class="trait" data-id="strength" data-min="1" data-max="6" data-default="1"><label>Strength</label><div class="dots-container"></div></div>
               <div class="trait" data-id="dexterity" data-min="1" data-max="6" data-default="1"><label>Dexterity</label><div class="dots-container"></div></div>
               <div class="trait" data-id="stamina" data-min="1" data-max="6" data-default="1"><label>Stamina</label><div class="dots-container"></div></div>
-            </div>
-            <div class="column">
-              <h3 class="column-header">Social</h3>
+</div>
+<div class="column">
+<h3 class="column-header">Social</h3>
+              <div class="trait" data-id="charisma" data-min="1" data-max="8" data-default="1"><label>Charisma</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="manipulation" data-min="1" data-max="8" data-default="1"><label>Manipulation</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="appearance" data-min="1" data-max="8" data-default="1"><label>Appearance</label><div class="dots-container"></div></div>
               <div class="trait" data-id="charisma" data-min="1" data-max="6" data-default="1"><label>Charisma</label><div class="dots-container"></div></div>
               <div class="trait" data-id="manipulation" data-min="1" data-max="6" data-default="1"><label>Manipulation</label><div class="dots-container"></div></div>
               <div class="trait" data-id="appearance" data-min="1" data-max="6" data-default="1"><label>Appearance</label><div class="dots-container"></div></div>
-            </div>
-            <div class="column">
-              <h3 class="column-header">Mental</h3>
+</div>
+<div class="column">
+<h3 class="column-header">Mental</h3>
+              <div class="trait" data-id="perception" data-min="1" data-max="8" data-default="1"><label>Perception</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="intelligence" data-min="1" data-max="8" data-default="1"><label>Intelligence</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="wits" data-min="1" data-max="8" data-default="1"><label>Wits</label><div class="dots-container"></div></div>
               <div class="trait" data-id="perception" data-min="1" data-max="6" data-default="1"><label>Perception</label><div class="dots-container"></div></div>
               <div class="trait" data-id="intelligence" data-min="1" data-max="6" data-default="1"><label>Intelligence</label><div class="dots-container"></div></div>
               <div class="trait" data-id="wits" data-min="1" data-max="6" data-default="1"><label>Wits</label><div class="dots-container"></div></div>
-            </div>
-          </div>
+</div>
+</div>
 
-          <h2>Abilities</h2>
-          <div class="three-col-grid">
-            <div class="column">
-              <h3 class="column-header">Talents</h3>
+<h2>Abilities</h2>
+<div class="three-col-grid">
+<div class="column">
+<h3 class="column-header">Talents</h3>
+              <div class="trait" data-id="alertness" data-min="0" data-max="8" data-default="0"><label>Alertness</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="athletics" data-min="0" data-max="8" data-default="0"><label>Athletics</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="awareness" data-min="0" data-max="8" data-default="0"><label>Awareness</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="brawl" data-min="0" data-max="8" data-default="0"><label>Brawl</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="empathy" data-min="0" data-max="8" data-default="0"><label>Empathy</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="expression" data-min="0" data-max="8" data-default="0"><label>Expression</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="intimidation" data-min="0" data-max="8" data-default="0"><label>Intimidation</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="leadership" data-min="0" data-max="8" data-default="0"><label>Leadership</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="legerdemain" data-min="0" data-max="8" data-default="0"><label>Legerdemain</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="subterfuge" data-min="0" data-max="8" data-default="0"><label>Subterfuge</label><div class="dots-container"></div></div>
               <div class="trait" data-id="alertness" data-min="0" data-max="6" data-default="0"><label>Alertness</label><div class="dots-container"></div></div>
               <div class="trait" data-id="athletics" data-min="0" data-max="6" data-default="0"><label>Athletics</label><div class="dots-container"></div></div>
               <div class="trait" data-id="awareness" data-min="0" data-max="6" data-default="0"><label>Awareness</label><div class="dots-container"></div></div>
@@ -565,9 +588,19 @@
               <div class="trait" data-id="leadership" data-min="0" data-max="6" data-default="0"><label>Leadership</label><div class="dots-container"></div></div>
               <div class="trait" data-id="legerdemain" data-min="0" data-max="6" data-default="0"><label>Legerdemain</label><div class="dots-container"></div></div>
               <div class="trait" data-id="subterfuge" data-min="0" data-max="6" data-default="0"><label>Subterfuge</label><div class="dots-container"></div></div>
-            </div>
-            <div class="column">
-              <h3 class="column-header">Skills</h3>
+</div>
+<div class="column">
+<h3 class="column-header">Skills</h3>
+              <div class="trait" data-id="animal_ken" data-min="0" data-max="8" data-default="0"><label>Animal Ken</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="archery" data-min="0" data-max="8" data-default="0"><label>Archery</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="commerce" data-min="0" data-max="8" data-default="0"><label>Commerce</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="crafts" data-min="0" data-max="8" data-default="0"><label>Crafts</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="etiquette" data-min="0" data-max="8" data-default="0"><label>Etiquette</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="melee" data-min="0" data-max="8" data-default="0"><label>Melee</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="performance" data-min="0" data-max="8" data-default="0"><label>Performance</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="ride" data-min="0" data-max="8" data-default="0"><label>Ride</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="stealth" data-min="0" data-max="8" data-default="0"><label>Stealth</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="survival" data-min="0" data-max="8" data-default="0"><label>Survival</label><div class="dots-container"></div></div>
               <div class="trait" data-id="animal_ken" data-min="0" data-max="6" data-default="0"><label>Animal Ken</label><div class="dots-container"></div></div>
               <div class="trait" data-id="archery" data-min="0" data-max="6" data-default="0"><label>Archery</label><div class="dots-container"></div></div>
               <div class="trait" data-id="commerce" data-min="0" data-max="6" data-default="0"><label>Commerce</label><div class="dots-container"></div></div>
@@ -578,9 +611,19 @@
               <div class="trait" data-id="ride" data-min="0" data-max="6" data-default="0"><label>Ride</label><div class="dots-container"></div></div>
               <div class="trait" data-id="stealth" data-min="0" data-max="6" data-default="0"><label>Stealth</label><div class="dots-container"></div></div>
               <div class="trait" data-id="survival" data-min="0" data-max="6" data-default="0"><label>Survival</label><div class="dots-container"></div></div>
-            </div>
-            <div class="column">
-              <h3 class="column-header">Knowledges</h3>
+</div>
+<div class="column">
+<h3 class="column-header">Knowledges</h3>
+              <div class="trait" data-id="academics" data-min="0" data-max="8" data-default="0"><label>Academics</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="enigmas" data-min="0" data-max="8" data-default="0"><label>Enigmas</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="hearth_wisdom" data-min="0" data-max="8" data-default="0"><label>Hearth Wisdom</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="investigation" data-min="0" data-max="8" data-default="0"><label>Investigation</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="law" data-min="0" data-max="8" data-default="0"><label>Law</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="medicine" data-min="0" data-max="8" data-default="0"><label>Medicine</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="occult" data-min="0" data-max="8" data-default="0"><label>Occult</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="politics" data-min="0" data-max="8" data-default="0"><label>Politics</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="seneschal" data-min="0" data-max="8" data-default="0"><label>Seneschal</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="theology" data-min="0" data-max="8" data-default="0"><label>Theology</label><div class="dots-container"></div></div>
               <div class="trait" data-id="academics" data-min="0" data-max="6" data-default="0"><label>Academics</label><div class="dots-container"></div></div>
               <div class="trait" data-id="enigmas" data-min="0" data-max="6" data-default="0"><label>Enigmas</label><div class="dots-container"></div></div>
               <div class="trait" data-id="hearth_wisdom" data-min="0" data-max="6" data-default="0"><label>Hearth Wisdom</label><div class="dots-container"></div></div>
@@ -591,96 +634,97 @@
               <div class="trait" data-id="politics" data-min="0" data-max="6" data-default="0"><label>Politics</label><div class="dots-container"></div></div>
               <div class="trait" data-id="seneschal" data-min="0" data-max="6" data-default="0"><label>Seneschal</label><div class="dots-container"></div></div>
               <div class="trait" data-id="theology" data-min="0" data-max="6" data-default="0"><label>Theology</label><div class="dots-container"></div></div>
-            </div>
-          </div>
+</div>
+</div>
 
-          <h2>Advantages</h2>
-          <div class="three-col-grid">
-            <div class="column">
-              <h3 class="column-header">Disciplines</h3>
-              <div id="disciplines-list" class="dynamic-list"></div>
-              <button class="btn btn-secondary btn-small" style="align-self: flex-start;" onclick="addDynamicRow('disciplines-list', 'discipline')">+ Add Discipline</button>
-            </div>
-            <div class="column">
-              <h3 class="column-header">Backgrounds</h3>
-              <div id="backgrounds-list" class="dynamic-list"></div>
-              <button class="btn btn-secondary btn-small" style="align-self: flex-start;" onclick="addDynamicRow('backgrounds-list', 'background')">+ Add Background</button>
-            </div>
-            <div class="column">
-              <h3 class="column-header">Virtues</h3>
-              <div style="display: flex; gap: 10px; margin-bottom: 5px;">
-                <select id="virtue-1-type" style="font-family: inherit; font-size: 0.8rem;" onchange="queueAutoSave()">
-                  <option value="Conscience">Conscience</option>
-                  <option value="Conviction">Conviction</option>
-                </select>
-              </div>
-              <div class="trait" data-id="virtue_1" data-min="1" data-max="5" data-default="1"><label>Rating</label><div class="dots-container"></div></div>
+<h2>Advantages</h2>
+<div class="three-col-grid">
+<div class="column">
+<h3 class="column-header">Disciplines</h3>
+<div id="disciplines-list" class="dynamic-list"></div>
+<button class="btn btn-secondary btn-small" style="align-self: flex-start;" onclick="addDynamicRow('disciplines-list', 'discipline')">+ Add Discipline</button>
+</div>
+<div class="column">
+<h3 class="column-header">Backgrounds</h3>
+<div id="backgrounds-list" class="dynamic-list"></div>
+<button class="btn btn-secondary btn-small" style="align-self: flex-start;" onclick="addDynamicRow('backgrounds-list', 'background')">+ Add Background</button>
+</div>
+<div class="column">
+<h3 class="column-header">Virtues</h3>
+<div style="display: flex; gap: 10px; margin-bottom: 5px;">
+<select id="virtue-1-type" style="font-family: inherit; font-size: 0.8rem;" onchange="queueAutoSave()">
+<option value="Conscience">Conscience</option>
+<option value="Conviction">Conviction</option>
+</select>
+</div>
+<div class="trait" data-id="virtue_1" data-min="1" data-max="5" data-default="1"><label>Rating</label><div class="dots-container"></div></div>
 
-              <div style="display: flex; gap: 10px; margin-bottom: 5px; margin-top: 10px;">
-                <select id="virtue-2-type" style="font-family: inherit; font-size: 0.8rem;" onchange="queueAutoSave()">
-                  <option value="Self-Control">Self-Control</option>
-                  <option value="Instinct">Instinct</option>
-                </select>
-              </div>
-              <div class="trait" data-id="virtue_2" data-min="1" data-max="5" data-default="1"><label>Rating</label><div class="dots-container"></div></div>
+<div style="display: flex; gap: 10px; margin-bottom: 5px; margin-top: 10px;">
+<select id="virtue-2-type" style="font-family: inherit; font-size: 0.8rem;" onchange="queueAutoSave()">
+<option value="Self-Control">Self-Control</option>
+<option value="Instinct">Instinct</option>
+</select>
+</div>
+<div class="trait" data-id="virtue_2" data-min="1" data-max="5" data-default="1"><label>Rating</label><div class="dots-container"></div></div>
 
-              <h4 style="margin: 15px 0 5px 0; font-size: 0.9rem; text-transform: uppercase;">Courage</h4>
-              <div class="trait" data-id="virtue_3" data-min="1" data-max="5" data-default="1"><label>Courage</label><div class="dots-container"></div></div>
-            </div>
-          </div>
+<h4 style="margin: 15px 0 5px 0; font-size: 0.9rem; text-transform: uppercase;">Courage</h4>
+<div class="trait" data-id="virtue_3" data-min="1" data-max="5" data-default="1"><label>Courage</label><div class="dots-container"></div></div>
+</div>
+</div>
 
-          <div class="status-section">
-            <div class="column">
-              <h2>Path & Mechanics</h2>
-              <div style="border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
-                <div class="info-group">
-                  <label>Road / Path Name</label>
-                  <input type="text" id="road-name" placeholder="e.g., Road of Humanity" oninput="queueAutoSave()">
-                </div>
-                <div class="trait" data-id="road-rating" data-min="0" data-max="10" data-default="0"><label>Road Value</label><div class="dots-container"></div></div>
-                <div class="info-group" style="margin-top: 10px;">
-                  <label>Aura (Bearing)</label>
-                  <input type="text" id="aura-bearing" placeholder="e.g., Normalcy" oninput="queueAutoSave()">
-                </div>
-              </div>
+<div class="status-section">
+<div class="column">
+<h2>Path & Mechanics</h2>
+<div style="border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+<div class="info-group">
+<label>Road / Path Name</label>
+<input type="text" id="road-name" placeholder="e.g., Road of Humanity" oninput="queueAutoSave()">
+</div>
+<div class="trait" data-id="road-rating" data-min="0" data-max="10" data-default="0"><label>Road Value</label><div class="dots-container"></div></div>
+<div class="info-group" style="margin-top: 10px;">
+<label>Aura (Bearing)</label>
+<input type="text" id="aura-bearing" placeholder="e.g., Normalcy" oninput="queueAutoSave()">
+</div>
+</div>
 
-              <div style="border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
-                <div class="trait" data-id="willpower-perm" data-min="0" data-max="10" data-default="0"><label>Willpower (Rating)</label><div class="dots-container"></div></div>
-                <div class="info-group" style="margin-top: 10px;">
-                  <label>Willpower (Temporary Pool)</label>
-                  <div style="display: flex; gap: 5px; margin-top: 5px;" id="willpower-temp-pool"></div>
-                </div>
-              </div>
+<div style="border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+<div class="trait" data-id="willpower-perm" data-min="0" data-max="10" data-default="0"><label>Willpower (Rating)</label><div class="dots-container"></div></div>
+<div class="info-group" style="margin-top: 10px;">
+<label>Willpower (Temporary Pool)</label>
+<div style="display: flex; gap: 5px; margin-top: 5px;" id="willpower-temp-pool"></div>
+</div>
+</div>
 
-              <div style="border: 1px solid var(--border-color); padding: 10px; border-radius: 4px;">
-                <div class="info-group">
-                  <label style="margin-bottom: 5px;">Blood Pool (Max 50 - 4th Gen)</label>
-                  <div style="display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px;" id="blood-pool"></div>
-                </div>
-              </div>
-            </div>
+<div style="border: 1px solid var(--border-color); padding: 10px; border-radius: 4px;">
+<div class="info-group">
+<label style="margin-bottom: 5px;">Blood Pool (Max 50 - 4th Gen)</label>
+<div style="display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px;" id="blood-pool"></div>
+</div>
+</div>
+</div>
 
-            <div class="column">
-              <h2>Health & Weakness</h2>
-              <table class="health-table">
-                <tr><td>Bruised</td><td>0</td><td style="text-align: right;"><input type="checkbox" id="health-bruised" onchange="queueAutoSave()"></td></tr>
-                <tr><td>Hurt</td><td>-1</td><td style="text-align: right;"><input type="checkbox" id="health-hurt" onchange="queueAutoSave()"></td></tr>
-                <tr><td>Injured</td><td>-1</td><td style="text-align: right;"><input type="checkbox" id="health-injured" onchange="queueAutoSave()"></td></tr>
-                <tr><td>Wounded</td><td>-2</td><td style="text-align: right;"><input type="checkbox" id="health-wounded" onchange="queueAutoSave()"></td></tr>
-                <tr><td>Mauled</td><td>-2</td><td style="text-align: right;"><input type="checkbox" id="health-mauled" onchange="queueAutoSave()"></td></tr>
-                <tr><td>Crippled</td><td>-5</td><td style="text-align: right;"><input type="checkbox" id="health-crippled" onchange="queueAutoSave()"></td></tr>
-                <tr><td>Incapacitated</td><td>Torpor</td><td style="text-align: right;"><input type="checkbox" id="health-incapacitated" onchange="queueAutoSave()"></td></tr>
-              </table>
-              <div class="text-area-group">
-                <label>Weakness</label>
-                <textarea id="clan-weakness" placeholder="Clan Weakness description..." oninput="queueAutoSave()"></textarea>
-              </div>
-            </div>
-          </div>
-        </div>
+<div class="column">
+<h2>Health & Weakness</h2>
+<table class="health-table">
+<tr><td>Bruised</td><td>0</td><td style="text-align: right;"><input type="checkbox" id="health-bruised" onchange="queueAutoSave()"></td></tr>
+<tr><td>Hurt</td><td>-1</td><td style="text-align: right;"><input type="checkbox" id="health-hurt" onchange="queueAutoSave()"></td></tr>
+<tr><td>Injured</td><td>-1</td><td style="text-align: right;"><input type="checkbox" id="health-injured" onchange="queueAutoSave()"></td></tr>
+<tr><td>Wounded</td><td>-2</td><td style="text-align: right;"><input type="checkbox" id="health-wounded" onchange="queueAutoSave()"></td></tr>
+<tr><td>Mauled</td><td>-2</td><td style="text-align: right;"><input type="checkbox" id="health-mauled" onchange="queueAutoSave()"></td></tr>
+<tr><td>Crippled</td><td>-5</td><td style="text-align: right;"><input type="checkbox" id="health-crippled" onchange="queueAutoSave()"></td></tr>
+<tr><td>Incapacitated</td><td>Torpor</td><td style="text-align: right;"><input type="checkbox" id="health-incapacitated" onchange="queueAutoSave()"></td></tr>
+</table>
+<div class="text-area-group">
+<label>Weakness</label>
+<textarea id="clan-weakness" placeholder="Clan Weakness description..." oninput="queueAutoSave()"></textarea>
+</div>
+</div>
+</div>
+</div>
 
+        <!-- PAGE 2: TRAITS & COMBAT -->
         <!-- PAGE 2: GRIMOIRE -->
-        <div id="tab-page-2" class="tab-content">
+<div id="tab-page-2" class="tab-content">
           <h2>Grimoire Ledger</h2>
           <div class="two-col-grid">
             <div class="column">
@@ -702,662 +746,1088 @@
 
         <!-- PAGE 3: TRAITS & COMBAT -->
         <div id="tab-page-3" class="tab-content">
-          <div class="two-col-grid">
-            <div class="column">
-              <h3>Merits</h3>
-              <div id="merits-list" class="dynamic-list"></div>
-              <button class="btn btn-secondary btn-small" onclick="addCustomRow('merits-list', 'merit')">+ Add Merit</button>
-            </div>
-            <div class="column">
-              <h3>Flaws</h3>
-              <div id="flaws-list" class="dynamic-list"></div>
-              <button class="btn btn-secondary btn-small" onclick="addCustomRow('flaws-list', 'flaw')">+ Add Flaw</button>
-            </div>
-          </div>
+<div class="two-col-grid">
+<div class="column">
+<h3>Merits</h3>
+<div id="merits-list" class="dynamic-list"></div>
+<button class="btn btn-secondary btn-small" onclick="addCustomRow('merits-list', 'merit')">+ Add Merit</button>
+</div>
+<div class="column">
+<h3>Flaws</h3>
+<div id="flaws-list" class="dynamic-list"></div>
+<button class="btn btn-secondary btn-small" onclick="addCustomRow('flaws-list', 'flaw')">+ Add Flaw</button>
+</div>
+</div>
 
+          <h2>Other Traits (10 Dots)</h2>
           <h2>Other Traits (6 Dots)</h2>
-          <div id="other-traits-list" class="dynamic-list"></div>
-          <button class="btn btn-secondary btn-small" onclick="addOtherTraitRow('other-traits-list')">+ Add Other Trait</button>
-
-          <h2>Combat Parameters</h2>
-          <table class="combat-table" id="combat-attacks-table">
-            <thead>
-              <tr>
-                <th>Weapon/Attack</th>
-                <th>Diff</th>
-                <th>Damage</th>
-                <th>Range</th>
-                <th>Rate</th>
-                <th>Clip</th>
-                <th>Conceal</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-          <button class="btn btn-secondary btn-small" style="margin-top: 10px;" onclick="addCombatAttackRow()">+ Add Attack</button>
+<div id="other-traits-list" class="dynamic-list"></div>
+<button class="btn btn-secondary btn-small" onclick="addOtherTraitRow('other-traits-list')">+ Add Other Trait</button>
 
           <div class="two-col-grid" style="margin-top: 20px;">
             <div class="column">
-              <h3>Armor parameters</h3>
-              <div class="info-group"><label>Class</label><input type="text" id="armor-class" oninput="queueAutoSave()"></div>
-              <div class="info-group"><label>Rating</label><input type="text" id="armor-rating" oninput="queueAutoSave()"></div>
-              <div class="info-group"><label>Penalty</label><input type="text" id="armor-penalty" oninput="queueAutoSave()"></div>
-              <div class="text-area-group"><label>Description</label><textarea id="armor-desc" oninput="queueAutoSave()"></textarea></div>
+              <h3>Rituals (Level 1-5)</h3>
+              <div id="rituals-list" class="dynamic-list"></div>
+              <button class="btn btn-secondary btn-small" onclick="addRitualRow('rituals-list')">+ Add Ritual</button>
             </div>
             <div class="column">
-              <h3>Derangements</h3>
-              <div id="derangements-list" class="dynamic-list"></div>
-              <button class="btn btn-secondary btn-small" onclick="addDerangementRow('derangements-list')">+ Add Derangement</button>
-
-              <h3 style="margin-top: 20px;">Experience</h3>
-              <div class="two-col-grid">
-                <div class="info-group"><label>Total</label><input type="text" id="exp-total" oninput="queueAutoSave()"></div>
-                <div class="info-group"><label>Spent</label><input type="text" id="exp-spent" oninput="queueAutoSave()"></div>
-              </div>
-              <div class="text-area-group"><label>Spent On</label><textarea id="exp-spent-on" oninput="queueAutoSave()"></textarea></div>
+              <h3>Paths (5 Dots)</h3>
+              <div id="paths-list" class="dynamic-list"></div>
+              <button class="btn btn-secondary btn-small" onclick="addPathRow('paths-list')">+ Add Path</button>
             </div>
           </div>
-        </div>
 
+<h2>Combat Parameters</h2>
+<table class="combat-table" id="combat-attacks-table">
+<thead>
+<tr>
+<th>Weapon/Attack</th>
+<th>Diff</th>
+<th>Damage</th>
+<th>Range</th>
+<th>Rate</th>
+<th>Clip</th>
+<th>Conceal</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+<button class="btn btn-secondary btn-small" style="margin-top: 10px;" onclick="addCombatAttackRow()">+ Add Attack</button>
+
+<div class="two-col-grid" style="margin-top: 20px;">
+<div class="column">
+<h3>Armor parameters</h3>
+<div class="info-group"><label>Class</label><input type="text" id="armor-class" oninput="queueAutoSave()"></div>
+<div class="info-group"><label>Rating</label><input type="text" id="armor-rating" oninput="queueAutoSave()"></div>
+<div class="info-group"><label>Penalty</label><input type="text" id="armor-penalty" oninput="queueAutoSave()"></div>
+<div class="text-area-group"><label>Description</label><textarea id="armor-desc" oninput="queueAutoSave()"></textarea></div>
+</div>
+<div class="column">
+<h3>Derangements</h3>
+<div id="derangements-list" class="dynamic-list"></div>
+<button class="btn btn-secondary btn-small" onclick="addDerangementRow('derangements-list')">+ Add Derangement</button>
+
+<h3 style="margin-top: 20px;">Experience</h3>
+<div class="two-col-grid">
+<div class="info-group"><label>Total</label><input type="text" id="exp-total" oninput="queueAutoSave()"></div>
+<div class="info-group"><label>Spent</label><input type="text" id="exp-spent" oninput="queueAutoSave()"></div>
+</div>
+<div class="text-area-group"><label>Spent On</label><textarea id="exp-spent-on" oninput="queueAutoSave()"></textarea></div>
+</div>
+</div>
+</div>
+
+        <!-- PAGE 3: POSSESSIONS -->
+        <div id="tab-page-3" class="tab-content">
         <!-- PAGE 4: POSSESSIONS -->
         <div id="tab-page-4" class="tab-content">
-          <h2>Expanded Backgrounds</h2>
-          <div class="three-col-grid">
-            <div class="text-area-group"><label>Allies</label><textarea id="bg-allies" oninput="queueAutoSave()"></textarea></div>
-            <div class="text-area-group"><label>Mentor</label><textarea id="bg-mentor" oninput="queueAutoSave()"></textarea></div>
-            <div class="text-area-group"><label>Contacts</label><textarea id="bg-contacts" oninput="queueAutoSave()"></textarea></div>
-            <div class="text-area-group"><label>Resources</label><textarea id="bg-resources" oninput="queueAutoSave()"></textarea></div>
-            <div class="text-area-group"><label>Fame</label><textarea id="bg-fame" oninput="queueAutoSave()"></textarea></div>
-            <div class="text-area-group"><label>Retainers</label><textarea id="bg-retainers" oninput="queueAutoSave()"></textarea></div>
-            <div class="text-area-group"><label>Herd</label><textarea id="bg-herd" oninput="queueAutoSave()"></textarea></div>
-            <div class="text-area-group"><label>Status</label><textarea id="bg-status" oninput="queueAutoSave()"></textarea></div>
-            <div class="text-area-group"><label>Other</label><textarea id="bg-other" oninput="queueAutoSave()"></textarea></div>
-          </div>
+<h2>Expanded Backgrounds</h2>
+<div class="three-col-grid">
+<div class="text-area-group"><label>Allies</label><textarea id="bg-allies" oninput="queueAutoSave()"></textarea></div>
+<div class="text-area-group"><label>Mentor</label><textarea id="bg-mentor" oninput="queueAutoSave()"></textarea></div>
+<div class="text-area-group"><label>Contacts</label><textarea id="bg-contacts" oninput="queueAutoSave()"></textarea></div>
+<div class="text-area-group"><label>Resources</label><textarea id="bg-resources" oninput="queueAutoSave()"></textarea></div>
+<div class="text-area-group"><label>Fame</label><textarea id="bg-fame" oninput="queueAutoSave()"></textarea></div>
+<div class="text-area-group"><label>Retainers</label><textarea id="bg-retainers" oninput="queueAutoSave()"></textarea></div>
+<div class="text-area-group"><label>Herd</label><textarea id="bg-herd" oninput="queueAutoSave()"></textarea></div>
+<div class="text-area-group"><label>Status</label><textarea id="bg-status" oninput="queueAutoSave()"></textarea></div>
+<div class="text-area-group"><label>Other</label><textarea id="bg-other" oninput="queueAutoSave()"></textarea></div>
+</div>
 
-          <h2>Possessions & Equipment</h2>
-          <div class="two-col-grid">
-            <div class="text-area-group"><label>Gear (Carried)</label><textarea id="poss-gear" oninput="queueAutoSave()"></textarea></div>
-            <div class="text-area-group"><label>Equipment (Owned)</label><textarea id="poss-equip" oninput="queueAutoSave()"></textarea></div>
-            <div class="text-area-group"><label>Feeding Grounds</label><textarea id="poss-feed" oninput="queueAutoSave()"></textarea></div>
-            <div class="text-area-group"><label>Transportation</label><textarea id="poss-trans" oninput="queueAutoSave()"></textarea></div>
-          </div>
+<h2>Possessions & Equipment</h2>
+<div class="two-col-grid">
+<div class="text-area-group"><label>Gear (Carried)</label><textarea id="poss-gear" oninput="queueAutoSave()"></textarea></div>
+<div class="text-area-group"><label>Equipment (Owned)</label><textarea id="poss-equip" oninput="queueAutoSave()"></textarea></div>
+<div class="text-area-group"><label>Feeding Grounds</label><textarea id="poss-feed" oninput="queueAutoSave()"></textarea></div>
+<div class="text-area-group"><label>Transportation</label><textarea id="poss-trans" oninput="queueAutoSave()"></textarea></div>
+</div>
 
-          <h2>Haven</h2>
-          <div class="two-col-grid">
-            <div class="text-area-group"><label>Location</label><textarea id="haven-location" oninput="queueAutoSave()"></textarea></div>
-            <div class="text-area-group"><label>Description</label><textarea id="haven-desc" oninput="queueAutoSave()"></textarea></div>
-          </div>
-        </div>
+<h2>Haven</h2>
+<div class="two-col-grid">
+<div class="text-area-group"><label>Location</label><textarea id="haven-location" oninput="queueAutoSave()"></textarea></div>
+<div class="text-area-group"><label>Description</label><textarea id="haven-desc" oninput="queueAutoSave()"></textarea></div>
+</div>
+</div>
 
+        <!-- PAGE 4: HISTORY -->
+        <div id="tab-page-4" class="tab-content">
         <!-- PAGE 5: HISTORY -->
         <div id="tab-page-5" class="tab-content">
-          <h2>History & Narrative</h2>
-          <div class="text-area-group"><label>Prelude</label><textarea id="narrative-prelude" style="min-height: 150px;" oninput="queueAutoSave()"></textarea></div>
-          <div class="text-area-group"><label>Goals</label><textarea id="narrative-goals" style="min-height: 100px;" oninput="queueAutoSave()"></textarea></div>
+<h2>History & Narrative</h2>
+<div class="text-area-group"><label>Prelude</label><textarea id="narrative-prelude" style="min-height: 150px;" oninput="queueAutoSave()"></textarea></div>
+<div class="text-area-group"><label>Goals</label><textarea id="narrative-goals" style="min-height: 100px;" oninput="queueAutoSave()"></textarea></div>
 
-          <div class="two-col-grid" style="margin-top: 25px;">
-            <div class="column">
-              <h3>Description Characteristics</h3>
-              <div class="info-group"><label>Age</label><input type="text" id="desc-age" oninput="queueAutoSave()"></div>
-              <div class="info-group"><label>Apparent Age</label><input type="text" id="desc-apparent" oninput="queueAutoSave()"></div>
-              <div class="info-group"><label>Date of Birth</label><input type="text" id="desc-dob" oninput="queueAutoSave()"></div>
-              <div class="info-group"><label>R.I.P.</label><input type="text" id="desc-rip" oninput="queueAutoSave()"></div>
-              <div class="info-group"><label>Hair</label><input type="text" id="desc-hair" oninput="queueAutoSave()"></div>
-              <div class="info-group"><label>Eyes</label><input type="text" id="desc-eyes" oninput="queueAutoSave()"></div>
-              <div class="info-group"><label>Race / Ethnicity</label><input type="text" id="desc-race" oninput="queueAutoSave()"></div>
-              <div class="info-group"><label>Nationality</label><input type="text" id="desc-nationality" oninput="queueAutoSave()"></div>
-              <div class="info-group"><label>Height</label><input type="text" id="desc-height" oninput="queueAutoSave()"></div>
-              <div class="info-group"><label>Weight</label><input type="text" id="desc-weight" oninput="queueAutoSave()"></div>
-              <div class="info-group"><label>Sex</label><input type="text" id="desc-sex" oninput="queueAutoSave()"></div>
-            </div>
-            <div class="column">
-              <h3>Visuals & Records</h3>
-              <div class="text-area-group"><label>Coterie Chart & Connections</label><textarea id="vis-coterie" style="min-height: 150px;" oninput="queueAutoSave()"></textarea></div>
-              <div class="text-area-group"><label>Character Sketch / Physical Description Notes</label><textarea id="vis-sketch" style="min-height: 200px;" oninput="queueAutoSave()"></textarea></div>
-            </div>
-          </div>
-        </div>
+<div class="two-col-grid" style="margin-top: 25px;">
+<div class="column">
+<h3>Description Characteristics</h3>
+<div class="info-group"><label>Age</label><input type="text" id="desc-age" oninput="queueAutoSave()"></div>
+<div class="info-group"><label>Apparent Age</label><input type="text" id="desc-apparent" oninput="queueAutoSave()"></div>
+<div class="info-group"><label>Date of Birth</label><input type="text" id="desc-dob" oninput="queueAutoSave()"></div>
+<div class="info-group"><label>R.I.P.</label><input type="text" id="desc-rip" oninput="queueAutoSave()"></div>
+<div class="info-group"><label>Hair</label><input type="text" id="desc-hair" oninput="queueAutoSave()"></div>
+<div class="info-group"><label>Eyes</label><input type="text" id="desc-eyes" oninput="queueAutoSave()"></div>
+<div class="info-group"><label>Race / Ethnicity</label><input type="text" id="desc-race" oninput="queueAutoSave()"></div>
+<div class="info-group"><label>Nationality</label><input type="text" id="desc-nationality" oninput="queueAutoSave()"></div>
+<div class="info-group"><label>Height</label><input type="text" id="desc-height" oninput="queueAutoSave()"></div>
+<div class="info-group"><label>Weight</label><input type="text" id="desc-weight" oninput="queueAutoSave()"></div>
+<div class="info-group"><label>Sex</label><input type="text" id="desc-sex" oninput="queueAutoSave()"></div>
+</div>
+<div class="column">
+<h3>Visuals & Records</h3>
+<div class="text-area-group"><label>Coterie Chart & Connections</label><textarea id="vis-coterie" style="min-height: 150px;" oninput="queueAutoSave()"></textarea></div>
+<div class="text-area-group"><label>Character Sketch / Physical Description Notes</label><textarea id="vis-sketch" style="min-height: 200px;" oninput="queueAutoSave()"></textarea></div>
+</div>
+</div>
+</div>
 
-      </div>
-    </div>
-  </div>
+</div>
+</div>
+</div>
 
-  <script>
-    /*
-      ================================================================================
-      GOOGLE SHEETS SYNC SYSTEM (Deploy as web app using code below)
-      ================================================================================
-      Replace the API_URL below with your deployed Google Web App URL [1].
-      If left as "YOUR_DEPLOYED_URL_HERE", the app falls back entirely to LocalStorage [1].
-    */
-    const API_URL = "YOUR_DEPLOYED_URL_HERE";
+<script>
+/*
+     ================================================================================
+     GOOGLE SHEETS SYNC SYSTEM (Deploy as web app using code below)
+     ================================================================================
+     Replace the API_URL below with your deployed Google Web App URL [1].
+     If left as "YOUR_DEPLOYED_URL_HERE", the app falls back entirely to LocalStorage [1].
+   */
+const API_URL = "YOUR_DEPLOYED_URL_HERE";
 
-    let activeCharacterId = null;
-    let saveTimeout = null;
-    let dynamicRowId = 0;
+let activeCharacterId = null;
+let saveTimeout = null;
+let dynamicRowId = 0;
 
-    document.addEventListener("DOMContentLoaded", () => {
-      buildTempPools();
-      initializeStaticDots();
-      renderDashboard();
-    });
+document.addEventListener("DOMContentLoaded", () => {
+buildTempPools();
+initializeStaticDots();
+renderDashboard();
+});
 
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      
-      const tabEl = document.getElementById(tabId);
-      if (tabEl) tabEl.classList.add('active');
+function switchTab(tabId) {
+document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
 
-      const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => {
-        const onclickAttr = btn.getAttribute('onclick');
-        return onclickAttr && onclickAttr.includes(tabId);
-      });
-      if (activeBtn) activeBtn.classList.add('active');
-    }
+document.getElementById(tabId).classList.add('active');
+const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => btn.getAttribute('onclick').includes(tabId));
+if (activeBtn) activeBtn.classList.add('active');
+}
 
-    function safeParseJSON(str, fallback = []) {
-      try {
-        if (!str) return fallback;
-        const parsed = JSON.parse(str);
-        return Array.isArray(parsed) ? parsed : fallback;
-      } catch (e) {
-        console.warn("Corrupted JSON detected, returning fallback:", e);
-        return fallback;
-      }
-    }
+async function getCharacterList() {
+if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+const list = localStorage.getItem('v20_da_characters_index');
+return list ? JSON.parse(list) : [];
+}
+try {
+const response = await fetch(API_URL);
+return await response.json();
+} catch (err) {
+console.warn("Cloud list fetch failed, falling back to LocalStorage:", err);
+const list = localStorage.getItem('v20_da_characters_index');
+return list ? JSON.parse(list) : [];
+}
+}
 
-    async function getCharacterList() {
-      if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
-        const list = localStorage.getItem('v20_da_characters_index');
-        return safeParseJSON(list, []);
-      }
-      try {
-        const response = await fetch(API_URL);
-        return await response.json();
-      } catch (err) {
-        console.warn("Cloud list fetch failed, falling back to LocalStorage:", err);
-        const list = localStorage.getItem('v20_da_characters_index');
-        return safeParseJSON(list, []);
-      }
-    }
+function saveLocalIndex(charId, name, clan, road) {
+const list = JSON.parse(localStorage.getItem('v20_da_characters_index') || '[]');
+const index = list.findIndex(item => item.id === charId);
+if (index !== -1) {
+list[index].name = name;
+list[index].clan = clan;
+list[index].road = road;
+list[index].lastSaved = Date.now();
+} else {
+list.push({ id: charId, name, clan, road, lastSaved: Date.now() });
+}
+localStorage.setItem('v20_da_characters_index', JSON.stringify(list));
+}
 
-    function saveLocalIndex(charId, name, clan, road) {
-      const list = safeParseJSON(localStorage.getItem('v20_da_characters_index'), []);
-      const index = list.findIndex(item => item.id === charId);
-      if (index !== -1) {
-        list[index].name = name;
-        list[index].clan = clan;
-        list[index].road = road;
-        list[index].lastSaved = Date.now();
-      } else {
-        list.push({ id: charId, name, clan, road, lastSaved: Date.now() });
-      }
-      localStorage.setItem('v20_da_characters_index', JSON.stringify(list));
-    }
+async function renderDashboard() {
+const list = await getCharacterList();
+const listContainer = document.getElementById('character-list');
+listContainer.innerHTML = '';
 
-    async function renderDashboard() {
-      const list = await getCharacterList();
-      const listContainer = document.getElementById('character-list');
-      listContainer.innerHTML = '';
+if (list.length === 0) {
+listContainer.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #8c7e6e; font-style: italic;">No records found. Prepare a new scribe.</p>`;
+return;
+}
 
-      if (list.length === 0) {
-        listContainer.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #8c7e6e; font-style: italic;">No records found. Prepare a new scribe.</p>`;
-        return;
-      }
+list.forEach(meta => {
+const card = document.createElement('div');
+card.className = 'char-card';
+card.innerHTML = `
+         <div class="char-card-meta">
+           <h3>${meta.name || 'Unnamed Scribe'}</h3>
+           <p><strong>Clan:</strong> ${meta.clan || 'Unknown'}</p>
+           <p><strong>Road:</strong> ${meta.road || 'Unselected'}</p>
+           <p style="font-size: 0.75rem; color: #8c7e6e; margin-top: 8px;">Saved: ${new Date(meta.lastSaved).toLocaleDateString()}</p>
+         </div>
+         <div class="char-card-actions">
+           <button class="btn btn-small" onclick="openEditor('${meta.id}')">Edit</button>
+           <button class="btn btn-secondary btn-small" onclick="cloneCharacter('${meta.id}')">Clone</button>
+           <button class="btn btn-secondary btn-small" onclick="triggerManualExport('${meta.id}')">Export</button>
+           <button class="btn btn-danger btn-small" onclick="deleteCharacter('${meta.id}')">Delete</button>
+         </div>
+       `;
+listContainer.appendChild(card);
+});
+}
 
-      list.forEach(meta => {
-        const card = document.createElement('div');
-        card.className = 'char-card';
-        card.innerHTML = `
-          <div class="char-card-meta">
-            <h3>${meta.name || 'Unnamed Scribe'}</h3>
-            <p><strong>Clan:</strong> ${meta.clan || 'Unknown'}</p>
-            <p><strong>Road:</strong> ${meta.road || 'Unselected'}</p>
-            <p style="font-size: 0.75rem; color: #8c7e6e; margin-top: 8px;">Saved: ${new Date(meta.lastSaved).toLocaleDateString()}</p>
-          </div>
-          <div class="char-card-actions">
-            <button class="btn btn-small" onclick="openEditor('${meta.id}')">Edit</button>
-            <button class="btn btn-secondary btn-small" onclick="cloneCharacter('${meta.id}')">Clone</button>
-            <button class="btn btn-secondary btn-small" onclick="triggerManualExport('${meta.id}')">Export</button>
-            <button class="btn btn-danger btn-small" onclick="deleteCharacter('${meta.id}')">Delete</button>
-          </div>
-        `;
-        listContainer.appendChild(card);
-      });
-    }
-
-    async function createNewCharacter() {
-      const charId = 'char_' + Date.now();
-      const initialSheet = {
-        id: charId,
-        meta: { name: 'New Character', clan: '', sire: '', generation: '12th', nature: '', demeanor: '', concept: '', chronicle: '' },
-        attributes: { strength: 1, dexterity: 1, stamina: 1, charisma: 1, manipulation: 1, appearance: 1, perception: 1, intelligence: 1, wits: 1 },
-        abilities: {},
-        virtues: { virtue_1_type: 'Conscience', virtue_1_val: 1, virtue_2_type: 'Self-Control', virtue_2_val: 1, virtue_3_val: 1 },
-        disciplines: [],
-        backgrounds: [],
-        mechanics: { roadName: '', roadValue: 0, auraValue: '', willpowerPerm: 0, willpowerTemp: Array(10).fill(false), bloodPoolTemp: Array(50).fill(false) },
-        health: { bruised: false, hurt: false, injured: false, wounded: false, mauled: false, crippled: false, incapacitated: false },
-        clan_weakness: '',
-        merits: [],
-        flaws: [],
-        otherTraits: [],
-        rituals: [],
-        paths: [],
+async function createNewCharacter() {
+const charId = 'char_' + Date.now();
+const initialSheet = {
+id: charId,
+meta: { name: 'New Character', clan: '', sire: '', generation: '12th', nature: '', demeanor: '', concept: '', chronicle: '' },
+attributes: { strength: 1, dexterity: 1, stamina: 1, charisma: 1, manipulation: 1, appearance: 1, perception: 1, intelligence: 1, wits: 1 },
+abilities: {},
+virtues: { virtue_1_type: 'Conscience', virtue_1_val: 1, virtue_2_type: 'Self-Control', virtue_2_val: 1, virtue_3_val: 1 },
+disciplines: [],
+backgrounds: [],
+mechanics: { roadName: '', roadValue: 0, auraValue: '', willpowerPerm: 0, willpowerTemp: Array(10).fill(false), bloodPoolTemp: Array(50).fill(false) },
+health: { bruised: false, hurt: false, injured: false, wounded: false, mauled: false, crippled: false, incapacitated: false },
+clan_weakness: '',
+merits: [],
+flaws: [],
+otherTraits: [],
+rituals: [],
+paths: [],
         grimoire_notes: '',
-        combatAttacks: [],
-        armor: { class: '', rating: '', penalty: '', desc: '' },
-        derangements: [],
-        exp: { total: '', spent: '', spentOn: '' },
-        backgrounds_expanded: { allies: '', mentor: '', contacts: '', resources: '', fame: '', retainers: '', herd: '', status: '', other: '' },
-        possessions: { gear: '', equip: '', feed: '', trans: '' },
-        haven: { location: '', desc: '' },
-        narrative: { prelude: '', goals: '' },
-        desc: { age: '', apparent: '', dob: '', rip: '', hair: '', eyes: '', race: '', nationality: '', height: '', weight: '', sex: '' },
-        vis: { coterie: '', sketch: '' }
-      };
+combatAttacks: [],
+armor: { class: '', rating: '', penalty: '', desc: '' },
+derangements: [],
+exp: { total: '', spent: '', spentOn: '' },
+backgrounds_expanded: { allies: '', mentor: '', contacts: '', resources: '', fame: '', retainers: '', herd: '', status: '', other: '' },
+possessions: { gear: '', equip: '', feed: '', trans: '' },
+haven: { location: '', desc: '' },
+narrative: { prelude: '', goals: '' },
+desc: { age: '', apparent: '', dob: '', rip: '', hair: '', eyes: '', race: '', nationality: '', height: '', weight: '', sex: '' },
+vis: { coterie: '', sketch: '' }
+};
 
-      localStorage.setItem(charId, JSON.stringify(initialSheet));
-      saveLocalIndex(charId, initialSheet.meta.name, initialSheet.meta.clan, '');
+      // Push initial values both locally & via cloud if configured
+localStorage.setItem(charId, JSON.stringify(initialSheet));
+saveLocalIndex(charId, initialSheet.meta.name, initialSheet.meta.clan, '');
 
-      if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
-        try {
-          await fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify(initialSheet)
-          });
-        } catch (err) {
-          console.warn("Cloud initialization failed, saved locally instead.");
-        }
-      }
+if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+try {
+await fetch(API_URL, {
+method: "POST",
+body: JSON.stringify(initialSheet)
+});
+} catch (err) {
+console.warn("Cloud initialization failed, saved locally instead.");
+}
+}
 
-      openEditor(charId);
-    }
+openEditor(charId);
+}
 
-    async function openEditor(id) {
-      activeCharacterId = id;
-      setSaveStatus('Loading draft...');
+async function openEditor(id) {
+activeCharacterId = id;
+setSaveStatus('Loading draft...');
 
-      if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
-        const sheetData = safeParseJSON(localStorage.getItem(id), null);
-        if (sheetData) {
-          loadSheetIntoDOM(sheetData);
-          document.getElementById('dashboard-view').classList.remove('active');
-          document.getElementById('editor-view').classList.add('active');
-          switchTab('tab-page-1');
-          setSaveStatus('Draft Loaded');
-        } else {
-          setSaveStatus('Draft not found');
-        }
-        return;
-      }
+if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+const sheetData = JSON.parse(localStorage.getItem(id));
+if (sheetData) {
+loadSheetIntoDOM(sheetData);
+document.getElementById('dashboard-view').classList.remove('active');
+document.getElementById('editor-view').classList.add('active');
+switchTab('tab-page-1');
+setSaveStatus('Draft Loaded');
+} else {
+setSaveStatus('Draft not found');
+}
+return;
+}
 
-      try {
-        const response = await fetch(`${API_URL}?id=${id}`);
-        const sheetData = await response.json();
-        loadSheetIntoDOM(sheetData);
-        document.getElementById('dashboard-view').classList.remove('active');
-        document.getElementById('editor-view').classList.add('active');
-        switchTab('tab-page-1');
-        setSaveStatus('Draft Loaded (Cloud)');
-      } catch (err) {
-        console.warn("Cloud fetch failed, trying local fallback...", err);
-        const sheetData = safeParseJSON(localStorage.getItem(id), null);
-        if (sheetData) {
-          loadSheetIntoDOM(sheetData);
-          document.getElementById('dashboard-view').classList.remove('active');
-          document.getElementById('editor-view').classList.add('active');
-          switchTab('tab-page-1');
-          setSaveStatus('Draft Loaded (Local Fallback)');
-        } else {
-          setSaveStatus('Failed to load draft');
-        }
-      }
-    }
+try {
+const response = await fetch(`${API_URL}?id=${id}`);
+const sheetData = await response.json();
+loadSheetIntoDOM(sheetData);
+document.getElementById('dashboard-view').classList.remove('active');
+document.getElementById('editor-view').classList.add('active');
+switchTab('tab-page-1');
+setSaveStatus('Draft Loaded (Cloud)');
+} catch (err) {
+console.warn("Cloud fetch failed, trying local fallback...", err);
+const sheetData = JSON.parse(localStorage.getItem(id));
+if (sheetData) {
+loadSheetIntoDOM(sheetData);
+document.getElementById('dashboard-view').classList.remove('active');
+document.getElementById('editor-view').classList.add('active');
+switchTab('tab-page-1');
+setSaveStatus('Draft Loaded (Local Fallback)');
+} else {
+setSaveStatus('Failed to load draft');
+}
+}
+}
 
-    async function closeEditor() {
-      if (saveTimeout) {
-        clearTimeout(saveTimeout);
-        await saveCurrentCharacter();
-      }
-      activeCharacterId = null;
-      document.getElementById('editor-view').classList.remove('active');
-      document.getElementById('dashboard-view').classList.add('active');
-      renderDashboard();
-    }
+async function closeEditor() {
+if (saveTimeout) {
+clearTimeout(saveTimeout);
+await saveCurrentCharacter();
+}
+activeCharacterId = null;
+document.getElementById('editor-view').classList.remove('active');
+document.getElementById('dashboard-view').classList.add('active');
+renderDashboard();
+}
 
-    async function cloneCharacter(id) {
-      setSaveStatus('Cloning...');
-      let sourceData = null;
+async function cloneCharacter(id) {
+setSaveStatus('Cloning...');
+let sourceData = null;
 
-      if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
-        sourceData = safeParseJSON(localStorage.getItem(id), null);
-      } else {
-        try {
-          const response = await fetch(`${API_URL}?id=${id}`);
-          sourceData = await response.json();
-        } catch (err) {
-          sourceData = safeParseJSON(localStorage.getItem(id), null);
-        }
-      }
+if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+sourceData = JSON.parse(localStorage.getItem(id));
+} else {
+try {
+const response = await fetch(`${API_URL}?id=${id}`);
+sourceData = await response.json();
+} catch (err) {
+sourceData = JSON.parse(localStorage.getItem(id));
+}
+}
 
-      if (!sourceData) return;
+if (!sourceData) return;
 
-      const newId = 'char_' + Date.now();
-      const clone = JSON.parse(JSON.stringify(sourceData));
-      clone.id = newId;
-      clone.meta.name = (clone.meta.name || 'Unnamed') + ' (Copy)';
+const newId = 'char_' + Date.now();
+const clone = JSON.parse(JSON.stringify(sourceData));
+clone.id = newId;
+clone.meta.name = (clone.meta.name || 'Unnamed') + ' (Copy)';
 
-      localStorage.setItem(newId, JSON.stringify(clone));
-      saveLocalIndex(newId, clone.meta.name, clone.meta.clan, clone.mechanics.roadName || '');
+localStorage.setItem(newId, JSON.stringify(clone));
+saveLocalIndex(newId, clone.meta.name, clone.meta.clan, clone.mechanics.roadName || '');
 
-      if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
-        try {
-          await fetch(API_URL, { method: "POST", body: JSON.stringify(clone) });
-        } catch (err) {
-          console.warn("Cloud clone failed, retained locally.");
-        }
-      }
+if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+try {
+await fetch(API_URL, { method: "POST", body: JSON.stringify(clone) });
+} catch (err) {
+console.warn("Cloud clone failed, retained locally.");
+}
+}
 
-      renderDashboard();
-    }
+renderDashboard();
+}
 
-    async function deleteCharacter(id) {
-      if (!confirm("Are you sure you want to permanently delete this character?")) return;
+async function deleteCharacter(id) {
+if (!confirm("Are you sure you want to permanently delete this character?")) return;
 
-      localStorage.removeItem(id);
-      let localList = safeParseJSON(localStorage.getItem('v20_da_characters_index'), []);
-      localList = localList.filter(item => item.id !== id);
-      localStorage.setItem('v20_da_characters_index', JSON.stringify(localList));
+      // Delete locally
+localStorage.removeItem(id);
+let localList = JSON.parse(localStorage.getItem('v20_da_characters_index') || '[]');
+localList = localList.filter(item => item.id !== id);
+localStorage.setItem('v20_da_characters_index', JSON.stringify(localList));
 
-      if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
-        try {
-          await fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify({ action: "delete", id: id })
-          });
-        } catch (err) {
-          console.warn("Cloud deletion failed.");
-        }
-      }
+if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+try {
+await fetch(API_URL, {
+method: "POST",
+body: JSON.stringify({ action: "delete", id: id })
+});
+} catch (err) {
+console.warn("Cloud deletion failed.");
+}
+}
 
-      renderDashboard();
-    }
+renderDashboard();
+}
 
-    /* --- DOM DOTS SYSTEM --- */
+/* --- DOM DOTS SYSTEM --- */
 
-    function initializeStaticDots() {
-      document.querySelectorAll('.trait').forEach(container => {
-        renderDots(container);
-      });
-    }
+function initializeStaticDots() {
+document.querySelectorAll('.trait').forEach(container => {
+renderDots(container);
+});
+}
 
-    function renderDots(container) {
-      const dotsContainer = container.querySelector('.dots-container');
-      if (!dotsContainer) return;
-      dotsContainer.innerHTML = '';
-      
+function renderDots(container) {
+const dotsContainer = container.querySelector('.dots-container');
+dotsContainer.innerHTML = '';
+
+      const max = parseInt(container.getAttribute('data-max')) || 8;
       const max = parseInt(container.getAttribute('data-max')) || 6;
-      const min = parseInt(container.getAttribute('data-min')) || 0;
-      
-      const valAttr = container.getAttribute('data-value');
-      const defAttr = container.getAttribute('data-default');
-      const parsedVal = valAttr !== null ? parseInt(valAttr) : NaN;
-      const parsedDef = defAttr !== null ? parseInt(defAttr) : NaN;
+const min = parseInt(container.getAttribute('data-min')) || 0;
+const currentVal = parseInt(container.getAttribute('data-value')) ?? parseInt(container.getAttribute('data-default')) ?? min;
+container.setAttribute('data-value', currentVal);
 
-      let currentVal = min;
-      if (!isNaN(parsedVal)) {
-        currentVal = parsedVal;
-      } else if (!isNaN(parsedDef)) {
-        currentVal = parsedDef;
-      }
+for (let i = 1; i <= max; i++) {
+const dot = document.createElement('span');
+dot.className = 'dot' + (i <= currentVal ? ' filled' : '');
+dot.setAttribute('data-index', i);
+dot.addEventListener('click', () => handleDotClick(container, i));
+dotsContainer.appendChild(dot);
+}
+}
 
-      container.setAttribute('data-value', currentVal);
+function handleDotClick(container, clickedIndex) {
+const min = parseInt(container.getAttribute('data-min')) || 0;
+let currentVal = parseInt(container.getAttribute('data-value')) || 0;
 
-      for (let i = 1; i <= max; i++) {
-        const dot = document.createElement('span');
-        dot.className = 'dot' + (i <= currentVal ? ' filled' : '');
-        dot.setAttribute('data-index', i);
-        dot.addEventListener('click', () => handleDotClick(container, i));
-        dotsContainer.appendChild(dot);
-      }
-    }
+if (currentVal === clickedIndex) {
+currentVal = Math.max(min, currentVal - 1);
+} else {
+currentVal = clickedIndex;
+}
 
-    function handleDotClick(container, clickedIndex) {
-      const min = parseInt(container.getAttribute('data-min')) || 0;
-      let currentVal = parseInt(container.getAttribute('data-value')) || 0;
+container.setAttribute('data-value', currentVal);
+renderDots(container);
+queueAutoSave();
+}
 
-      if (currentVal === clickedIndex) {
-        currentVal = Math.max(min, currentVal - 1);
-      } else {
-        currentVal = clickedIndex;
-      }
+function buildTempPools() {
+const wpPool = document.getElementById('willpower-temp-pool');
+wpPool.innerHTML = '';
+for (let i = 1; i <= 10; i++) {
+const cb = document.createElement('input');
+cb.type = 'checkbox';
+cb.id = `wp-temp-${i}`;
+cb.addEventListener('change', queueAutoSave);
+wpPool.appendChild(cb);
+}
 
-      container.setAttribute('data-value', currentVal);
-      renderDots(container);
-      queueAutoSave();
-    }
+const bpPool = document.getElementById('blood-pool');
+bpPool.innerHTML = '';
+for (let i = 1; i <= 50; i++) {
+const cb = document.createElement('input');
+cb.type = 'checkbox';
+cb.id = `bp-temp-${i}`;
+cb.addEventListener('change', queueAutoSave);
+bpPool.appendChild(cb);
+}
+}
 
-    function buildTempPools() {
-      const wpPool = document.getElementById('willpower-temp-pool');
-      wpPool.innerHTML = '';
-      for (let i = 1; i <= 10; i++) {
-        const cb = document.createElement('input');
-        cb.type = 'checkbox';
-        cb.id = `wp-temp-${i}`;
-        cb.addEventListener('change', queueAutoSave);
-        wpPool.appendChild(cb);
-      }
+/* --- DYNAMIC LIST ADDITIONS --- */
 
-      const bpPool = document.getElementById('blood-pool');
-      bpPool.innerHTML = '';
-      for (let i = 1; i <= 50; i++) {
-        const cb = document.createElement('input');
-        cb.type = 'checkbox';
-        cb.id = `bp-temp-${i}`;
-        cb.addEventListener('change', queueAutoSave);
-        bpPool.appendChild(cb);
-      }
-    }
+function addDynamicRow(targetListId, type, initialName = '', initialVal = 0) {
+const list = document.getElementById(targetListId);
+const rowId = `dynamic-${type}-${dynamicRowId++}`;
 
-    /* --- DYNAMIC LIST ADDITIONS --- */
+const row = document.createElement('div');
+row.className = 'dynamic-row';
+row.id = rowId;
 
-    function handleDisciplineChange(selectEl) {
-      if (selectEl.value === 'custom') {
-        const customName = prompt("Enter the name of the custom Discipline:");
-        if (customName && customName.trim() !== '') {
-          let exists = false;
-          for (let opt of selectEl.options) {
-            if (opt.value === customName) {
-              exists = true;
-              selectEl.value = customName;
-              break;
-            }
-          }
-          if (!exists) {
-            const newOpt = document.createElement('option');
-            newOpt.value = customName;
-            newOpt.text = customName;
-            selectEl.add(newOpt);
-            selectEl.value = customName;
-          }
-        } else {
-          selectEl.value = "";
-        }
-      }
-      queueAutoSave();
-    }
-
-    function addDynamicRow(targetListId, type, initialName = '', initialVal = 0) {
-      const list = document.getElementById(targetListId);
-      const rowId = `dynamic-${type}-${dynamicRowId++}`;
-      
-      const row = document.createElement('div');
-      row.className = 'dynamic-row';
-      row.id = rowId;
-
-      let nameFieldHTML = '';
-      
-      if (type === 'discipline') {
-        const standardDisciplines = [
-          "Abombwe", "Abyss Mysticism", "Animalism", "Auspex", "Bardo", 
-          "Celerity", "Chimerstry", "Clan Sorcery", "Daimonion", 
-          "Dark Thaumaturgy", "Dementation", "Dominate", "Flight", 
-          "Fortitude", "Koldunic Sorcery", "Mytherceria", "Necromancy", 
-          "Obfuscate", "Obtenebration", "Ogham", "Potence", "Presence", 
-          "Protean", "Quietus Cruscitus", "Quietus Hematus", "Serpentis", 
-          "Spiritus", "Temporis", "Thaumaturgy", "Valeren - Healer", 
-          "Valeren - Warrior", "Valeren - Watcher", "Vicissitude"
-        ];
-
-        nameFieldHTML = `<select class="dynamic-name" onchange="handleDisciplineChange(this)" style="flex-grow: 1; background: transparent; border: none; border-bottom: 1px dashed var(--border-color); font-family: inherit; font-size: 0.9rem; color: var(--text-dark);">`;
-        nameFieldHTML += `<option value="custom">Custom...</option>`;
-        nameFieldHTML += `<option value="" disabled ${!initialName ? 'selected' : ''}>Select Discipline...</option>`;
-        
-        if (initialName && !standardDisciplines.includes(initialName)) {
-          nameFieldHTML += `<option value="${initialName}" selected>${initialName}</option>`;
-        }
-        
-        standardDisciplines.forEach(disc => {
-          nameFieldHTML += `<option value="${disc}" ${initialName === disc ? 'selected' : ''}>${disc}</option>`;
-        });
-        
-        nameFieldHTML += `</select>`;
-      } else {
-        nameFieldHTML = `<input type="text" class="dynamic-name" placeholder="Name..." value="${initialName}" oninput="queueAutoSave()">`;
-      }
-
-      row.innerHTML = `
-        ${nameFieldHTML}
+row.innerHTML = `
+       <input type="text" class="dynamic-name" placeholder="Name..." value="${initialName}" oninput="queueAutoSave()">
+        <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="8" data-value="${initialVal}">
         <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${initialVal}">
-          <div class="dots-container"></div>
-        </div>
-        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
-      `;
+         <div class="dots-container"></div>
+       </div>
+       <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
+     `;
 
-      list.appendChild(row);
-      renderDots(row.querySelector('.trait'));
-      queueAutoSave();
-    }
+list.appendChild(row);
+renderDots(row.querySelector('.trait'));
+queueAutoSave();
+}
 
-    function addCustomRow(targetListId, type, name = '', costType = '', costValue = '') {
-      const list = document.getElementById(targetListId);
-      const rowId = `custom-${type}-${dynamicRowId++}`;
-      const placeholderName = type === 'merit' ? 'Merit Name...' : 'Flaw Name...';
-      const placeholderVal = type === 'merit' ? 'Cost...' : 'Bonus...';
-      
-      const row = document.createElement('div');
-      row.className = 'dynamic-row';
-      row.id = rowId;
+function addCustomRow(targetListId, type, name = '', costType = '', costValue = '') {
+const list = document.getElementById(targetListId);
+const rowId = `custom-${type}-${dynamicRowId++}`;
+const placeholderName = type === 'merit' ? 'Merit Name...' : 'Flaw Name...';
+const placeholderVal = type === 'merit' ? 'Cost...' : 'Bonus...';
 
-      row.innerHTML = `
-        <input type="text" class="dynamic-name" style="width: 50%" placeholder="${placeholderName}" value="${name}" oninput="queueAutoSave()">
-        <input type="text" class="dynamic-type" style="width: 25%" placeholder="Type..." value="${costType}" oninput="queueAutoSave()">
-        <input type="text" class="dynamic-val" style="width: 15%" placeholder="${placeholderVal}" value="${costValue}" oninput="queueAutoSave()">
-        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
-      `;
+const row = document.createElement('div');
+row.className = 'dynamic-row';
+row.id = rowId;
 
-      list.appendChild(row);
-      queueAutoSave();
-    }
+row.innerHTML = `
+       <input type="text" class="dynamic-name" style="width: 50%" placeholder="${placeholderName}" value="${name}" oninput="queueAutoSave()">
+       <input type="text" class="dynamic-type" style="width: 25%" placeholder="Type..." value="${costType}" oninput="queueAutoSave()">
+       <input type="text" class="dynamic-val" style="width: 15%" placeholder="${placeholderVal}" value="${costValue}" oninput="queueAutoSave()">
+       <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
+     `;
 
-    function addOtherTraitRow(targetListId, name = '', val = 0) {
-      const list = document.getElementById(targetListId);
-      const rowId = `other-trait-${dynamicRowId++}`;
-      
-      const row = document.createElement('div');
-      row.className = 'dynamic-row';
-      row.id = rowId;
+list.appendChild(row);
+queueAutoSave();
+}
 
-      row.innerHTML = `
-        <input type="text" class="dynamic-name" placeholder="Other Trait..." value="${name}" oninput="queueAutoSave()">
+function addOtherTraitRow(targetListId, name = '', val = 0) {
+const list = document.getElementById(targetListId);
+const rowId = `other-trait-${dynamicRowId++}`;
+
+const row = document.createElement('div');
+row.className = 'dynamic-row';
+row.id = rowId;
+
+row.innerHTML = `
+       <input type="text" class="dynamic-name" placeholder="Other Trait..." value="${name}" oninput="queueAutoSave()">
+        <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="10" data-value="${val}">
         <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${val}">
-          <div class="dots-container"></div>
-        </div>
-        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
-      `;
+         <div class="dots-container"></div>
+       </div>
+       <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
+     `;
 
-      list.appendChild(row);
-      renderDots(row.querySelector('.trait'));
-      queueAutoSave();
-    }
+list.appendChild(row);
+renderDots(row.querySelector('.trait'));
+queueAutoSave();
+}
 
-    function addRitualRow(targetListId, name = '', level = 1) {
-      const list = document.getElementById(targetListId);
-      const rowId = `ritual-${dynamicRowId++}`;
-      
-      const row = document.createElement('div');
-      row.className = 'dynamic-row';
-      row.id = rowId;
+function addRitualRow(targetListId, name = '', level = 1) {
+const list = document.getElementById(targetListId);
+const rowId = `ritual-${dynamicRowId++}`;
 
-      row.innerHTML = `
-        <input type="text" class="dynamic-name" style="width: 70%" placeholder="Ritual Name..." value="${name}" oninput="queueAutoSave()">
-        <input type="number" class="dynamic-val" style="width: 20%" min="1" max="5" value="${level}" oninput="queueAutoSave()">
-        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
-      `;
+const row = document.createElement('div');
+row.className = 'dynamic-row';
+row.id = rowId;
 
-      list.appendChild(row);
-      queueAutoSave();
-    }
+row.innerHTML = `
+       <input type="text" class="dynamic-name" style="width: 70%" placeholder="Ritual Name..." value="${name}" oninput="queueAutoSave()">
+       <input type="number" class="dynamic-val" style="width: 20%" min="1" max="5" value="${level}" oninput="queueAutoSave()">
+       <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
+     `;
 
-    function addPathRow(targetListId, name = '', val = 0) {
-      const list = document.getElementById(targetListId);
-      const rowId = `path-${dynamicRowId++}`;
-      
-      const row = document.createElement('div');
-      row.className = 'dynamic-row';
-      row.id = rowId;
+list.appendChild(row);
+queueAutoSave();
+}
 
-      row.innerHTML = `
-        <input type="text" class="dynamic-name" placeholder="Path Name..." value="${name}" oninput="queueAutoSave()">
+function addPathRow(targetListId, name = '', val = 0) {
+const list = document.getElementById(targetListId);
+const rowId = `path-${dynamicRowId++}`;
+
+const row = document.createElement('div');
+row.className = 'dynamic-row';
+row.id = rowId;
+
+row.innerHTML = `
+       <input type="text" class="dynamic-name" placeholder="Path Name..." value="${name}" oninput="queueAutoSave()">
+        <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="5" data-value="${val}">
         <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${val}">
-          <div class="dots-container"></div>
-        </div>
-        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
-      `;
+         <div class="dots-container"></div>
+       </div>
+       <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
+     `;
 
-      list.appendChild(row);
-      renderDots(row.querySelector('.trait'));
-      queueAutoSave();
-    }
+list.appendChild(row);
+renderDots(row.querySelector('.trait'));
+queueAutoSave();
+}
 
-    function addDerangementRow(targetListId, name = '') {
-      const list = document.getElementById(targetListId);
-      const rowId = `derangement-${dynamicRowId++}`;
-      
-      const row = document.createElement('div');
-      row.className = 'dynamic-row';
-      row.id = rowId;
+function addDerangementRow(targetListId, name = '') {
+const list = document.getElementById(targetListId);
+const rowId = `derangement-${dynamicRowId++}`;
 
-      row.innerHTML = `
-        <input type="text" class="dynamic-name" style="width: 90%" placeholder="Derangement..." value="${name}" oninput="queueAutoSave()">
-        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
-      `;
+const row = document.createElement('div');
+row.className = 'dynamic-row';
+row.id = rowId;
 
-      list.appendChild(row);
-      queueAutoSave();
-    }
+row.innerHTML = `
+       <input type="text" class="dynamic-name" style="width: 90%" placeholder="Derangement..." value="${name}" oninput="queueAutoSave()">
+       <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
+     `;
 
-    function addCombatAttackRow(weapon = '', diff = '', dmg = '', range = '', rate = '', clip = '', conceal = '') {
-      const tbody = document.querySelector('#combat-attacks-table tbody');
-      const rowId = `combat-row-${dynamicRowId++}`;
-      const tr = document.createElement('tr');
-      tr.id = rowId;
-      tr.innerHTML = `
-        <td><input type="text" class="c-weapon" value="${weapon}" oninput="queueAutoSave()"></td>
-        <td><input type="text" class="c-diff" value="${diff}" oninput="queueAutoSave()"></td>
-        <td><input type="text" class="c-dmg" value="${dmg}" oninput="queueAutoSave()"></td>
-        <td><input type="text" class="c-range" value="${range}" oninput="queueAutoSave()"></td>
-        <td><input type="text" class="c-rate" value="${rate}" oninput="queueAutoSave()"></td>
-        <td><input type="text" class="c-clip" value="${clip}" oninput="queueAutoSave()"></td>
-        <td><input type="text" class="c-conceal" value="${conceal}" oninput="queueAutoSave()"></td>
-        <td style="text-align: center;"><button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button></td>
-      `;
-      tbody.appendChild(tr);
-      queueAutoSave();
-    }
-  </script>
+list.appendChild(row);
+queueAutoSave();
+}
+
+function addCombatAttackRow(weapon = '', diff = '', dmg = '', range = '', rate = '', clip = '', conceal = '') {
+const tbody = document.querySelector('#combat-attacks-table tbody');
+const rowId = `combat-row-${dynamicRowId++}`;
+const tr = document.createElement('tr');
+tr.id = rowId;
+tr.innerHTML = `
+       <td><input type="text" class="c-weapon" value="${weapon}" oninput="queueAutoSave()"></td>
+       <td><input type="text" class="c-diff" value="${diff}" oninput="queueAutoSave()"></td>
+       <td><input type="text" class="c-dmg" value="${dmg}" oninput="queueAutoSave()"></td>
+       <td><input type="text" class="c-range" value="${range}" oninput="queueAutoSave()"></td>
+       <td><input type="text" class="c-rate" value="${rate}" oninput="queueAutoSave()"></td>
+       <td><input type="text" class="c-clip" value="${clip}" oninput="queueAutoSave()"></td>
+       <td><input type="text" class="c-conceal" value="${conceal}" oninput="queueAutoSave()"></td>
+       <td style="text-align: center;"><button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button></td>
+     `;
+tbody.appendChild(tr);
+queueAutoSave();
+}
+
+/* --- CORE SYNC ENGINE --- */
+
+function queueAutoSave() {
+setSaveStatus('Saving changes...');
+if (saveTimeout) clearTimeout(saveTimeout);
+saveTimeout = setTimeout(saveCurrentCharacter, 1000);
+}
+
+function setSaveStatus(text) {
+document.getElementById('save-status').innerText = text;
+}
+
+async function saveCurrentCharacter() {
+if (!activeCharacterId) return;
+
+const data = compileSheetData();
+
+// Always store backup in LocalStorage
+localStorage.setItem(activeCharacterId, JSON.stringify(data));
+saveLocalIndex(activeCharacterId, data.meta.name, data.meta.clan, data.mechanics.roadName);
+
+if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+setSaveStatus('Saved Locally (No Cloud URL)');
+return;
+}
+
+try {
+await fetch(API_URL, {
+method: "POST",
+body: JSON.stringify(data)
+});
+setSaveStatus('Auto-Saved to Cloud');
+} catch (err) {
+console.warn("Cloud save failed, falls back to local data:", err);
+setSaveStatus('Offline - Saved locally');
+}
+}
+
+function compileSheetData() {
+const data = {
+id: activeCharacterId,
+meta: {
+name: document.getElementById('char-name').value,
+clan: document.getElementById('char-clan').value,
+sire: document.getElementById('char-sire').value,
+generation: document.getElementById('char-generation').value,
+nature: document.getElementById('char-nature').value,
+demeanor: document.getElementById('char-demeanor').value,
+concept: document.getElementById('char-concept').value,
+chronicle: document.getElementById('char-chronicle').value,
+},
+attributes: {},
+abilities: {},
+virtues: {
+virtue_1_type: document.getElementById('virtue-1-type').value,
+virtue_1_val: parseInt(document.querySelector('[data-id="virtue_1"]').getAttribute('data-value')),
+virtue_2_type: document.getElementById('virtue-2-type').value,
+virtue_2_val: parseInt(document.querySelector('[data-id="virtue_2"]').getAttribute('data-value')),
+virtue_3_val: parseInt(document.querySelector('[data-id="virtue_3"]').getAttribute('data-value')),
+},
+disciplines: [],
+backgrounds: [],
+mechanics: {
+roadName: document.getElementById('road-name').value,
+roadValue: parseInt(document.querySelector('[data-id="road-rating"]').getAttribute('data-value')),
+auraValue: document.getElementById('aura-bearing').value,
+willpowerPerm: parseInt(document.querySelector('[data-id="willpower-perm"]').getAttribute('data-value')),
+willpowerTemp: [],
+bloodPoolTemp: []
+},
+health: {
+bruised: document.getElementById('health-bruised').checked,
+hurt: document.getElementById('health-hurt').checked,
+injured: document.getElementById('health-injured').checked,
+wounded: document.getElementById('health-wounded').checked,
+mauled: document.getElementById('health-mauled').checked,
+crippled: document.getElementById('health-crippled').checked,
+incapacitated: document.getElementById('health-incapacitated').checked,
+},
+clan_weakness: document.getElementById('clan-weakness').value,
+merits: [],
+flaws: [],
+otherTraits: [],
+rituals: [],
+paths: [],
+        grimoire_notes: document.getElementById('grimoire-notes').value,
+combatAttacks: [],
+armor: {
+class: document.getElementById('armor-class').value,
+rating: document.getElementById('armor-rating').value,
+penalty: document.getElementById('armor-penalty').value,
+desc: document.getElementById('armor-desc').value
+},
+derangements: [],
+exp: {
+total: document.getElementById('exp-total').value,
+spent: document.getElementById('exp-spent').value,
+spentOn: document.getElementById('exp-spent-on').value
+},
+backgrounds_expanded: {
+allies: document.getElementById('bg-allies').value,
+mentor: document.getElementById('bg-mentor').value,
+contacts: document.getElementById('bg-contacts').value,
+resources: document.getElementById('bg-resources').value,
+fame: document.getElementById('bg-fame').value,
+retainers: document.getElementById('bg-retainers').value,
+herd: document.getElementById('bg-herd').value,
+status: document.getElementById('bg-status').value,
+other: document.getElementById('bg-other').value
+},
+possessions: {
+gear: document.getElementById('poss-gear').value,
+equip: document.getElementById('poss-equip').value,
+feed: document.getElementById('poss-feed').value,
+trans: document.getElementById('poss-trans').value
+},
+haven: {
+location: document.getElementById('haven-location').value,
+desc: document.getElementById('haven-desc').value
+},
+narrative: {
+prelude: document.getElementById('narrative-prelude').value,
+goals: document.getElementById('narrative-goals').value
+},
+desc: {
+age: document.getElementById('desc-age').value,
+apparent: document.getElementById('desc-apparent').value,
+dob: document.getElementById('desc-dob').value,
+rip: document.getElementById('desc-rip').value,
+hair: document.getElementById('desc-hair').value,
+eyes: document.getElementById('desc-eyes').value,
+race: document.getElementById('desc-race').value,
+nationality: document.getElementById('desc-nationality').value,
+height: document.getElementById('desc-height').value,
+weight: document.getElementById('desc-weight').value,
+sex: document.getElementById('desc-sex').value
+},
+vis: {
+coterie: document.getElementById('vis-coterie').value,
+sketch: document.getElementById('vis-sketch').value
+}
+};
+
+const attributesList = ['strength', 'dexterity', 'stamina', 'charisma', 'manipulation', 'appearance', 'perception', 'intelligence', 'wits'];
+attributesList.forEach(id => {
+data.attributes[id] = parseInt(document.querySelector(`[data-id="${id}"]`).getAttribute('data-value'));
+});
+
+const abilitiesList = [
+'alertness', 'athletics', 'awareness', 'brawl', 'empathy', 'expression', 'intimidation', 'leadership', 'legerdemain', 'subterfuge',
+'animal_ken', 'archery', 'commerce', 'crafts', 'etiquette', 'melee', 'performance', 'ride', 'stealth', 'survival',
+'academics', 'enigmas', 'hearth_wisdom', 'investigation', 'law', 'medicine', 'occult', 'politics', 'seneschal', 'theology'
+];
+abilitiesList.forEach(id => {
+data.abilities[id] = parseInt(document.querySelector(`[data-id="${id}"]`).getAttribute('data-value'));
+});
+
+document.querySelectorAll('#disciplines-list .dynamic-row').forEach(row => {
+const name = row.querySelector('.dynamic-name').value;
+const val = parseInt(row.querySelector('.trait').getAttribute('data-value'));
+if (name || val > 0) data.disciplines.push({ name, rating: val });
+});
+
+document.querySelectorAll('#backgrounds-list .dynamic-row').forEach(row => {
+const name = row.querySelector('.dynamic-name').value;
+const val = parseInt(row.querySelector('.trait').getAttribute('data-value'));
+if (name || val > 0) data.backgrounds.push({ name, rating: val });
+});
+
+document.querySelectorAll('#merits-list .dynamic-row').forEach(row => {
+data.merits.push({
+name: row.querySelector('.dynamic-name').value,
+type: row.querySelector('.dynamic-type').value,
+val: row.querySelector('.dynamic-val').value
+});
+});
+
+document.querySelectorAll('#flaws-list .dynamic-row').forEach(row => {
+data.flaws.push({
+name: row.querySelector('.dynamic-name').value,
+type: row.querySelector('.dynamic-type').value,
+val: row.querySelector('.dynamic-val').value
+});
+});
+
+document.querySelectorAll('#other-traits-list .dynamic-row').forEach(row => {
+data.otherTraits.push({
+name: row.querySelector('.dynamic-name').value,
+val: parseInt(row.querySelector('.trait').getAttribute('data-value'))
+});
+});
+
+document.querySelectorAll('#rituals-list .dynamic-row').forEach(row => {
+data.rituals.push({
+name: row.querySelector('.dynamic-name').value,
+level: row.querySelector('.dynamic-val').value
+});
+});
+
+document.querySelectorAll('#paths-list .dynamic-row').forEach(row => {
+data.paths.push({
+name: row.querySelector('.dynamic-name').value,
+val: parseInt(row.querySelector('.trait').getAttribute('data-value'))
+});
+});
+
+document.querySelectorAll('#derangements-list .dynamic-row').forEach(row => {
+data.derangements.push({ name: row.querySelector('.dynamic-name').value });
+});
+
+document.querySelectorAll('#combat-attacks-table tbody tr').forEach(row => {
+data.combatAttacks.push({
+weapon: row.querySelector('.c-weapon').value,
+diff: row.querySelector('.c-diff').value,
+dmg: row.querySelector('.c-dmg').value,
+range: row.querySelector('.c-range').value,
+rate: row.querySelector('.c-rate').value,
+clip: row.querySelector('.c-clip').value,
+conceal: row.querySelector('.c-conceal').value
+});
+});
+
+for (let i = 1; i <= 10; i++) {
+data.mechanics.willpowerTemp.push(document.getElementById(`wp-temp-${i}`).checked);
+}
+for (let i = 1; i <= 50; i++) {
+data.mechanics.bloodPoolTemp.push(document.getElementById(`bp-temp-${i}`).checked);
+}
+
+return data;
+}
+
+function loadSheetIntoDOM(data) {
+// Info Header
+document.getElementById('char-name').value = data.meta.name || '';
+document.getElementById('char-clan').value = data.meta.clan || '';
+document.getElementById('char-sire').value = data.meta.sire || '';
+document.getElementById('char-generation').value = data.meta.generation || '';
+document.getElementById('char-nature').value = data.meta.nature || '';
+document.getElementById('char-demeanor').value = data.meta.demeanor || '';
+document.getElementById('char-concept').value = data.meta.concept || '';
+document.getElementById('char-chronicle').value = data.meta.chronicle || '';
+
+// Attributes
+if (data.attributes) {
+Object.keys(data.attributes).forEach(id => {
+const el = document.querySelector(`[data-id="${id}"]`);
+if (el) {
+el.setAttribute('data-value', data.attributes[id]);
+renderDots(el);
+}
+});
+}
+
+// Abilities
+if (data.abilities) {
+Object.keys(data.abilities).forEach(id => {
+const el = document.querySelector(`[data-id="${id}"]`);
+if (el) {
+el.setAttribute('data-value', data.abilities[id] || 0);
+renderDots(el);
+}
+});
+}
+
+// Virtues
+if (data.virtues) {
+document.getElementById('virtue-1-type').value = data.virtues.virtue_1_type || 'Conscience';
+const v1 = document.querySelector('[data-id="virtue_1"]');
+v1.setAttribute('data-value', data.virtues.virtue_1_val || 1);
+renderDots(v1);
+
+document.getElementById('virtue-2-type').value = data.virtues.virtue_2_type || 'Self-Control';
+const v2 = document.querySelector('[data-id="virtue_2"]');
+v2.setAttribute('data-value', data.virtues.virtue_2_val || 1);
+renderDots(v2);
+
+const v3 = document.querySelector('[data-id="virtue_3"]');
+v3.setAttribute('data-value', data.virtues.virtue_3_val || 1);
+renderDots(v3);
+}
+
+// Disciplines & Backgrounds
+document.getElementById('disciplines-list').innerHTML = '';
+if (data.disciplines && data.disciplines.length > 0) {
+data.disciplines.forEach(d => addDynamicRow('disciplines-list', 'discipline', d.name, d.rating));
+} else {
+addDynamicRow('disciplines-list', 'discipline');
+}
+
+document.getElementById('backgrounds-list').innerHTML = '';
+if (data.backgrounds && data.backgrounds.length > 0) {
+data.backgrounds.forEach(b => addDynamicRow('backgrounds-list', 'background', b.name, b.rating));
+} else {
+addDynamicRow('backgrounds-list', 'background');
+}
+
+      // Page 2 Lists
+      // Page 3 Lists
+document.getElementById('merits-list').innerHTML = '';
+if (data.merits) data.merits.forEach(m => addCustomRow('merits-list', 'merit', m.name, m.type, m.val));
+
+document.getElementById('flaws-list').innerHTML = '';
+if (data.flaws) data.flaws.forEach(f => addCustomRow('flaws-list', 'flaw', f.name, f.type, f.val));
+
+document.getElementById('other-traits-list').innerHTML = '';
+if (data.otherTraits) data.otherTraits.forEach(t => addOtherTraitRow('other-traits-list', t.name, t.val));
+
+      // Page 2 Grimoire Lists
+document.getElementById('rituals-list').innerHTML = '';
+if (data.rituals) data.rituals.forEach(r => addRitualRow('rituals-list', r.name, r.level));
+
+document.getElementById('paths-list').innerHTML = '';
+if (data.paths) data.paths.forEach(p => addPathRow('paths-list', p.name, p.val));
+
+      document.getElementById('grimoire-notes').value = data.grimoire_notes || '';
+
+document.getElementById('derangements-list').innerHTML = '';
+if (data.derangements) data.derangements.forEach(d => addDerangementRow('derangements-list', d.name));
+
+      // Page 2 Combat Attacks
+      // Page 3 Combat Attacks
+const combatBody = document.querySelector('#combat-attacks-table tbody');
+combatBody.innerHTML = '';
+if (data.combatAttacks) {
+data.combatAttacks.forEach(a => addCombatAttackRow(a.weapon, a.diff, a.dmg, a.range, a.rate, a.clip, a.conceal));
+}
+
+// Mechanics
+if (data.mechanics) {
+document.getElementById('road-name').value = data.mechanics.roadName || '';
+const rRating = document.querySelector('[data-id="road-rating"]');
+rRating.setAttribute('data-value', data.mechanics.roadValue || 0);
+renderDots(rRating);
+
+document.getElementById('aura-bearing').value = data.mechanics.auraValue || '';
+
+const wpPerm = document.querySelector('[data-id="willpower-perm"]');
+wpPerm.setAttribute('data-value', data.mechanics.willpowerPerm || 0);
+renderDots(wpPerm);
+
+if (data.mechanics.willpowerTemp) {
+data.mechanics.willpowerTemp.forEach((val, i) => {
+const cb = document.getElementById(`wp-temp-${i + 1}`);
+if (cb) cb.checked = val;
+});
+}
+
+if (data.mechanics.bloodPoolTemp) {
+data.mechanics.bloodPoolTemp.forEach((val, i) => {
+const cb = document.getElementById(`bp-temp-${i + 1}`);
+if (cb) cb.checked = val;
+});
+}
+}
+
+// Health
+if (data.health) {
+Object.keys(data.health).forEach(level => {
+const cb = document.getElementById(`health-${level}`);
+if (cb) cb.checked = data.health[level];
+});
+}
+
+document.getElementById('clan-weakness').value = data.clan_weakness || '';
+
+// Armor
+if (data.armor) {
+document.getElementById('armor-class').value = data.armor.class || '';
+document.getElementById('armor-rating').value = data.armor.rating || '';
+document.getElementById('armor-penalty').value = data.armor.penalty || '';
+document.getElementById('armor-desc').value = data.armor.desc || '';
+}
+
+// Exp
+if (data.exp) {
+document.getElementById('exp-total').value = data.exp.total || '';
+document.getElementById('exp-spent').value = data.exp.spent || '';
+document.getElementById('exp-spent-on').value = data.exp.spentOn || '';
+}
+
+      // Page 3 Expanded Backgrounds
+      // Page 4 Expanded Backgrounds
+if (data.backgrounds_expanded) {
+document.getElementById('bg-allies').value = data.backgrounds_expanded.allies || '';
+document.getElementById('bg-mentor').value = data.backgrounds_expanded.mentor || '';
+document.getElementById('bg-contacts').value = data.backgrounds_expanded.contacts || '';
+document.getElementById('bg-resources').value = data.backgrounds_expanded.resources || '';
+document.getElementById('bg-fame').value = data.backgrounds_expanded.fame || '';
+document.getElementById('bg-retainers').value = data.backgrounds_expanded.retainers || '';
+document.getElementById('bg-herd').value = data.backgrounds_expanded.herd || '';
+document.getElementById('bg-status').value = data.backgrounds_expanded.status || '';
+document.getElementById('bg-other').value = data.backgrounds_expanded.other || '';
+}
+
+// Possessions
+if (data.possessions) {
+document.getElementById('poss-gear').value = data.possessions.gear || '';
+document.getElementById('poss-equip').value = data.possessions.equip || '';
+document.getElementById('poss-feed').value = data.possessions.feed || '';
+document.getElementById('poss-trans').value = data.possessions.trans || '';
+}
+
+// Haven
+if (data.haven) {
+document.getElementById('haven-location').value = data.haven.location || '';
+document.getElementById('haven-desc').value = data.haven.desc || '';
+}
+
+      // Page 4 History & Description
+      // Page 5 History & Description
+if (data.narrative) {
+document.getElementById('narrative-prelude').value = data.narrative.prelude || '';
+document.getElementById('narrative-goals').value = data.narrative.goals || '';
+}
+
+if (data.desc) {
+document.getElementById('desc-age').value = data.desc.age || '';
+document.getElementById('desc-apparent').value = data.desc.apparent || '';
+document.getElementById('desc-dob').value = data.desc.dob || '';
+document.getElementById('desc-rip').value = data.desc.rip || '';
+document.getElementById('desc-hair').value = data.desc.hair || '';
+document.getElementById('desc-eyes').value = data.desc.eyes || '';
+document.getElementById('desc-race').value = data.desc.race || '';
+document.getElementById('desc-nationality').value = data.desc.nationality || '';
+document.getElementById('desc-height').value = data.desc.height || '';
+document.getElementById('desc-weight').value = data.desc.weight || '';
+document.getElementById('desc-sex').value = data.desc.sex || '';
+}
+
+if (data.vis) {
+document.getElementById('vis-coterie').value = data.vis.coterie || '';
+document.getElementById('vis-sketch').value = data.vis.sketch || '';
+}
+}
+
+/* --- EXTERNAL FILE IO --- */
+
+function triggerManualExport(id) {
+const exportId = id || activeCharacterId;
+if (!exportId) return;
+
+const charData = JSON.parse(localStorage.getItem(exportId));
+if (!charData) return;
+
+const filename = `${charData.meta.name || 'Unnamed'}_V20DA_Aligned.json`;
+const blob = new Blob([JSON.stringify(charData, null, 2)], { type: 'application/json' });
+const link = document.createElement('a');
+link.href = URL.createObjectURL(blob);
+link.download = filename;
+link.click();
+}
+
+function importCharacter(event) {
+const file = event.target.files[0];
+if (!file) return;
+
+const reader = new FileReader();
+reader.onload = async function(e) {
+try {
+const data = JSON.parse(e.target.result);
+const newId = 'char_' + Date.now();
+data.id = newId;
+
+localStorage.setItem(newId, JSON.stringify(data));
+saveLocalIndex(newId, data.meta.name, data.meta.clan, data.mechanics ? data.mechanics.roadName : '');
+
+if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+try {
+await fetch(API_URL, {
+method: "POST",
+body: JSON.stringify(data)
+});
+} catch (err) {
+console.warn("Cloud import failed, backed up locally.");
+}
+}
+
+renderDashboard();
+alert("Character imported successfully.");
+} catch (err) {
+alert("Could not parse file.");
+console.error(err);
+}
+};
+reader.readAsText(file);
+event.target.value = '';
+}
+</script>
 </body>
-</html>
