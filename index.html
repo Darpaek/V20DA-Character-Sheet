@@ -468,6 +468,12 @@
       background: rgba(255,255,255,0.3);
     }
 
+    /* Dropdown customization for perfect readability [1] */
+    .discipline-select-container select option {
+      color: var(--text-dark) !important;
+      background-color: var(--parchment) !important;
+    }
+
     #file-import {
       display: none;
     }
@@ -1139,6 +1145,7 @@
         discWrapper.style.background = "rgba(0,0,0,0.02)";
         discWrapper.style.borderLeft = "3px solid var(--accent-red)";
         discWrapper.style.borderRadius = "0 4px 4px 0";
+        discWrapper.id = `grimoire-entry-${item.name.replace(/\s+/g, '-')}`;
         
         // Output format updated to: Name (Level X) [1]
         let html = `<h3 style="margin: 0 0 12px 0; color: var(--accent-red); font-size: 1.1rem; text-transform: uppercase; border-bottom: 1px solid rgba(140, 126, 110, 0.3); padding-bottom: 4px;">${item.name} (Level ${item.dots})</h3>`;
@@ -1171,6 +1178,24 @@
         discWrapper.innerHTML = html;
         container.appendChild(discWrapper);
       });
+    }
+
+    // Interactive smooth scroll navigation to Page 2 Grimoire entry [1]
+    function navigateToDiscipline(name) {
+      switchTab('tab-page-2');
+      const targetId = `grimoire-entry-${name.replace(/\s+/g, '-')}`;
+      setTimeout(() => {
+        const el = document.getElementById(targetId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Highlight flash to guide the player's eye [1]
+          el.style.transition = 'background-color 0.5s';
+          el.style.backgroundColor = 'rgba(124, 11, 11, 0.15)';
+          setTimeout(() => {
+            el.style.backgroundColor = 'rgba(0,0,0,0.02)';
+          }, 1000);
+        }
+      }, 100);
     }
 
     function getLocalIndex() {
@@ -1506,20 +1531,28 @@
           "Valeren - Warrior", "Valeren - Watcher", "Vicissitude"
         ];
 
-        nameFieldHTML = `<select class="dynamic-name" onchange="handleDisciplineChange(this); renderGrimoireDisciplines();" style="flex-grow: 1; background: transparent; border: none; border-bottom: 1px dashed var(--border-color); font-family: inherit; font-size: 0.9rem; color: var(--text-dark);">`;
-        nameFieldHTML += `<option value="custom">Custom...</option>`;
-        nameFieldHTML += `<option value="" disabled ${!initialName ? 'selected' : ''}>Select Discipline...</option>`;
+        let optionsHTML = `<option value="" disabled ${!initialName ? 'selected' : ''}>Select Discipline...</option>`;
+        optionsHTML += `<option value="custom">Custom...</option>`;
         
-        // Auto-populate option if loaded value is custom/unlisted
         if (initialName && !standardDisciplines.includes(initialName)) {
-          nameFieldHTML += `<option value="${initialName}" selected>${initialName}</option>`;
+          optionsHTML += `<option value="${initialName}" selected>${initialName}</option>`;
         }
         
         standardDisciplines.forEach(disc => {
-          nameFieldHTML += `<option value="${disc}" ${initialName === disc ? 'selected' : ''}>${disc}</option>`;
+          optionsHTML += `<option value="${disc}" ${initialName === disc ? 'selected' : ''}>${disc}</option>`;
         });
         
-        nameFieldHTML += `</select>`;
+        nameFieldHTML = `
+          <div class="discipline-select-container" style="position: relative; display: inline-flex; align-items: center; flex-grow: 1; width: 100%;">
+            <select class="dynamic-name" onchange="handleDisciplineChange(this)" style="width: 100%; background: transparent; border: none; border-bottom: 1px dashed var(--border-color); font-family: inherit; font-size: 0.9rem; padding-right: 20px; appearance: none; -webkit-appearance: none; -moz-appearance: none; color: transparent; cursor: pointer;">
+              ${optionsHTML}
+            </select>
+            <span class="disc-caret" style="position: absolute; right: 5px; pointer-events: none; color: var(--accent-red); font-size: 0.7rem; font-family: sans-serif;">▼</span>
+            <div class="disc-link-overlay" style="position: absolute; left: 0; top: 0; bottom: 0; right: 20px; display: flex; align-items: center; pointer-events: none;">
+              <!-- Handled dynamically in updateDisciplineOverlay -->
+            </div>
+          </div>
+        `;
       } else {
         // Keeps text fields for Backgrounds and other list variants
         nameFieldHTML = `<input type="text" class="dynamic-name" placeholder="Name..." value="${initialName}" oninput="queueAutoSave()">`;
@@ -1535,11 +1568,46 @@
 
       list.appendChild(row);
       renderDots(row.querySelector('.trait'));
+
+      if (type === 'discipline') {
+        const select = row.querySelector('.dynamic-name');
+        if (select) updateDisciplineOverlay(select);
+      }
+
       renderGrimoireDisciplines();
       queueAutoSave();
     }
 
-    /* --- Custom Discipline Popup --- */
+    /* --- Custom Discipline Popup & Link Overlays --- */
+
+    function updateDisciplineOverlay(selectEl) {
+      const container = selectEl.closest('.discipline-select-container');
+      if (!container) return;
+      const overlay = container.querySelector('.disc-link-overlay');
+      if (!overlay) return;
+
+      const val = selectEl.value;
+      const standardDisciplines = [
+        "Abombwe", "Abyss Mysticism", "Animalism", "Auspex", "Bardo", 
+        "Celerity", "Chimerstry", "Clan Sorcery", "Daimonion", 
+        "Dark Thaumaturgy", "Dementation", "Dominate", "Flight", 
+        "Fortitude", "Koldunic Sorcery", "Mytherceria", "Necromancy", 
+        "Obfuscate", "Obtenebration", "Ogham", "Potence", "Presence", 
+        "Protean", "Quietus Cruscitus", "Quietus Hematus", "Serpentis", 
+        "Spiritus", "Temporis", "Thaumaturgy", "Valeren - Healer", 
+        "Valeren - Warrior", "Valeren - Watcher", "Vicissitude"
+      ];
+
+      if (!val) {
+        overlay.innerHTML = `<span style="color: #8c7e6e; pointer-events: none; font-family: inherit; font-size: 0.9rem; font-style: italic;">Select Discipline...</span>`;
+      } else if (standardDisciplines.includes(val)) {
+        // Standard Discipline -> Styled hyperlinked anchor linking to Page 2 Grimoire [1]
+        overlay.innerHTML = `<a href="#" onclick="navigateToDiscipline('${val}'); return false;" style="color: var(--accent-red); text-decoration: underline; pointer-events: auto; font-weight: bold; font-family: inherit; font-size: 0.9rem; z-index: 2;">${val}</a>`;
+      } else {
+        // Custom Discipline -> Plain text [1]
+        overlay.innerHTML = `<span style="color: var(--text-dark); pointer-events: none; font-family: inherit; font-size: 0.9rem;">${val}</span>`;
+      }
+    }
 
     function handleDisciplineChange(selectEl) {
       if (selectEl.value === 'custom') {
@@ -1567,6 +1635,7 @@
           selectEl.value = "";
         }
       }
+      updateDisciplineOverlay(selectEl);
       renderGrimoireDisciplines();
       queueAutoSave();
     }
