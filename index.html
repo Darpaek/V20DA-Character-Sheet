@@ -349,7 +349,7 @@
       gap: 10px;
     }
 
-    .dynamic-row input[type="text"], .dynamic-row input[type="number"], .dynamic-row select {
+    .dynamic-row input[type="text"], .dynamic-row input[type="number"] {
       background: transparent;
       border: none;
       border-bottom: 1px dashed var(--border-color);
@@ -357,7 +357,7 @@
       font-size: 0.9rem;
     }
 
-    .dynamic-row input[type="text"]:focus, .dynamic-row select:focus {
+    .dynamic-row input[type="text"]:focus {
       outline: none;
       border-bottom-color: var(--accent-red);
     }
@@ -477,7 +477,7 @@
 
   <div class="app-container">
     <header>
-      <h1>Dark Ages Character Scribe</h1>
+      <h2>Vampire: The Dark Ages</h2>
       <p>Sourcebook-Aligned V20 Dark Ages Interactive Web Application</p>
     </header>
 
@@ -847,31 +847,15 @@
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       
-      const tabEl = document.getElementById(tabId);
-      if (tabEl) tabEl.classList.add('active');
-
-      const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => {
-        const onclickAttr = btn.getAttribute('onclick');
-        return onclickAttr && onclickAttr.includes(tabId);
-      });
+      document.getElementById(tabId).classList.add('active');
+      const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => btn.getAttribute('onclick').includes(tabId));
       if (activeBtn) activeBtn.classList.add('active');
-    }
-
-    function safeParseJSON(str, fallback = []) {
-      try {
-        if (!str) return fallback;
-        const parsed = JSON.parse(str);
-        return Array.isArray(parsed) ? parsed : fallback;
-      } catch (e) {
-        console.warn("Corrupted JSON detected, returning fallback:", e);
-        return fallback;
-      }
     }
 
     async function getCharacterList() {
       if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
         const list = localStorage.getItem('v20_da_characters_index');
-        return safeParseJSON(list, []);
+        return list ? JSON.parse(list) : [];
       }
       try {
         const response = await fetch(API_URL);
@@ -879,12 +863,12 @@
       } catch (err) {
         console.warn("Cloud list fetch failed, falling back to LocalStorage:", err);
         const list = localStorage.getItem('v20_da_characters_index');
-        return safeParseJSON(list, []);
+        return list ? JSON.parse(list) : [];
       }
     }
 
     function saveLocalIndex(charId, name, clan, road) {
-      const list = safeParseJSON(localStorage.getItem('v20_da_characters_index'), []);
+      const list = JSON.parse(localStorage.getItem('v20_da_characters_index') || '[]');
       const index = list.findIndex(item => item.id === charId);
       if (index !== -1) {
         list[index].name = name;
@@ -981,7 +965,7 @@
       setSaveStatus('Loading draft...');
 
       if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
-        const sheetData = safeParseJSON(localStorage.getItem(id), null);
+        const sheetData = JSON.parse(localStorage.getItem(id));
         if (sheetData) {
           loadSheetIntoDOM(sheetData);
           document.getElementById('dashboard-view').classList.remove('active');
@@ -1004,7 +988,7 @@
         setSaveStatus('Draft Loaded (Cloud)');
       } catch (err) {
         console.warn("Cloud fetch failed, trying local fallback...", err);
-        const sheetData = safeParseJSON(localStorage.getItem(id), null);
+        const sheetData = JSON.parse(localStorage.getItem(id));
         if (sheetData) {
           loadSheetIntoDOM(sheetData);
           document.getElementById('dashboard-view').classList.remove('active');
@@ -1033,13 +1017,13 @@
       let sourceData = null;
 
       if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
-        sourceData = safeParseJSON(localStorage.getItem(id), null);
+        sourceData = JSON.parse(localStorage.getItem(id));
       } else {
         try {
           const response = await fetch(`${API_URL}?id=${id}`);
           sourceData = await response.json();
         } catch (err) {
-          sourceData = safeParseJSON(localStorage.getItem(id), null);
+          sourceData = JSON.parse(localStorage.getItem(id));
         }
       }
 
@@ -1068,7 +1052,7 @@
       if (!confirm("Are you sure you want to permanently delete this character?")) return;
 
       localStorage.removeItem(id);
-      let localList = safeParseJSON(localStorage.getItem('v20_da_characters_index'), []);
+      let localList = JSON.parse(localStorage.getItem('v20_da_characters_index') || '[]');
       localList = localList.filter(item => item.id !== id);
       localStorage.setItem('v20_da_characters_index', JSON.stringify(localList));
 
@@ -1096,24 +1080,11 @@
 
     function renderDots(container) {
       const dotsContainer = container.querySelector('.dots-container');
-      if (!dotsContainer) return;
       dotsContainer.innerHTML = '';
       
       const max = parseInt(container.getAttribute('data-max')) || 6;
       const min = parseInt(container.getAttribute('data-min')) || 0;
-      
-      const valAttr = container.getAttribute('data-value');
-      const defAttr = container.getAttribute('data-default');
-      const parsedVal = valAttr !== null ? parseInt(valAttr) : NaN;
-      const parsedDef = defAttr !== null ? parseInt(defAttr) : NaN;
-
-      let currentVal = min;
-      if (!isNaN(parsedVal)) {
-        currentVal = parsedVal;
-      } else if (!isNaN(parsedDef)) {
-        currentVal = parsedDef;
-      }
-
+      const currentVal = parseInt(container.getAttribute('data-value')) ?? parseInt(container.getAttribute('data-default')) ?? min;
       container.setAttribute('data-value', currentVal);
 
       for (let i = 1; i <= max; i++) {
@@ -1164,83 +1135,90 @@
 
     /* --- DYNAMIC LIST ADDITIONS --- */
 
-    function handleDisciplineChange(selectEl) {
-      if (selectEl.value === 'custom') {
-        const customName = prompt("Enter the name of the custom Discipline:");
-        if (customName && customName.trim() !== '') {
-          let exists = false;
-          for (let opt of selectEl.options) {
-            if (opt.value === customName) {
-              exists = true;
-              selectEl.value = customName;
-              break;
-            }
-          }
-          if (!exists) {
-            const newOpt = document.createElement('option');
-            newOpt.value = customName;
-            newOpt.text = customName;
-            selectEl.add(newOpt);
-            selectEl.value = customName;
-          }
-        } else {
-          selectEl.value = "";
-        }
-      }
-      queueAutoSave();
-    }
-
     function addDynamicRow(targetListId, type, initialName = '', initialVal = 0) {
-      const list = document.getElementById(targetListId);
-      const rowId = `dynamic-${type}-${dynamicRowId++}`;
-      
-      const row = document.createElement('div');
-      row.className = 'dynamic-row';
-      row.id = rowId;
+  const list = document.getElementById(targetListId);
+  const rowId = `dynamic-${type}-${dynamicRowId++}`;
+  
+  const row = document.createElement('div');
+  row.className = 'dynamic-row';
+  row.id = rowId;
 
-      let nameFieldHTML = '';
-      
-      if (type === 'discipline') {
-        const standardDisciplines = [
-          "Abombwe", "Abyss Mysticism", "Animalism", "Auspex", "Bardo", 
-          "Celerity", "Chimerstry", "Clan Sorcery", "Daimonion", 
-          "Dark Thaumaturgy", "Dementation", "Dominate", "Flight", 
-          "Fortitude", "Koldunic Sorcery", "Mytherceria", "Necromancy", 
-          "Obfuscate", "Obtenebration", "Ogham", "Potence", "Presence", 
-          "Protean", "Quietus Cruscitus", "Quietus Hematus", "Serpentis", 
-          "Spiritus", "Temporis", "Thaumaturgy", "Valeren - Healer", 
-          "Valeren - Warrior", "Valeren - Watcher", "Vicissitude"
-        ];
+  let nameFieldHTML = '';
+  
+  if (type === 'discipline') {
+    const standardDisciplines = [
+      "Abombwe", "Abyss Mysticism", "Animalism", "Auspex", "Bardo", 
+      "Celerity", "Chimerstry", "Clan Sorcery", "Daimonion", 
+      "Dark Thaumaturgy", "Dementation", "Dominate", "Flight", 
+      "Fortitude", "Koldunic Sorcery", "Mytherceria", "Necromancy", 
+      "Obfuscate", "Obtenebration", "Ogham", "Potence", "Presence", 
+      "Protean", "Quietus Cruscitus", "Quietus Hematus", "Serpentis", 
+      "Spiritus", "Temporis", "Thaumaturgy", "Valeren - Healer", 
+      "Valeren - Warrior", "Valeren - Watcher", "Vicissitude"
+    ];
 
-        nameFieldHTML = `<select class="dynamic-name" onchange="handleDisciplineChange(this)" style="flex-grow: 1; background: transparent; border: none; border-bottom: 1px dashed var(--border-color); font-family: inherit; font-size: 0.9rem; color: var(--text-dark);">`;
-        nameFieldHTML += `<option value="custom">Custom...</option>`;
-        nameFieldHTML += `<option value="" disabled ${!initialName ? 'selected' : ''}>Select Discipline...</option>`;
-        
-        if (initialName && !standardDisciplines.includes(initialName)) {
-          nameFieldHTML += `<option value="${initialName}" selected>${initialName}</option>`;
-        }
-        
-        standardDisciplines.forEach(disc => {
-          nameFieldHTML += `<option value="${disc}" ${initialName === disc ? 'selected' : ''}>${disc}</option>`;
-        });
-        
-        nameFieldHTML += `</select>`;
-      } else {
-        nameFieldHTML = `<input type="text" class="dynamic-name" placeholder="Name..." value="${initialName}" oninput="queueAutoSave()">`;
-      }
-
-      row.innerHTML = `
-        ${nameFieldHTML}
-        <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${initialVal}">
-          <div class="dots-container"></div>
-        </div>
-        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
-      `;
-
-      list.appendChild(row);
-      renderDots(row.querySelector('.trait'));
-      queueAutoSave();
+    nameFieldHTML = `<select class="dynamic-name" onchange="handleDisciplineChange(this)" style="flex-grow: 1; background: transparent; border: none; border-bottom: 1px dashed var(--border-color); font-family: inherit; font-size: 0.9rem; color: var(--text-dark);">`;
+    nameFieldHTML += `<option value="custom">Custom...</option>`;
+    nameFieldHTML += `<option value="" disabled ${!initialName ? 'selected' : ''}>Select Discipline...</option>`;
+    
+    // Auto-populate option if loaded value is custom/unlisted
+    if (initialName && !standardDisciplines.includes(initialName)) {
+      nameFieldHTML += `<option value="${initialName}" selected>${initialName}</option>`;
     }
+    
+    standardDisciplines.forEach(disc => {
+      nameFieldHTML += `<option value="${disc}" ${initialName === disc ? 'selected' : ''}>${disc}</option>`;
+    });
+    
+    nameFieldHTML += `</select>`;
+  } else {
+    // Keeps text fields for Backgrounds and other list variants
+    nameFieldHTML = `<input type="text" class="dynamic-name" placeholder="Name..." value="${initialName}" oninput="queueAutoSave()">`;
+  }
+
+  row.innerHTML = `
+    ${nameFieldHTML}
+    <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${initialVal}">
+      <div class="dots-container"></div>
+    </div>
+    <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
+  `;
+
+  list.appendChild(row);
+  renderDots(row.querySelector('.trait'));
+  queueAutoSave();
+}
+
+    /* --- Custom Discipline Popup --- */
+
+	function handleDisciplineChange(selectEl) {
+  if (selectEl.value === 'custom') {
+    const customName = prompt("Enter the name of the custom Discipline:");
+    if (customName && customName.trim() !== '') {
+      // Check if this option already exists to avoid duplication
+      let exists = false;
+      for (let opt of selectEl.options) {
+        if (opt.value === customName) {
+          exists = true;
+          selectEl.value = customName;
+          break;
+        }
+      }
+      if (!exists) {
+        // Dynamically append the custom option and select it
+        const newOpt = document.createElement('option');
+        newOpt.value = customName;
+        newOpt.text = customName;
+        selectEl.add(newOpt);
+        selectEl.value = customName;
+      }
+    } else {
+      // Reset back to blank if prompt was cancelled or empty
+      selectEl.value = "";
+    }
+  }
+  queueAutoSave();
+}
 
     function addCustomRow(targetListId, type, name = '', costType = '', costValue = '') {
       const list = document.getElementById(targetListId);
@@ -1357,6 +1335,491 @@
       `;
       tbody.appendChild(tr);
       queueAutoSave();
+    }
+
+    /* --- CORE SYNC ENGINE --- */
+
+    function queueAutoSave() {
+      setSaveStatus('Saving changes...');
+      if (saveTimeout) clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(saveCurrentCharacter, 1000);
+    }
+
+    function setSaveStatus(text) {
+      document.getElementById('save-status').innerText = text;
+    }
+
+    async function saveCurrentCharacter() {
+      if (!activeCharacterId) return;
+
+      const data = compileSheetData();
+      
+      // Always store backup in LocalStorage
+      localStorage.setItem(activeCharacterId, JSON.stringify(data));
+      saveLocalIndex(activeCharacterId, data.meta.name, data.meta.clan, data.mechanics.roadName);
+
+      if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+        setSaveStatus('Saved Locally (No Cloud URL)');
+        return;
+      }
+
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify(data)
+        });
+        setSaveStatus('Auto-Saved to Cloud');
+      } catch (err) {
+        console.warn("Cloud save failed, falls back to local data:", err);
+        setSaveStatus('Offline - Saved locally');
+      }
+    }
+
+    function compileSheetData() {
+      const data = {
+        id: activeCharacterId,
+        meta: {
+          name: document.getElementById('char-name').value,
+          clan: document.getElementById('char-clan').value,
+          sire: document.getElementById('char-sire').value,
+          generation: document.getElementById('char-generation').value,
+          nature: document.getElementById('char-nature').value,
+          demeanor: document.getElementById('char-demeanor').value,
+          concept: document.getElementById('char-concept').value,
+          chronicle: document.getElementById('char-chronicle').value,
+        },
+        attributes: {},
+        abilities: {},
+        virtues: {
+          virtue_1_type: document.getElementById('virtue-1-type').value,
+          virtue_1_val: parseInt(document.querySelector('[data-id="virtue_1"]').getAttribute('data-value')),
+          virtue_2_type: document.getElementById('virtue-2-type').value,
+          virtue_2_val: parseInt(document.querySelector('[data-id="virtue_2"]').getAttribute('data-value')),
+          virtue_3_val: parseInt(document.querySelector('[data-id="virtue_3"]').getAttribute('data-value')),
+        },
+        disciplines: [],
+        backgrounds: [],
+        mechanics: {
+          roadName: document.getElementById('road-name').value,
+          roadValue: parseInt(document.querySelector('[data-id="road-rating"]').getAttribute('data-value')),
+          auraValue: document.getElementById('aura-bearing').value,
+          willpowerPerm: parseInt(document.querySelector('[data-id="willpower-perm"]').getAttribute('data-value')),
+          willpowerTemp: [],
+          bloodPoolTemp: []
+        },
+        health: {
+          bruised: document.getElementById('health-bruised').checked,
+          hurt: document.getElementById('health-hurt').checked,
+          injured: document.getElementById('health-injured').checked,
+          wounded: document.getElementById('health-wounded').checked,
+          mauled: document.getElementById('health-mauled').checked,
+          crippled: document.getElementById('health-crippled').checked,
+          incapacitated: document.getElementById('health-incapacitated').checked,
+        },
+        clan_weakness: document.getElementById('clan-weakness').value,
+        merits: [],
+        flaws: [],
+        otherTraits: [],
+        rituals: [],
+        paths: [],
+        grimoire_notes: document.getElementById('grimoire-notes').value,
+        combatAttacks: [],
+        armor: {
+          class: document.getElementById('armor-class').value,
+          rating: document.getElementById('armor-rating').value,
+          penalty: document.getElementById('armor-penalty').value,
+          desc: document.getElementById('armor-desc').value
+        },
+        derangements: [],
+        exp: {
+          total: document.getElementById('exp-total').value,
+          spent: document.getElementById('exp-spent').value,
+          spentOn: document.getElementById('exp-spent-on').value
+        },
+        backgrounds_expanded: {
+          allies: document.getElementById('bg-allies').value,
+          mentor: document.getElementById('bg-mentor').value,
+          contacts: document.getElementById('bg-contacts').value,
+          resources: document.getElementById('bg-resources').value,
+          fame: document.getElementById('bg-fame').value,
+          retainers: document.getElementById('bg-retainers').value,
+          herd: document.getElementById('bg-herd').value,
+          status: document.getElementById('bg-status').value,
+          other: document.getElementById('bg-other').value
+        },
+        possessions: {
+          gear: document.getElementById('poss-gear').value,
+          equip: document.getElementById('poss-equip').value,
+          feed: document.getElementById('poss-feed').value,
+          trans: document.getElementById('poss-trans').value
+        },
+        haven: {
+          location: document.getElementById('haven-location').value,
+          desc: document.getElementById('haven-desc').value
+        },
+        narrative: {
+          prelude: document.getElementById('narrative-prelude').value,
+          goals: document.getElementById('narrative-goals').value
+        },
+        desc: {
+          age: document.getElementById('desc-age').value,
+          apparent: document.getElementById('desc-apparent').value,
+          dob: document.getElementById('desc-dob').value,
+          rip: document.getElementById('desc-rip').value,
+          hair: document.getElementById('desc-hair').value,
+          eyes: document.getElementById('desc-eyes').value,
+          race: document.getElementById('desc-race').value,
+          nationality: document.getElementById('desc-nationality').value,
+          height: document.getElementById('desc-height').value,
+          weight: document.getElementById('desc-weight').value,
+          sex: document.getElementById('desc-sex').value
+        },
+        vis: {
+          coterie: document.getElementById('vis-coterie').value,
+          sketch: document.getElementById('vis-sketch').value
+        }
+      };
+
+      const attributesList = ['strength', 'dexterity', 'stamina', 'charisma', 'manipulation', 'appearance', 'perception', 'intelligence', 'wits'];
+      attributesList.forEach(id => {
+        data.attributes[id] = parseInt(document.querySelector(`[data-id="${id}"]`).getAttribute('data-value'));
+      });
+
+      const abilitiesList = [
+        'alertness', 'athletics', 'awareness', 'brawl', 'empathy', 'expression', 'intimidation', 'leadership', 'legerdemain', 'subterfuge',
+        'animal_ken', 'archery', 'commerce', 'crafts', 'etiquette', 'melee', 'performance', 'ride', 'stealth', 'survival',
+        'academics', 'enigmas', 'hearth_wisdom', 'investigation', 'law', 'medicine', 'occult', 'politics', 'seneschal', 'theology'
+      ];
+      abilitiesList.forEach(id => {
+        data.abilities[id] = parseInt(document.querySelector(`[data-id="${id}"]`).getAttribute('data-value'));
+      });
+
+      document.querySelectorAll('#disciplines-list .dynamic-row').forEach(row => {
+        const name = row.querySelector('.dynamic-name').value;
+        const val = parseInt(row.querySelector('.trait').getAttribute('data-value'));
+        if (name || val > 0) data.disciplines.push({ name, rating: val });
+      });
+
+      document.querySelectorAll('#backgrounds-list .dynamic-row').forEach(row => {
+        const name = row.querySelector('.dynamic-name').value;
+        const val = parseInt(row.querySelector('.trait').getAttribute('data-value'));
+        if (name || val > 0) data.backgrounds.push({ name, rating: val });
+      });
+
+      document.querySelectorAll('#merits-list .dynamic-row').forEach(row => {
+        data.merits.push({
+          name: row.querySelector('.dynamic-name').value,
+          type: row.querySelector('.dynamic-type').value,
+          val: row.querySelector('.dynamic-val').value
+        });
+      });
+
+      document.querySelectorAll('#flaws-list .dynamic-row').forEach(row => {
+        data.flaws.push({
+          name: row.querySelector('.dynamic-name').value,
+          type: row.querySelector('.dynamic-type').value,
+          val: row.querySelector('.dynamic-val').value
+        });
+      });
+
+      document.querySelectorAll('#other-traits-list .dynamic-row').forEach(row => {
+        data.otherTraits.push({
+          name: row.querySelector('.dynamic-name').value,
+          val: parseInt(row.querySelector('.trait').getAttribute('data-value'))
+        });
+      });
+
+      document.querySelectorAll('#rituals-list .dynamic-row').forEach(row => {
+        data.rituals.push({
+          name: row.querySelector('.dynamic-name').value,
+          level: row.querySelector('.dynamic-val').value
+        });
+      });
+
+      document.querySelectorAll('#paths-list .dynamic-row').forEach(row => {
+        data.paths.push({
+          name: row.querySelector('.dynamic-name').value,
+          val: parseInt(row.querySelector('.trait').getAttribute('data-value'))
+        });
+      });
+
+      document.querySelectorAll('#derangements-list .dynamic-row').forEach(row => {
+        data.derangements.push({ name: row.querySelector('.dynamic-name').value });
+      });
+
+      document.querySelectorAll('#combat-attacks-table tbody tr').forEach(row => {
+        data.combatAttacks.push({
+          weapon: row.querySelector('.c-weapon').value,
+          diff: row.querySelector('.c-diff').value,
+          dmg: row.querySelector('.c-dmg').value,
+          range: row.querySelector('.c-range').value,
+          rate: row.querySelector('.c-rate').value,
+          clip: row.querySelector('.c-clip').value,
+          conceal: row.querySelector('.c-conceal').value
+        });
+      });
+
+      for (let i = 1; i <= 10; i++) {
+        data.mechanics.willpowerTemp.push(document.getElementById(`wp-temp-${i}`).checked);
+      }
+      for (let i = 1; i <= 50; i++) {
+        data.mechanics.bloodPoolTemp.push(document.getElementById(`bp-temp-${i}`).checked);
+      }
+
+      return data;
+    }
+
+    function loadSheetIntoDOM(data) {
+      // Info Header
+      document.getElementById('char-name').value = data.meta.name || '';
+      document.getElementById('char-clan').value = data.meta.clan || '';
+      document.getElementById('char-sire').value = data.meta.sire || '';
+      document.getElementById('char-generation').value = data.meta.generation || '';
+      document.getElementById('char-nature').value = data.meta.nature || '';
+      document.getElementById('char-demeanor').value = data.meta.demeanor || '';
+      document.getElementById('char-concept').value = data.meta.concept || '';
+      document.getElementById('char-chronicle').value = data.meta.chronicle || '';
+
+      // Attributes
+      if (data.attributes) {
+        Object.keys(data.attributes).forEach(id => {
+          const el = document.querySelector(`[data-id="${id}"]`);
+          if (el) {
+            el.setAttribute('data-value', data.attributes[id]);
+            renderDots(el);
+          }
+        });
+      }
+
+      // Abilities
+      if (data.abilities) {
+        Object.keys(data.abilities).forEach(id => {
+          const el = document.querySelector(`[data-id="${id}"]`);
+          if (el) {
+            el.setAttribute('data-value', data.abilities[id] || 0);
+            renderDots(el);
+          }
+        });
+      }
+
+      // Virtues
+      if (data.virtues) {
+        document.getElementById('virtue-1-type').value = data.virtues.virtue_1_type || 'Conscience';
+        const v1 = document.querySelector('[data-id="virtue_1"]');
+        v1.setAttribute('data-value', data.virtues.virtue_1_val || 1);
+        renderDots(v1);
+
+        document.getElementById('virtue-2-type').value = data.virtues.virtue_2_type || 'Self-Control';
+        const v2 = document.querySelector('[data-id="virtue_2"]');
+        v2.setAttribute('data-value', data.virtues.virtue_2_val || 1);
+        renderDots(v2);
+
+        const v3 = document.querySelector('[data-id="virtue_3"]');
+        v3.setAttribute('data-value', data.virtues.virtue_3_val || 1);
+        renderDots(v3);
+      }
+
+      // Disciplines & Backgrounds
+      document.getElementById('disciplines-list').innerHTML = '';
+      if (data.disciplines && data.disciplines.length > 0) {
+        data.disciplines.forEach(d => addDynamicRow('disciplines-list', 'discipline', d.name, d.rating));
+      } else {
+        addDynamicRow('disciplines-list', 'discipline');
+      }
+
+      document.getElementById('backgrounds-list').innerHTML = '';
+      if (data.backgrounds && data.backgrounds.length > 0) {
+        data.backgrounds.forEach(b => addDynamicRow('backgrounds-list', 'background', b.name, b.rating));
+      } else {
+        addDynamicRow('backgrounds-list', 'background');
+      }
+
+      // Page 3 Lists
+      document.getElementById('merits-list').innerHTML = '';
+      if (data.merits) data.merits.forEach(m => addCustomRow('merits-list', 'merit', m.name, m.type, m.val));
+
+      document.getElementById('flaws-list').innerHTML = '';
+      if (data.flaws) data.flaws.forEach(f => addCustomRow('flaws-list', 'flaw', f.name, f.type, f.val));
+
+      document.getElementById('other-traits-list').innerHTML = '';
+      if (data.otherTraits) data.otherTraits.forEach(t => addOtherTraitRow('other-traits-list', t.name, t.val));
+
+      // Page 2 Grimoire Lists
+      document.getElementById('rituals-list').innerHTML = '';
+      if (data.rituals) data.rituals.forEach(r => addRitualRow('rituals-list', r.name, r.level));
+
+      document.getElementById('paths-list').innerHTML = '';
+      if (data.paths) data.paths.forEach(p => addPathRow('paths-list', p.name, p.val));
+
+      document.getElementById('grimoire-notes').value = data.grimoire_notes || '';
+
+      document.getElementById('derangements-list').innerHTML = '';
+      if (data.derangements) data.derangements.forEach(d => addDerangementRow('derangements-list', d.name));
+
+      // Page 3 Combat Attacks
+      const combatBody = document.querySelector('#combat-attacks-table tbody');
+      combatBody.innerHTML = '';
+      if (data.combatAttacks) {
+        data.combatAttacks.forEach(a => addCombatAttackRow(a.weapon, a.diff, a.dmg, a.range, a.rate, a.clip, a.conceal));
+      }
+
+      // Mechanics
+      if (data.mechanics) {
+        document.getElementById('road-name').value = data.mechanics.roadName || '';
+        const rRating = document.querySelector('[data-id="road-rating"]');
+        rRating.setAttribute('data-value', data.mechanics.roadValue || 0);
+        renderDots(rRating);
+
+        document.getElementById('aura-bearing').value = data.mechanics.auraValue || '';
+
+        const wpPerm = document.querySelector('[data-id="willpower-perm"]');
+        wpPerm.setAttribute('data-value', data.mechanics.willpowerPerm || 0);
+        renderDots(wpPerm);
+
+        if (data.mechanics.willpowerTemp) {
+          data.mechanics.willpowerTemp.forEach((val, i) => {
+            const cb = document.getElementById(`wp-temp-${i + 1}`);
+            if (cb) cb.checked = val;
+          });
+        }
+
+        if (data.mechanics.bloodPoolTemp) {
+          data.mechanics.bloodPoolTemp.forEach((val, i) => {
+            const cb = document.getElementById(`bp-temp-${i + 1}`);
+            if (cb) cb.checked = val;
+          });
+        }
+      }
+
+      // Health
+      if (data.health) {
+        Object.keys(data.health).forEach(level => {
+          const cb = document.getElementById(`health-${level}`);
+          if (cb) cb.checked = data.health[level];
+        });
+      }
+
+      document.getElementById('clan-weakness').value = data.clan_weakness || '';
+
+      // Armor
+      if (data.armor) {
+        document.getElementById('armor-class').value = data.armor.class || '';
+        document.getElementById('armor-rating').value = data.armor.rating || '';
+        document.getElementById('armor-penalty').value = data.armor.penalty || '';
+        document.getElementById('armor-desc').value = data.armor.desc || '';
+      }
+
+      // Exp
+      if (data.exp) {
+        document.getElementById('exp-total').value = data.exp.total || '';
+        document.getElementById('exp-spent').value = data.exp.spent || '';
+        document.getElementById('exp-spent-on').value = data.exp.spentOn || '';
+      }
+
+      // Page 4 Expanded Backgrounds
+      if (data.backgrounds_expanded) {
+        document.getElementById('bg-allies').value = data.backgrounds_expanded.allies || '';
+        document.getElementById('bg-mentor').value = data.backgrounds_expanded.mentor || '';
+        document.getElementById('bg-contacts').value = data.backgrounds_expanded.contacts || '';
+        document.getElementById('bg-resources').value = data.backgrounds_expanded.resources || '';
+        document.getElementById('bg-fame').value = data.backgrounds_expanded.fame || '';
+        document.getElementById('bg-retainers').value = data.backgrounds_expanded.retainers || '';
+        document.getElementById('bg-herd').value = data.backgrounds_expanded.herd || '';
+        document.getElementById('bg-status').value = data.backgrounds_expanded.status || '';
+        document.getElementById('bg-other').value = data.backgrounds_expanded.other || '';
+      }
+
+      // Possessions
+      if (data.possessions) {
+        document.getElementById('poss-gear').value = data.possessions.gear || '';
+        document.getElementById('poss-equip').value = data.possessions.equip || '';
+        document.getElementById('poss-feed').value = data.possessions.feed || '';
+        document.getElementById('poss-trans').value = data.possessions.trans || '';
+      }
+
+      // Haven
+      if (data.haven) {
+        document.getElementById('haven-location').value = data.haven.location || '';
+        document.getElementById('haven-desc').value = data.haven.desc || '';
+      }
+
+      // Page 5 History & Description
+      if (data.narrative) {
+        document.getElementById('narrative-prelude').value = data.narrative.prelude || '';
+        document.getElementById('narrative-goals').value = data.narrative.goals || '';
+      }
+
+      if (data.desc) {
+        document.getElementById('desc-age').value = data.desc.age || '';
+        document.getElementById('desc-apparent').value = data.desc.apparent || '';
+        document.getElementById('desc-dob').value = data.desc.dob || '';
+        document.getElementById('desc-rip').value = data.desc.rip || '';
+        document.getElementById('desc-hair').value = data.desc.hair || '';
+        document.getElementById('desc-eyes').value = data.desc.eyes || '';
+        document.getElementById('desc-race').value = data.desc.race || '';
+        document.getElementById('desc-nationality').value = data.desc.nationality || '';
+        document.getElementById('desc-height').value = data.desc.height || '';
+        document.getElementById('desc-weight').value = data.desc.weight || '';
+        document.getElementById('desc-sex').value = data.desc.sex || '';
+      }
+
+      if (data.vis) {
+        document.getElementById('vis-coterie').value = data.vis.coterie || '';
+        document.getElementById('vis-sketch').value = data.vis.sketch || '';
+      }
+    }
+
+    /* --- EXTERNAL FILE IO --- */
+
+    function triggerManualExport(id) {
+      const exportId = id || activeCharacterId;
+      if (!exportId) return;
+
+      const charData = JSON.parse(localStorage.getItem(exportId));
+      if (!charData) return;
+
+      const filename = `${charData.meta.name || 'Unnamed'}_V20DA_Aligned.json`;
+      const blob = new Blob([JSON.stringify(charData, null, 2)], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+    }
+
+    function importCharacter(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          const newId = 'char_' + Date.now();
+          data.id = newId;
+
+          localStorage.setItem(newId, JSON.stringify(data));
+          saveLocalIndex(newId, data.meta.name, data.meta.clan, data.mechanics ? data.mechanics.roadName : '');
+
+          if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+            try {
+              await fetch(API_URL, {
+                method: "POST",
+                body: JSON.stringify(data)
+              });
+            } catch (err) {
+              console.warn("Cloud import failed, backed up locally.");
+            }
+          }
+
+          renderDashboard();
+          alert("Character imported successfully.");
+        } catch (err) {
+          alert("Could not parse file.");
+          console.error(err);
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
     }
   </script>
 </body>
