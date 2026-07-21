@@ -934,4 +934,401 @@
         combatAttacks: [],
         armor: { class: '', rating: '', penalty: '', desc: '' },
         derangements: [],
-        exp: { tot
+        exp: { total: '', spent: '', spentOn: '' },
+        backgrounds_expanded: { allies: '', mentor: '', contacts: '', resources: '', fame: '', retainers: '', herd: '', status: '', other: '' },
+        possessions: { gear: '', equip: '', feed: '', trans: '' },
+        haven: { location: '', desc: '' },
+        narrative: { prelude: '', goals: '' },
+        desc: { age: '', apparent: '', dob: '', rip: '', hair: '', eyes: '', race: '', nationality: '', height: '', weight: '', sex: '' },
+        vis: { coterie: '', sketch: '' }
+      };
+
+      localStorage.setItem(charId, JSON.stringify(initialSheet));
+      saveLocalIndex(charId, initialSheet.meta.name, initialSheet.meta.clan, '');
+
+      if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+        try {
+          await fetch(API_URL, {
+            method: "POST",
+            body: JSON.stringify(initialSheet)
+          });
+        } catch (err) {
+          console.warn("Cloud initialization failed, saved locally instead.");
+        }
+      }
+
+      openEditor(charId);
+    }
+
+    async function openEditor(id) {
+      activeCharacterId = id;
+      setSaveStatus('Loading draft...');
+
+      if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+        const sheetData = JSON.parse(localStorage.getItem(id));
+        if (sheetData) {
+          loadSheetIntoDOM(sheetData);
+          document.getElementById('dashboard-view').classList.remove('active');
+          document.getElementById('editor-view').classList.add('active');
+          switchTab('tab-page-1');
+          setSaveStatus('Draft Loaded');
+        } else {
+          setSaveStatus('Draft not found');
+        }
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}?id=${id}`);
+        const sheetData = await response.json();
+        loadSheetIntoDOM(sheetData);
+        document.getElementById('dashboard-view').classList.remove('active');
+        document.getElementById('editor-view').classList.add('active');
+        switchTab('tab-page-1');
+        setSaveStatus('Draft Loaded (Cloud)');
+      } catch (err) {
+        console.warn("Cloud fetch failed, trying local fallback...", err);
+        const sheetData = JSON.parse(localStorage.getItem(id));
+        if (sheetData) {
+          loadSheetIntoDOM(sheetData);
+          document.getElementById('dashboard-view').classList.remove('active');
+          document.getElementById('editor-view').classList.add('active');
+          switchTab('tab-page-1');
+          setSaveStatus('Draft Loaded (Local Fallback)');
+        } else {
+          setSaveStatus('Failed to load draft');
+        }
+      }
+    }
+
+    async function closeEditor() {
+      if (saveTimeout) {
+        clearTimeout(saveTimeout);
+        await saveCurrentCharacter();
+      }
+      activeCharacterId = null;
+      document.getElementById('editor-view').classList.remove('active');
+      document.getElementById('dashboard-view').classList.add('active');
+      renderDashboard();
+    }
+
+    async function cloneCharacter(id) {
+      setSaveStatus('Cloning...');
+      let sourceData = null;
+
+      if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+        sourceData = JSON.parse(localStorage.getItem(id));
+      } else {
+        try {
+          const response = await fetch(`${API_URL}?id=${id}`);
+          sourceData = await response.json();
+        } catch (err) {
+          sourceData = JSON.parse(localStorage.getItem(id));
+        }
+      }
+
+      if (!sourceData) return;
+
+      const newId = 'char_' + Date.now();
+      const clone = JSON.parse(JSON.stringify(sourceData));
+      clone.id = newId;
+      clone.meta.name = (clone.meta.name || 'Unnamed') + ' (Copy)';
+
+      localStorage.setItem(newId, JSON.stringify(clone));
+      saveLocalIndex(newId, clone.meta.name, clone.meta.clan, clone.mechanics.roadName || '');
+
+      if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+        try {
+          await fetch(API_URL, { method: "POST", body: JSON.stringify(clone) });
+        } catch (err) {
+          console.warn("Cloud clone failed, retained locally.");
+        }
+      }
+
+      renderDashboard();
+    }
+
+    async function deleteCharacter(id) {
+      if (!confirm("Are you sure you want to permanently delete this character?")) return;
+
+      localStorage.removeItem(id);
+      let localList = JSON.parse(localStorage.getItem('v20_da_characters_index') || '[]');
+      localList = localList.filter(item => item.id !== id);
+      localStorage.setItem('v20_da_characters_index', JSON.stringify(localList));
+
+      if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+        try {
+          await fetch(API_URL, {
+            method: "POST",
+            body: JSON.stringify({ action: "delete", id: id })
+          });
+        } catch (err) {
+          console.warn("Cloud deletion failed.");
+        }
+      }
+
+      renderDashboard();
+    }
+
+    /* --- DOM DOTS SYSTEM --- */
+
+    function initializeStaticDots() {
+      document.querySelectorAll('.trait').forEach(container => {
+        renderDots(container);
+      });
+    }
+
+    function renderDots(container) {
+      const dotsContainer = container.querySelector('.dots-container');
+      dotsContainer.innerHTML = '';
+      
+      const max = parseInt(container.getAttribute('data-max')) || 6;
+      const min = parseInt(container.getAttribute('data-min')) || 0;
+      const currentVal = parseInt(container.getAttribute('data-value')) ?? parseInt(container.getAttribute('data-default')) ?? min;
+      container.setAttribute('data-value', currentVal);
+
+      for (let i = 1; i <= max; i++) {
+        const dot = document.createElement('span');
+        dot.className = 'dot' + (i <= currentVal ? ' filled' : '');
+        dot.setAttribute('data-index', i);
+        dot.addEventListener('click', () => handleDotClick(container, i));
+        dotsContainer.appendChild(dot);
+      }
+    }
+
+    function handleDotClick(container, clickedIndex) {
+      const min = parseInt(container.getAttribute('data-min')) || 0;
+      let currentVal = parseInt(container.getAttribute('data-value')) || 0;
+
+      if (currentVal === clickedIndex) {
+        currentVal = Math.max(min, currentVal - 1);
+      } else {
+        currentVal = clickedIndex;
+      }
+
+      container.setAttribute('data-value', currentVal);
+      renderDots(container);
+      queueAutoSave();
+    }
+
+    function buildTempPools() {
+      const wpPool = document.getElementById('willpower-temp-pool');
+      wpPool.innerHTML = '';
+      for (let i = 1; i <= 10; i++) {
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.id = `wp-temp-${i}`;
+        cb.addEventListener('change', queueAutoSave);
+        wpPool.appendChild(cb);
+      }
+
+      const bpPool = document.getElementById('blood-pool');
+      bpPool.innerHTML = '';
+      for (let i = 1; i <= 50; i++) {
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.id = `bp-temp-${i}`;
+        cb.addEventListener('change', queueAutoSave);
+        bpPool.appendChild(cb);
+      }
+    }
+
+    /* --- DYNAMIC LIST ADDITIONS --- */
+
+    function handleDisciplineChange(selectEl) {
+      if (selectEl.value === 'custom') {
+        const customName = prompt("Enter the name of the custom Discipline:");
+        if (customName && customName.trim() !== '') {
+          let exists = false;
+          for (let opt of selectEl.options) {
+            if (opt.value === customName) {
+              exists = true;
+              selectEl.value = customName;
+              break;
+            }
+          }
+          if (!exists) {
+            const newOpt = document.createElement('option');
+            newOpt.value = customName;
+            newOpt.text = customName;
+            selectEl.add(newOpt);
+            selectEl.value = customName;
+          }
+        } else {
+          selectEl.value = "";
+        }
+      }
+      queueAutoSave();
+    }
+
+    function addDynamicRow(targetListId, type, initialName = '', initialVal = 0) {
+      const list = document.getElementById(targetListId);
+      const rowId = `dynamic-${type}-${dynamicRowId++}`;
+      
+      const row = document.createElement('div');
+      row.className = 'dynamic-row';
+      row.id = rowId;
+
+      let nameFieldHTML = '';
+      
+      if (type === 'discipline') {
+        const standardDisciplines = [
+          "Abombwe", "Abyss Mysticism", "Animalism", "Auspex", "Bardo", 
+          "Celerity", "Chimerstry", "Clan Sorcery", "Daimonion", 
+          "Dark Thaumaturgy", "Dementation", "Dominate", "Flight", 
+          "Fortitude", "Koldunic Sorcery", "Mytherceria", "Necromancy", 
+          "Obfuscate", "Obtenebration", "Ogham", "Potence", "Presence", 
+          "Protean", "Quietus Cruscitus", "Quietus Hematus", "Serpentis", 
+          "Spiritus", "Temporis", "Thaumaturgy", "Valeren - Healer", 
+          "Valeren - Warrior", "Valeren - Watcher", "Vicissitude"
+        ];
+
+        nameFieldHTML = `<select class="dynamic-name" onchange="handleDisciplineChange(this)" style="flex-grow: 1; background: transparent; border: none; border-bottom: 1px dashed var(--border-color); font-family: inherit; font-size: 0.9rem; color: var(--text-dark);">`;
+        nameFieldHTML += `<option value="custom">Custom...</option>`;
+        nameFieldHTML += `<option value="" disabled ${!initialName ? 'selected' : ''}>Select Discipline...</option>`;
+        
+        if (initialName && !standardDisciplines.includes(initialName)) {
+          nameFieldHTML += `<option value="${initialName}" selected>${initialName}</option>`;
+        }
+        
+        standardDisciplines.forEach(disc => {
+          nameFieldHTML += `<option value="${disc}" ${initialName === disc ? 'selected' : ''}>${disc}</option>`;
+        });
+        
+        nameFieldHTML += `</select>`;
+      } else {
+        nameFieldHTML = `<input type="text" class="dynamic-name" placeholder="Name..." value="${initialName}" oninput="queueAutoSave()">`;
+      }
+
+      row.innerHTML = `
+        ${nameFieldHTML}
+        <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${initialVal}">
+          <div class="dots-container"></div>
+        </div>
+        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
+      `;
+
+      list.appendChild(row);
+      renderDots(row.querySelector('.trait'));
+      queueAutoSave();
+    }
+
+    function addCustomRow(targetListId, type, name = '', costType = '', costValue = '') {
+      const list = document.getElementById(targetListId);
+      const rowId = `custom-${type}-${dynamicRowId++}`;
+      const placeholderName = type === 'merit' ? 'Merit Name...' : 'Flaw Name...';
+      const placeholderVal = type === 'merit' ? 'Cost...' : 'Bonus...';
+      
+      const row = document.createElement('div');
+      row.className = 'dynamic-row';
+      row.id = rowId;
+
+      row.innerHTML = `
+        <input type="text" class="dynamic-name" style="width: 50%" placeholder="${placeholderName}" value="${name}" oninput="queueAutoSave()">
+        <input type="text" class="dynamic-type" style="width: 25%" placeholder="Type..." value="${costType}" oninput="queueAutoSave()">
+        <input type="text" class="dynamic-val" style="width: 15%" placeholder="${placeholderVal}" value="${costValue}" oninput="queueAutoSave()">
+        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
+      `;
+
+      list.appendChild(row);
+      queueAutoSave();
+    }
+
+    function addOtherTraitRow(targetListId, name = '', val = 0) {
+      const list = document.getElementById(targetListId);
+      const rowId = `other-trait-${dynamicRowId++}`;
+      
+      const row = document.createElement('div');
+      row.className = 'dynamic-row';
+      row.id = rowId;
+
+      row.innerHTML = `
+        <input type="text" class="dynamic-name" placeholder="Other Trait..." value="${name}" oninput="queueAutoSave()">
+        <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${val}">
+          <div class="dots-container"></div>
+        </div>
+        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
+      `;
+
+      list.appendChild(row);
+      renderDots(row.querySelector('.trait'));
+      queueAutoSave();
+    }
+
+    function addRitualRow(targetListId, name = '', level = 1) {
+      const list = document.getElementById(targetListId);
+      const rowId = `ritual-${dynamicRowId++}`;
+      
+      const row = document.createElement('div');
+      row.className = 'dynamic-row';
+      row.id = rowId;
+
+      row.innerHTML = `
+        <input type="text" class="dynamic-name" style="width: 70%" placeholder="Ritual Name..." value="${name}" oninput="queueAutoSave()">
+        <input type="number" class="dynamic-val" style="width: 20%" min="1" max="5" value="${level}" oninput="queueAutoSave()">
+        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
+      `;
+
+      list.appendChild(row);
+      queueAutoSave();
+    }
+
+    function addPathRow(targetListId, name = '', val = 0) {
+      const list = document.getElementById(targetListId);
+      const rowId = `path-${dynamicRowId++}`;
+      
+      const row = document.createElement('div');
+      row.className = 'dynamic-row';
+      row.id = rowId;
+
+      row.innerHTML = `
+        <input type="text" class="dynamic-name" placeholder="Path Name..." value="${name}" oninput="queueAutoSave()">
+        <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${val}">
+          <div class="dots-container"></div>
+        </div>
+        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
+      `;
+
+      list.appendChild(row);
+      renderDots(row.querySelector('.trait'));
+      queueAutoSave();
+    }
+
+    function addDerangementRow(targetListId, name = '') {
+      const list = document.getElementById(targetListId);
+      const rowId = `derangement-${dynamicRowId++}`;
+      
+      const row = document.createElement('div');
+      row.className = 'dynamic-row';
+      row.id = rowId;
+
+      row.innerHTML = `
+        <input type="text" class="dynamic-name" style="width: 90%" placeholder="Derangement..." value="${name}" oninput="queueAutoSave()">
+        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
+      `;
+
+      list.appendChild(row);
+      queueAutoSave();
+    }
+
+    function addCombatAttackRow(weapon = '', diff = '', dmg = '', range = '', rate = '', clip = '', conceal = '') {
+      const tbody = document.querySelector('#combat-attacks-table tbody');
+      const rowId = `combat-row-${dynamicRowId++}`;
+      const tr = document.createElement('tr');
+      tr.id = rowId;
+      tr.innerHTML = `
+        <td><input type="text" class="c-weapon" value="${weapon}" oninput="queueAutoSave()"></td>
+        <td><input type="text" class="c-diff" value="${diff}" oninput="queueAutoSave()"></td>
+        <td><input type="text" class="c-dmg" value="${dmg}" oninput="queueAutoSave()"></td>
+        <td><input type="text" class="c-range" value="${range}" oninput="queueAutoSave()"></td>
+        <td><input type="text" class="c-rate" value="${rate}" oninput="queueAutoSave()"></td>
+        <td><input type="text" class="c-clip" value="${clip}" oninput="queueAutoSave()"></td>
+        <td><input type="text" class="c-conceal" value="${conceal}" oninput="queueAutoSave()"></td>
+        <td style="text-align: center;"><button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button></td>
+      `;
+      tbody.appendChild(tr);
+      queueAutoSave();
+    }
+  </script>
+</body>
+</html>
