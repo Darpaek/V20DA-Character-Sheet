@@ -847,15 +847,31 @@
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       
-      document.getElementById(tabId).classList.add('active');
-      const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => btn.getAttribute('onclick').includes(tabId));
+      const tabEl = document.getElementById(tabId);
+      if (tabEl) tabEl.classList.add('active');
+
+      const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => {
+        const onclickAttr = btn.getAttribute('onclick');
+        return onclickAttr && onclickAttr.includes(tabId);
+      });
       if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    function safeParseJSON(str, fallback = []) {
+      try {
+        if (!str) return fallback;
+        const parsed = JSON.parse(str);
+        return Array.isArray(parsed) ? parsed : fallback;
+      } catch (e) {
+        console.warn("Corrupted JSON detected, returning fallback:", e);
+        return fallback;
+      }
     }
 
     async function getCharacterList() {
       if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
         const list = localStorage.getItem('v20_da_characters_index');
-        return list ? JSON.parse(list) : [];
+        return safeParseJSON(list, []);
       }
       try {
         const response = await fetch(API_URL);
@@ -863,12 +879,12 @@
       } catch (err) {
         console.warn("Cloud list fetch failed, falling back to LocalStorage:", err);
         const list = localStorage.getItem('v20_da_characters_index');
-        return list ? JSON.parse(list) : [];
+        return safeParseJSON(list, []);
       }
     }
 
     function saveLocalIndex(charId, name, clan, road) {
-      const list = JSON.parse(localStorage.getItem('v20_da_characters_index') || '[]');
+      const list = safeParseJSON(localStorage.getItem('v20_da_characters_index'), []);
       const index = list.findIndex(item => item.id === charId);
       if (index !== -1) {
         list[index].name = name;
@@ -965,7 +981,7 @@
       setSaveStatus('Loading draft...');
 
       if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
-        const sheetData = JSON.parse(localStorage.getItem(id));
+        const sheetData = safeParseJSON(localStorage.getItem(id), null);
         if (sheetData) {
           loadSheetIntoDOM(sheetData);
           document.getElementById('dashboard-view').classList.remove('active');
@@ -988,7 +1004,7 @@
         setSaveStatus('Draft Loaded (Cloud)');
       } catch (err) {
         console.warn("Cloud fetch failed, trying local fallback...", err);
-        const sheetData = JSON.parse(localStorage.getItem(id));
+        const sheetData = safeParseJSON(localStorage.getItem(id), null);
         if (sheetData) {
           loadSheetIntoDOM(sheetData);
           document.getElementById('dashboard-view').classList.remove('active');
@@ -1017,13 +1033,13 @@
       let sourceData = null;
 
       if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
-        sourceData = JSON.parse(localStorage.getItem(id));
+        sourceData = safeParseJSON(localStorage.getItem(id), null);
       } else {
         try {
           const response = await fetch(`${API_URL}?id=${id}`);
           sourceData = await response.json();
         } catch (err) {
-          sourceData = JSON.parse(localStorage.getItem(id));
+          sourceData = safeParseJSON(localStorage.getItem(id), null);
         }
       }
 
@@ -1052,7 +1068,7 @@
       if (!confirm("Are you sure you want to permanently delete this character?")) return;
 
       localStorage.removeItem(id);
-      let localList = JSON.parse(localStorage.getItem('v20_da_characters_index') || '[]');
+      let localList = safeParseJSON(localStorage.getItem('v20_da_characters_index'), []);
       localList = localList.filter(item => item.id !== id);
       localStorage.setItem('v20_da_characters_index', JSON.stringify(localList));
 
@@ -1080,11 +1096,24 @@
 
     function renderDots(container) {
       const dotsContainer = container.querySelector('.dots-container');
+      if (!dotsContainer) return;
       dotsContainer.innerHTML = '';
       
       const max = parseInt(container.getAttribute('data-max')) || 6;
       const min = parseInt(container.getAttribute('data-min')) || 0;
-      const currentVal = parseInt(container.getAttribute('data-value')) ?? parseInt(container.getAttribute('data-default')) ?? min;
+      
+      const valAttr = container.getAttribute('data-value');
+      const defAttr = container.getAttribute('data-default');
+      const parsedVal = valAttr !== null ? parseInt(valAttr) : NaN;
+      const parsedDef = defAttr !== null ? parseInt(defAttr) : NaN;
+
+      let currentVal = min;
+      if (!isNaN(parsedVal)) {
+        currentVal = parsedVal;
+      } else if (!isNaN(parsedDef)) {
+        currentVal = parsedDef;
+      }
+
       container.setAttribute('data-value', currentVal);
 
       for (let i = 1; i <= max; i++) {
