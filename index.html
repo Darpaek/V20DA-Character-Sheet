@@ -276,6 +276,10 @@
       margin-bottom: 25px;
     }
 
+    .info-grid label {
+      font-weight: bold;
+    }
+
     .info-group {
       display: flex;
       flex-direction: column;
@@ -863,7 +867,9 @@
         { level: 3, name: "Song of Serenity", desc: "Dulls strong emotions in a target, suppressing frenzy or crushing a mortal's will.", sys: "<strong>Roll Manipulation + Intimidation</strong> if asserting dominance through fear, or <strong>Roll Manipulation + Empathy</strong> to soothe the victim into complacency. Both rolls are difficulty 7. This is an extended action, requiring successes equal to the victim’s Willpower dots." },
         { level: 4, name: "Subsume the Spirit", desc: "Possesses the mind and physical body of a targeted animal.", sys: "The vampire must make eye contact with the animal. <strong>Roll Manipulation + Animal Ken</strong> (difficulty 8)." },
         { level: 5, name: "Unleash the Beast", desc: "Ejects the vampire's own Beast into another target, driving them into a violent frenzy.", sys: "The vampire must establish eye contact to eject her Beast. <strong>Roll Manipulation + Self-Control/Instinct</strong> (difficulty 8)." },
-        { level: 6, name: "Animal Succulence", desc: "Maximizes nourishment, allowing the user to thrive longer on animal blood.", sys: "No roll is needed; once learned, this power is always in effect. Each blood point taken from an animal effectively becomes two." }
+        { level: 6, name: "Animal Succulence", desc: "Maximizes nourishment, allowing the user to thrive longer on animal blood.", sys: "No roll is needed; once learned, this power is always in effect. Each blood point taken from an animal effectively becomes two." },
+        { level: 6, name: "The Twin Souls", desc: "Establishes a permanent, shared sensory and mental bond with a touched animal.", sys: "The vampire touches the animal. <strong>Roll Perception + Animal Ken</strong> (difficulty 6). Maintaining the power requires one Willpower point per turn." },
+        { level: 6, name: "The Tongue of Beasts", desc: "Communicates with entire groups of animals without establishing eye contact.", sys: "No roll is required. The character can choose one group of animals with which to speak at any given time." }
       ],
       "Auspex": [
         { level: 1, name: "Heightened Senses", desc: "Sharpens all five senses, doubling sight/hearing ranges.", sys: "This power costs nothing, is reflexive, and requires no rolls to use. When activated, any roll related to the sense’s use is decreased in difficulty by the character’s Auspex dots." },
@@ -871,7 +877,9 @@
         { level: 3, name: "The Spirit's Touch", desc: "Reads psychic and emotional impressions left on touched physical objects.", sys: "<strong>Roll Perception + Empathy</strong> (difficulty varies by age and strength of impression)." },
         { level: 4, name: "Invade the Mind", desc: "Probes deep thoughts or implants foreign ideas into a victim's mind.", sys: "<strong>Roll Intelligence + Subterfuge</strong> (difficulty equal to the victim's current Willpower points)." },
         { level: 5, name: "Soul's Flight", desc: "Projects the vampire's soul into the astral plane, leaving the body in torpor.", sys: "The player spends a Willpower point and <strong>Roll Intelligence + Awareness</strong>." },
-        { level: 6, name: "Far Sense", desc: "Projects senses to a familiar location or person from afar, keeping the user aware of their actual body.", sys: "<strong>Roll Perception + Empathy</strong> (difficulty 6, describing the person she is trying to spy on)." }
+        { level: 6, name: "Far Sense", desc: "Projects senses to a familiar location or person from afar, keeping the user aware of their actual body.", sys: "<strong>Roll Perception + Empathy</strong> (difficulty 6, describing the person she is trying to spy on)." },
+        { level: 6, name: "The Heart's Desire", desc: "Senses exactly what a social partner wishes to hear by reading subtle cues.", sys: "To activate The Heart’s Desire, the player spends a blood point and <strong>Roll Perception + Empathy</strong> (difficulty equal to the partner’s current Willpower points)." },
+        { level: 6, name: "Soul Bond", desc: "Binds the user's soul to a person, place, or thing, allowing them to project senses there at any time.", sys: "Spend a Willpower point to initiate Soul Bond. <strong>Roll Intelligence + Occult</strong> (difficulty 7 or the person’s current Willpower points, whichever is higher)." }
       ],
       "Bardo": [
         { level: 1, name: "Restore Humanitas", desc: "Attempts to restore lost Humanity points without spending experience.", sys: "When the vampire loses a dot of Road of Humanity, he can attempt to regain it without spending experience points. <strong>Roll Conscience</strong> (difficulty equal to the level of Road of Humanity being regained)." },
@@ -887,7 +895,10 @@
         { level: 3, name: "Celerity 3", desc: "Grants +3 yards of movement, +3 Initiative, +3 Dice on Dexterity Rolls.", sys: "Spend 1 blood point to negate multiple action penalties on up to 4 actions. +2 attacks possible. x4 yards." },
         { level: 4, name: "Celerity 4", desc: "Grants +4 yards of movement, +4 Initiative, +4 Dice on Dexterity Rolls.", sys: "Spend 1 blood point to negate multiple action penalties on up to 5 actions. +2 attacks possible. x5 yards." },
         { level: 5, name: "Celerity 5", desc: "Grants +5 yards of movement, +5 Initiative, +5 Dice on Dexterity Rolls.", sys: "Spend 1 blood point to negate multiple action penalties on up to 6 actions. +3 attacks possible. x6 yards." },
-        { level: 6, name: "Celerity 6", desc: "Grants +6 yards of movement, +6 Initiative, +6 Dice on Dexterity Rolls.", sys: "Spend 1 blood point to negate multiple action penalties on up to 7 actions. +3 attacks possible. x7 yards." }
+        { level: 6, name: "Celerity 6", desc: "Grants +6 yards of movement, +6 Initiative, +6 Dice on Dexterity Rolls.", sys: "Spend 1 blood point to negate multiple action penalties on up to 7 actions. +3 attacks possible. x7 yards." },
+        { level: 6, name: "Momentum", desc: "Channels speed into an instant, devastating blow, adding knockback.", sys: "Spend 2 blood points reflexively. Celerity dots are added as extra dice on a single Strength-based roll." },
+        { level: 6, name: "Precision", desc: "Applies speed to manual tasks to perform exceptionally fine manipulation.", sys: "Spend 1 blood point. Adds Celerity dots as automatic successes to a single roll requiring fine dexterity." },
+        { level: 6, name: "Projectile", desc: "Channels speed into a thrown weapon, forcing it forward faster than a longbow.", sys: "Spend 1 blood point. Choose an amount of Celerity dots to subtract; if the throw hits, add that amount as automatic successes to the damage pool." }
       ],
       "Chimerstry": [
         { level: 1, name: "Ignis Fatuus", desc: "Crafts simple, static illusions that affect a single sense.", sys: "The player spends one Willpower point, and creating the illusions takes the vampire’s action." },
@@ -895,7 +906,10 @@
         { level: 3, name: "Phantasm", desc: "Animates and moves existing Chimerstry illusions.", sys: "After creating an illusion with Ignis Fatuus or Chimaera, spend one blood point to make the illusion move." },
         { level: 4, name: "Permanency", desc: "Extends the duration of an illusion indefinitely.", sys: "The player spends one blood point to make the illusion permanent until dismissed." },
         { level: 5, name: "Horrid Reality", desc: "Inflicts single-target illusions so real they deal actual, unsoakable damage.", sys: "A Horrid Reality illusion costs two Willpower points to create and must target an individual. <strong>Roll Manipulation + Subterfuge</strong> (difficulty the victim’s Perception + Self-Control/Instinct)." },
-        { level: 6, name: "Fatuus Mastery", desc: "Negates Willpower/blood costs for lower-level Chimerstry powers.", sys: "Fatuus Mastery negates the Willpower and blood cost for using the first three levels of Chimerstry." }
+        { level: 6, name: "Fatuus Mastery", desc: "Negates Willpower/blood costs for lower-level Chimerstry powers.", sys: "Fatuus Mastery negates the Willpower and blood cost for using the first three levels of Chimerstry." },
+        { level: 6, name: "Shared Nightmare", desc: "Inflicts a Horrid Reality illusion on an entire crowd of targets simultaneously.", sys: "To use this power, the player must spend two Willpower points plus one blood point per target. <strong>Roll Manipulation + Subterfuge</strong> once, with a difficulty rating of the target’s <strong>Perception + Self-Control/Instinct</strong>." },
+        { level: 6, name: "Blade of the Demons", desc: "Creates an unholy, illusionary blade that deals aggravated damage.", sys: "Spend 1 Willpower point and 1 blood point per die of damage. Aggravated damage." },
+        { level: 6, name: "Far Fatuus", desc: "Allows the user to project illusions into any space they can see or imagine.", sys: "<strong>Roll Perception + Subterfuge</strong> (difficulty based on familiarity)." }
       ],
       "Clan Sorcery": [
         { level: "Sorcery", name: "Clan Sorcery", desc: "Evocative, insular magical practices specific to individual clans and bloodlines (such as *Akhu*, *Dur-An-Ki*, or *Sadhana*).", sys: "All Blood Sorcery Paths and Rituals are activated by spending 1 blood point and <strong>Roll Intelligence + Occult</strong> (Difficulty 6) unless stated otherwise in the power's description." }
@@ -906,7 +920,8 @@
         { level: 3, name: "Tormented Essence", desc: "Hurls a projectile of pure infernal suffering at an enemy.", sys: "Spend a blood point per level of aggravated damage to inflict. The player <strong>Roll Dexterity + Occult</strong> (difficulty 6) to hit." },
         { level: 4, name: "Psychomachia", desc: "Forces a victim's vice to manifest as a physical, hostile apparition they must battle.", sys: "After successfully using Sense the Sin, the vampire forces the target to <strong>Roll Virtue</strong> (difficulty of the Baali's Willpower) using their lowest Virtue." },
         { level: 5, name: "Condemnation", desc: "Places a powerful, long-term curse upon a victim.", sys: "<strong>Roll Intelligence + Occult</strong> (difficulty equal to the subject's Willpower)." },
-        { level: 6, name: "Hell-Born Investiture", desc: "Grants demonic physical traits, such as flight or fire immunity.", sys: "The most typical manifestation of this power incorporates immunity to the damaging effects of fire." }
+        { level: 6, name: "Hell-Born Investiture", desc: "Grants demonic physical traits, such as flight or fire immunity.", sys: "The most typical manifestation of this power incorporates immunity to the damaging effects of fire." },
+        { level: 6, name: "Lure Diabolik", desc: "Speaks the dark truths of the void to strip Road dots from a target.", sys: "Spend 1 Willpower point and <strong>Roll Manipulation + Empathy</strong> vs target's Willpower points." }
       ],
       "Dark Thaumaturgy": [
         { level: "Sorcery", name: "Dark Thaumaturgy", desc: "A corrupted, highly illicit discipline of blood sorcery fueled by pacts with demons, spirits, and the dark entities of the Outer Dark, offering terrifying destructive power at the cost of the user's soul.", sys: "All Blood Sorcery Paths and Rituals are activated by spending 1 blood point and <strong>Roll Intelligence + Occult</strong> (Difficulty 6) unless stated otherwise in the power's description." }
@@ -917,7 +932,8 @@
         { level: 3, name: "Eyes of Chaos", desc: "Scrutinizes complex patterns, layout arrays, or social networks to divine hidden truths.", sys: "<strong>Roll Perception + Enigmas</strong> (difficulty varies based on available information)." },
         { level: 4, name: "Fire Voice", desc: "Induces a Rotschreck-like fear of fire in a target or crowd.", sys: "<strong>Roll Manipulation + Empathy</strong> (difficulty 7)." },
         { level: 5, name: "Shedding the Mask", desc: "Overwhelms a victim's mind with raw, unmitigated madness.", sys: "The player spends a blood point and <strong>Roll Manipulation + Intimidation</strong> (difficulty of her victim’s current Willpower points)." },
-        { level: 6, name: "The Call", desc: "Sends a general pulse or telepathic message over the Madness Network.", sys: "To Call, a Malkavian (and only a Malkavian) names another Malkavian of equal or lesser Generation, then <strong>Roll Perception + Empathy</strong> (difficulty 6)." }
+        { level: 6, name: "The Call", desc: "Sends a general pulse or telepathic message over the Madness Network.", sys: "To Call, a Malkavian (and only a Malkavian) names another Malkavian of equal or lesser Generation, then <strong>Roll Perception + Empathy</strong> (difficulty 6)." },
+        { level: 6, name: "Stain the Soul", desc: "Permanently inflicts a chosen Derangement upon a target's soul.", sys: "The player spends a Willpower point and <strong>Roll Manipulation + Empathy</strong> at a difficulty equal to the victim’s current Willpower points." }
       ],
       "Dominate": [
         { level: 1, name: "Command", desc: "Forces a victim to obey a single, spoken word.", sys: "Eye contact required. <strong>Roll Manipulation + Intimidation</strong> vs target's current Willpower points (as difficulty)." },
@@ -925,7 +941,9 @@
         { level: 3, name: "The Forgetful Mind", desc: "Erases, alters, or reconstructs a target's memories.", sys: "<strong>Roll Wits + Subterfuge</strong> vs target's current Willpower points (as difficulty)." },
         { level: 4, name: "Conditioning", desc: "Strips the victim's individual personality, locking them into a compliant puppet.", sys: "As an extended action, <strong>Roll Charisma + Leadership</strong>. Total successes needed is 5 * target's <strong>Self-Control</strong> or <strong>Instinct</strong>." },
         { level: 5, name: "Possession", desc: "Supplants the vampire's consciousness into a mortal body.", sys: "<strong>Roll Charisma + Intimidation</strong> vs target's <strong>Roll Willpower</strong> (both at difficulty 7) in a clash of wills." },
-        { level: 6, name: "Chain the Psyche", desc: "Wracks disobedient thralled subjects with crippling physical pain.", sys: "Spend 1 blood point. <strong>Roll Manipulation + Intimidation</strong> vs target's <strong>Stamina + Empathy</strong> (as difficulty)." }
+        { level: 6, name: "Chain the Psyche", desc: "Wracks disobedient thralled subjects with crippling physical pain.", sys: "Spend 1 blood point. <strong>Roll Manipulation + Intimidation</strong> vs target's <strong>Stamina + Empathy</strong> (as difficulty)." },
+        { level: 6, name: "Obedience", desc: "Allows use of Dominate through skin-to-skin contact, omitting eye contact.", sys: "Passive upgrade. No roll is required." },
+        { level: 6, name: "Loyalty", desc: "Shields your thralls from other users of Dominate.", sys: "Passive upgrade. Increases the difficulty of other's Dominate rolls by 3." }
       ],
       "Flight": [
         { level: 1, name: "Glide", desc: "Gargoyle glides safely, but cannot fly upward.", sys: "No roll, passive. Carrying over 2 lbs causes them to fall." },
@@ -941,7 +959,8 @@
         { level: 3, name: "Fortitude 3", desc: "Supernatural toughness to resist and absorb physical trauma.", sys: "Spend 1 blood point to automatically succeed at 3 soak dice. Cannot be used against fire or sunlight." },
         { level: 4, name: "Fortitude 4", desc: "Supernatural toughness to resist and absorb physical trauma.", sys: "Spend 1 blood point to automatically succeed at 4 soak dice. Cannot be used against fire or sunlight." },
         { level: 5, name: "Fortitude 5", desc: "Supernatural toughness to resist and absorb physical trauma.", sys: "Spend 1 blood point to automatically succeed at 5 soak dice. Cannot be used against fire or sunlight." },
-        { level: 6, name: "Fortitude 6", desc: "Supernatural toughness to resist and absorb physical trauma.", sys: "Paint blood on target's forehead. Spend 1 blood and 1 Willpower. <strong>Roll Stamina + Survival</strong> (difficulty 8)." }
+        { level: 6, name: "Fortitude 6", desc: "Supernatural toughness to resist and absorb physical trauma.", sys: "Paint blood on target's forehead. Spend 1 blood and 1 Willpower. <strong>Roll Stamina + Survival</strong> (difficulty 8)." },
+        { level: 6, name: "The Knight's Bane", desc: "Hardens skin like wrought iron, shattering incoming weapons.", sys: "Spend 2 blood points. If your soak roll reduces damage to zero, the attacking weapon is destroyed." }
       ],
       "Koldunic Sorcery": [
         { level: "Sorcery", name: "Koldunic Sorcery", desc: "The ancient Tzimisce art of landscape sorcery, drawing upon direct communion with the elements, rivers, and chthonic spirits of the Carpathian territory.", sys: "All Blood Sorcery Paths and Rituals are activated by spending 1 blood point and <strong>Roll Intelligence + Occult</strong> (Difficulty 6) unless stated otherwise in the power's description." }
@@ -986,7 +1005,8 @@
         { level: 3, name: "Potence 3", desc: "Supernatural physical strength allowing immense feats of force.", sys: "Spend 1 blood point for 3 automatic successes on Strength Rolls." },
         { level: 4, name: "Potence 4", desc: "Supernatural physical strength allowing immense feats of force.", sys: "Spend 1 blood point for 4 automatic successes on Strength Rolls." },
         { level: 5, name: "Potence 5", desc: "Supernatural physical strength allowing immense feats of force.", sys: "Spend 1 blood point for 5 automatic successes on Strength Rolls." },
-        { level: 6, name: "Potence 6", desc: "Supernatural physical strength allowing immense feats of force.", sys: "Spend 1 blood point for 6 automatic successes on Strength Rolls." }
+        { level: 6, name: "Potence 6", desc: "Supernatural physical strength allowing immense feats of force.", sys: "Spend 1 blood point for 6 automatic successes on Strength Rolls." },
+        { level: 6, name: "Crush", desc: "Refines muscle output to instantly destroy physical shields, weapons, or items.", sys: "Spend 2 blood points. A successful physical strike automatically destroys the targeted item." }
       ],
       "Presence": [
         { level: 1, name: "Awe", desc: "Captures the complete attention of everyone in the immediate vicinity.", sys: "The player spends a blood point and chooses what impression she wants to make. <strong>Roll Charisma + Performance</strong> (difficulty 7)." },
@@ -994,7 +1014,10 @@
         { level: 3, name: "Entrancement", desc: "Binds a target into absolute, loving service.", sys: "The player spends a blood point and <strong>Roll Appearance + Empathy</strong> (difficulty equal to the target's current Willpower points)." },
         { level: 4, name: "Summon", desc: "Calls any individual the vampire has met to travel immediately to their side.", sys: "The player spends a blood point and <strong>Roll Charisma + Subterfuge</strong>. The base difficulty is 5; this increases to difficulty 7 if the vampire only met the subject briefly." },
         { level: 5, name: "Majesty", desc: "Projects an aura of absolute, respect-inducing authority.", sys: "No roll is required on the part of the vampire, but she must spend a Willpower point. A subject must pass a <strong>Roll Courage</strong> (difficulty equal to the vampire's <strong>Charisma + Intimidation</strong>, to a maximum of 9)." },
-        { level: 6, name: "Kingmaker", desc: "Projects social grace to boost another character's Social pools.", sys: "Spend 1 blood point and <strong>Roll Manipulation + Empathy</strong> (difficulty 7)." }
+        { level: 6, name: "Kingmaker", desc: "Projects social grace to boost another character's Social pools.", sys: "Spend 1 blood point and <strong>Roll Manipulation + Empathy</strong> (difficulty 7)." },
+        { level: 6, name: "Love", desc: "Artificially simulates the emotional bonds of a full blood oath.", sys: "Spend 1 blood point. <strong>Roll Charisma + Subterfuge</strong> (difficulty equal to the target's current Willpower points)." },
+        { level: 6, name: "Paralyzing Glance", desc: "Freezes an individual in pure, whimpering, catatonic terror.", sys: "Make eye contact. <strong>Roll Manipulation + Intimidation</strong> (difficulty equal to the target's current Willpower points)." },
+        { level: 6, name: "Spark of Rage", desc: "Starts fights and causes vampires to frenzy.", sys: "Spend 1 blood point and <strong>Roll Manipulation + Subterfuge</strong> (difficulty 8)." }
       ],
       "Protean": [
         { level: 1, name: "Eyes of the Beast", desc: "Eyes glow red, allowing perfect sight in pitch darkness.", sys: "No roll is necessary. The vampire simply wills herself to see in the darkness." },
@@ -1002,7 +1025,12 @@
         { level: 3, name: "Earth Meld", desc: "Sinks the user's body into the soil to sleep in complete safety.", sys: "To enter the soil, the vampire spends a turn joining her flesh with the dirt. Her player spends a blood point and at the end of the turn she is gone." },
         { level: 4, name: "Shape of the Beast", desc: "Transforms the vampire's body into a bat or a grey wolf.", sys: "Changing forms takes three full turns and costs a blood point." },
         { level: 5, name: "Lurking Mists", desc: "Transforms the body into an insubstantial, floating mist.", sys: "No roll is needed; expending a blood point activates this power." },
-        { level: 6, name: "Adaptation", desc: "Body rapidly shifts to ignore extreme environmental hazards (falls, temperatures).", sys: "Spend 1 blood point, automatic." }
+        { level: 6, name: "Adaptation", desc: "Body rapidly shifts to ignore extreme environmental hazards (falls, temperatures).", sys: "Spend 1 blood point, automatic." },
+        { level: 6, name: "Earth Control", desc: "Glides through natural soil and rock as if it were water.", sys: "No roll required. Moves at half normal walking speed." },
+        { level: 6, name: "Ephemeral Slumber", desc: "Allows the user to sleep in mist form during the day.", sys: "Spend 1 Willpower point while activating Lurking Mists." },
+        { level: 6, name: "Flesh of Marble", desc: "Hardens the body's skin into fine, poreless stone.", sys: "Spend 3 blood points, reflexive. Reduces damage dice pools by half." },
+        { level: 6, name: "Loki's Gift", desc: "Assumes the exact physical form of the last individual fed upon.", sys: "Spend 2 blood points, takes 2 turns." },
+        { level: 6, name: "Reversion to the True Form", desc: "The vampire prevents shapeshifters from shifting.", sys: "Touch the victim and spend 1 Willpower point. <strong>Roll Manipulation + Animal Ken</strong> (difficult of target's Willpower)." }
       ],
       "Quietus Cruscitus": [
         { level: 1, name: "Blood Essence", desc: "Calcifies a victim's heart into a glass-like flask preserving their soul.", sys: "Exsanguinate the victim, touch them, and calcify their heart. <strong>Roll Wits + Subterfuge</strong> or an extended <strong>Roll Willpower</strong> (difficulty 9)." },
@@ -1103,6 +1131,9 @@
         return;
       }
 
+      // Sort alphabetically by Discipline Name [1]
+      activeDisciplines.sort((a, b) => a.name.localeCompare(b.name));
+
       activeDisciplines.forEach(item => {
         const entry = disciplineDatabase[item.name];
         if (!entry) return;
@@ -1114,7 +1145,8 @@
         discWrapper.style.borderLeft = "3px solid var(--accent-red)";
         discWrapper.style.borderRadius = "0 4px 4px 0";
         
-        let html = `<h3 style="margin: 0 0 12px 0; color: var(--accent-red); font-size: 1.1rem; text-transform: uppercase; border-bottom: 1px solid rgba(140, 126, 110, 0.3); padding-bottom: 4px;">${item.name} (${item.dots} Dots)</h3>`;
+        // Output format updated to: Name (Level X) [1]
+        let html = `<h3 style="margin: 0 0 12px 0; color: var(--accent-red); font-size: 1.1rem; text-transform: uppercase; border-bottom: 1px solid rgba(140, 126, 110, 0.3); padding-bottom: 4px;">${item.name} (Level ${item.dots})</h3>`;
 
         // Check if it is a non-leveled unified blood sorcery
         if (entry.length === 1 && entry[0].level === "Sorcery") {
@@ -1125,8 +1157,11 @@
             </div>
           `;
         } else {
-          // Render only up to the trained dot value [1]
-          const displayLevels = entry.slice(0, item.dots);
+          // Robust Level Filtering: displays all powers at or below currently trained dots [1]
+          const displayLevels = entry.filter(lvl => {
+            return typeof lvl.level === 'number' && lvl.level <= item.dots;
+          });
+
           displayLevels.forEach(lvl => {
             html += `
               <div style="margin-bottom: 12px; font-size: 0.9rem; line-height: 1.45; border-bottom: 1px dashed rgba(140, 126, 110, 0.2); padding-bottom: 8px;">
@@ -2173,25 +2208,58 @@
       renderGrimoireDisciplines(); // Synchronize ledger
     }
 
-    /* --- INITIALIZATION --- */
+    /* --- EXTERNAL FILE IO --- */
 
-    document.addEventListener("DOMContentLoaded", async () => {
-      try {
-        buildTempPools();
-      } catch (e) {
-        console.error("Error building temp pools:", e);
-      }
-      try {
-        initializeStaticDots();
-      } catch (e) {
-        console.error("Error initializing static dots:", e);
-      }
-      try {
-        await renderDashboard();
-      } catch (e) {
-        console.error("Error rendering dashboard:", e);
-      }
-    });
+    function triggerManualExport(id) {
+      const exportId = id || activeCharacterId;
+      if (!exportId) return;
+
+      const charData = JSON.parse(localStorage.getItem(exportId));
+      if (!charData) return;
+
+      const filename = `${charData.meta.name || 'Unnamed'}_V20DA_Aligned.json`;
+      const blob = new Blob([JSON.stringify(charData, null, 2)], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+    }
+
+    function importCharacter(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          const newId = 'char_' + Date.now();
+          data.id = newId;
+
+          localStorage.setItem(newId, JSON.stringify(data));
+          saveLocalIndex(newId, data.meta.name, data.meta.clan, data.mechanics ? data.mechanics.roadName : '');
+
+          if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+            try {
+              await fetch(API_URL, {
+                method: "POST",
+                body: JSON.stringify(data)
+              });
+            } catch (err) {
+              console.warn("Cloud import failed, backed up locally.");
+            }
+          }
+
+          await renderDashboard();
+          alert("Character imported successfully.");
+        } catch (err) {
+          alert("Could not parse file.");
+          console.error(err);
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
   </script>
 </body>
 </html>
