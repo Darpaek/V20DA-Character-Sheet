@@ -290,7 +290,7 @@
       margin-bottom: 3px;
     }
 
-    .info-group input {
+    .info-group input, .info-group select {
       background: transparent;
       border: none;
       border-bottom: 1px solid var(--border-color);
@@ -300,7 +300,7 @@
       color: var(--text-dark);
     }
 
-    .info-group input:focus {
+    .info-group input:focus, .info-group select:focus {
       outline: none;
       border-bottom-color: var(--accent-red);
     }
@@ -396,6 +396,13 @@
       border-bottom: 1px solid rgba(0,0,0,0.05);
     }
 
+    .health-table th {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      color: #5a5045;
+      padding: 4px;
+    }
+
     .health-table input[type="checkbox"] {
       cursor: pointer;
       width: 14px;
@@ -469,13 +476,27 @@
     }
 
     /* Dropdown customization for perfect readability [1] */
-    .discipline-select-container select option {
+    .discipline-select-container select option,
+    .generation-select-container select option {
       color: var(--text-dark) !important;
       background-color: var(--parchment) !important;
     }
 
     #file-import {
       display: none;
+    }
+
+    /* Alternating Columns for Other Traits Grid layout */
+    #other-traits-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 25px;
+      margin-bottom: 15px;
+    }
+    @media (max-width: 600px) {
+      #other-traits-list {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -528,7 +549,23 @@
             <div class="info-group"><label>Name</label><input type="text" id="char-name" oninput="queueAutoSave()"></div>
             <div class="info-group"><label>Clan</label><input type="text" id="char-clan" oninput="queueAutoSave()"></div>
             <div class="info-group"><label>Sire</label><input type="text" id="char-sire" oninput="queueAutoSave()"></div>
-            <div class="info-group"><label>Generation</label><input type="text" id="char-generation" oninput="queueAutoSave()"></div>
+            <div class="info-group">
+              <label>Generation</label>
+              <div class="generation-select-container" style="position: relative; display: inline-flex; align-items: center; width: 100%;">
+                <select id="char-generation" onchange="handleGenerationChange(this)" style="width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border-color); font-family: inherit; font-size: 1rem; padding: 3px 0; color: var(--text-dark); cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none;">
+                  <option value="">Select Gen...</option>
+                  <option value="13">13th</option>
+                  <option value="12">12th</option>
+                  <option value="11">11th</option>
+                  <option value="10">10th</option>
+                  <option value="9">9th</option>
+                  <option value="8">8th</option>
+                  <option value="7">7th</option>
+                  <option value="custom">Custom...</option>
+                </select>
+                <span class="gen-caret" style="position: absolute; right: 5px; pointer-events: none; color: var(--accent-red); font-size: 0.7rem; font-family: sans-serif;">▼</span>
+              </div>
+            </div>
             <div class="info-group"><label>Nature</label><input type="text" id="char-nature" oninput="queueAutoSave()"></div>
             <div class="info-group"><label>Demeanor</label><input type="text" id="char-demeanor" oninput="queueAutoSave()"></div>
             <div class="info-group"><label>Concept</label><input type="text" id="char-concept" oninput="queueAutoSave()"></div>
@@ -654,13 +691,13 @@
                 <div class="trait" data-id="willpower-perm" data-min="0" data-max="10" data-default="0"><label>Willpower (Rating)</label><div class="dots-container"></div></div>
                 <div class="info-group" style="margin-top: 10px;">
                   <label>Willpower (Temporary Pool)</label>
-                  <div style="display: flex; gap: 5px; margin-top: 5px;" id="willpower-temp-pool"></div>
+                  <div style="display: flex; gap: 5px; margin-top: 5px; justify-content: center;" id="willpower-temp-pool"></div>
                 </div>
               </div>
 
               <div style="border: 1px solid var(--border-color); padding: 10px; border-radius: 4px;">
                 <div class="info-group">
-                  <label style="margin-bottom: 5px;">Blood Pool (Max 50 - 4th Gen)</label>
+                  <label style="margin-bottom: 5px;">Blood Pool <span id="blood-pool-spend-limit">(Spend 1 Blood/Turn)</span></label>
                   <div style="display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px;" id="blood-pool"></div>
                 </div>
               </div>
@@ -669,13 +706,24 @@
             <div class="column">
               <h2>Health & Weakness</h2>
               <table class="health-table">
-                <tr><td>Bruised</td><td>0</td><td style="text-align: right;"><input type="checkbox" id="health-bruised" onchange="queueAutoSave()"></td></tr>
-                <tr><td>Hurt</td><td>-1</td><td style="text-align: right;"><input type="checkbox" id="health-hurt" onchange="queueAutoSave()"></td></tr>
-                <tr><td>Injured</td><td>-1</td><td style="text-align: right;"><input type="checkbox" id="health-injured" onchange="queueAutoSave()"></td></tr>
-                <tr><td>Wounded</td><td>-2</td><td style="text-align: right;"><input type="checkbox" id="health-wounded" onchange="queueAutoSave()"></td></tr>
-                <tr><td>Mauled</td><td>-2</td><td style="text-align: right;"><input type="checkbox" id="health-mauled" onchange="queueAutoSave()"></td></tr>
-                <tr><td>Crippled</td><td>-5</td><td style="text-align: right;"><input type="checkbox" id="health-crippled" onchange="queueAutoSave()"></td></tr>
-                <tr><td>Incapacitated</td><td>Torpor</td><td style="text-align: right;"><input type="checkbox" id="health-incapacitated" onchange="queueAutoSave()"></td></tr>
+                <thead>
+                  <tr>
+                    <th style="text-align: left; font-size: 0.85rem; font-weight: bold;">Level</th>
+                    <th style="text-align: left; font-size: 0.85rem; font-weight: bold;">Penalty</th>
+                    <th style="text-align: center; font-size: 0.7rem; font-weight: normal; text-transform: uppercase;">Bashing</th>
+                    <th style="text-align: center; font-size: 0.7rem; font-weight: normal; text-transform: uppercase;">Lethal</th>
+                    <th style="text-align: center; font-size: 0.7rem; font-weight: normal; text-transform: uppercase;">Aggravated</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Bruised</td><td>0</td><td style="text-align: center;"><input type="checkbox" id="health-bruised-b" onchange="queueAutoSave()"></td><td style="text-align: center;"><input type="checkbox" id="health-bruised-l" onchange="queueAutoSave()"></td><td style="text-align: center;"><input type="checkbox" id="health-bruised-a" onchange="queueAutoSave()"></td></tr>
+                  <tr><td>Hurt</td><td>-1</td><td style="text-align: center;"><input type="checkbox" id="health-hurt-b" onchange="queueAutoSave()"></td><td style="text-align: center;"><input type="checkbox" id="health-hurt-l" onchange="queueAutoSave()"></td><td style="text-align: center;"><input type="checkbox" id="health-hurt-a" onchange="queueAutoSave()"></td></tr>
+                  <tr><td>Injured</td><td>-1</td><td style="text-align: center;"><input type="checkbox" id="health-injured-b" onchange="queueAutoSave()"></td><td style="text-align: center;"><input type="checkbox" id="health-injured-l" onchange="queueAutoSave()"></td><td style="text-align: center;"><input type="checkbox" id="health-injured-a" onchange="queueAutoSave()"></td></tr>
+                  <tr><td>Wounded</td><td>-2</td><td style="text-align: center;"><input type="checkbox" id="health-wounded-b" onchange="queueAutoSave()"></td><td style="text-align: center;"><input type="checkbox" id="health-wounded-l" onchange="queueAutoSave()"></td><td style="text-align: center;"><input type="checkbox" id="health-wounded-a" onchange="queueAutoSave()"></td></tr>
+                  <tr><td>Mauled</td><td>-2</td><td style="text-align: center;"><input type="checkbox" id="health-mauled-b" onchange="queueAutoSave()"></td><td style="text-align: center;"><input type="checkbox" id="health-mauled-l" onchange="queueAutoSave()"></td><td style="text-align: center;"><input type="checkbox" id="health-mauled-a" onchange="queueAutoSave()"></td></tr>
+                  <tr><td>Crippled</td><td>-5</td><td style="text-align: center;"><input type="checkbox" id="health-crippled-b" onchange="queueAutoSave()"></td><td style="text-align: center;"><input type="checkbox" id="health-crippled-l" onchange="queueAutoSave()"></td><td style="text-align: center;"><input type="checkbox" id="health-crippled-a" onchange="queueAutoSave()"></td></tr>
+                  <tr><td>Incapacitated</td><td>Torpor</td><td style="text-align: center;"><input type="checkbox" id="health-incapacitated-b" onchange="queueAutoSave()"></td><td style="text-align: center;"><input type="checkbox" id="health-incapacitated-l" onchange="queueAutoSave()"></td><td style="text-align: center;"><input type="checkbox" id="health-incapacitated-a" onchange="queueAutoSave()"></td></tr>
+                </tbody>
               </table>
               <div class="text-area-group">
                 <label>Weakness</label>
@@ -751,7 +799,7 @@
 
           <div class="two-col-grid" style="margin-top: 20px;">
             <div class="column">
-              <h3>Armor parameters</h3>
+              <h3>Armor Parameters</h3>
               <div class="info-group"><label>Class</label><input type="text" id="armor-class" oninput="queueAutoSave()"></div>
               <div class="info-group"><label>Rating</label><input type="text" id="armor-rating" oninput="queueAutoSave()"></div>
               <div class="info-group"><label>Penalty</label><input type="text" id="armor-penalty" oninput="queueAutoSave()"></div>
@@ -818,10 +866,10 @@
               <div class="info-group"><label>Hair</label><input type="text" id="desc-hair" oninput="queueAutoSave()"></div>
               <div class="info-group"><label>Eyes</label><input type="text" id="desc-eyes" oninput="queueAutoSave()"></div>
               <div class="info-group"><label>Race / Ethnicity</label><input type="text" id="desc-race" oninput="queueAutoSave()"></div>
-              <div class="info-group"><label>Nationality</label><input type="text" id="desc-nationality" oninput="queueAutoSave()"></div>
+              <div class="info-group"><label>Nationality / Citizenship</label><input type="text" id="desc-nationality" oninput="queueAutoSave()"></div>
               <div class="info-group"><label>Height</label><input type="text" id="desc-height" oninput="queueAutoSave()"></div>
               <div class="info-group"><label>Weight</label><input type="text" id="desc-weight" oninput="queueAutoSave()"></div>
-              <div class="info-group"><label>Sex</label><input type="text" id="desc-sex" oninput="queueAutoSave()"></div>
+              <div class="info-group"><label>Gender Identity</label><input type="text" id="desc-sex" oninput="queueAutoSave()"></div>
             </div>
             <div class="column">
               <h3>Visuals & Records</h3>
@@ -849,6 +897,7 @@
     let saveTimeout = null;
     let dynamicRowId = 0;
     let isLoadingSheet = false; // Flag to prevent auto-saves while sheet DOM is initializing [1]
+    const collapsedDisciplines = {}; // Persistent Grimoire minimizes
 
     // Strict V20 Core Rulebook Discipline Database [1]
     const disciplineDatabase = {
@@ -990,7 +1039,7 @@
         { level: 3, name: "Arms of Ahriman", desc: "Manifests physical shadow tentacles that can attack and grapple.", sys: "<strong>Roll Manipulation + Occult</strong> (difficulty 7)." },
         { level: 4, name: "Nightshades", desc: "Crafts lifelike images and silhouettes out of darkness.", sys: "<strong>Roll Wits + Occult</strong> (difficulty 7)." },
         { level: 5, name: "Tenebrous Avatar", desc: "Transforms the vampire's body into a fluid shadow form.", sys: "Spend 3 blood points, takes 3 turns." },
-        { level: 6, name: "The Darkness Within", desc: "Engulfs a target in Abyssal shadow, draining blood and causing terror.", sys: "Spend 1 blood point and <strong>Roll Willpower</strong> (difficulty 6). Engulfed target loses 2 blood per turn. Targets touched must succeed on a <strong>Roll Stamina</strong> (difficulty 6) each turn they remain in contact." },
+        { level: 6, name: "The Darkness Within", desc: "Engulfs a target in Abyssal shadow, draining blood and causing terror.", sys: "Spend 1 blood point and <strong>Roll Willpower</strong> (difficulty 6). Engulfed target loses 2 blood per turn. Targets touched must succeed on a <strong>Roll Stamina</strong> (difficulty 6) each turn they remain in contact with the cloud." },
         { level: 6, name: "Walk the Abyss", desc: "Steps into any nearby shadow and instantly emerges from another shadow in line of sight.", sys: "<strong>Roll Intelligence + Stealth</strong> (travel) or <strong>Roll Intelligence + Brawl</strong> (grasping objects) at difficulty 7." }
       ],
       "Ogham": [
@@ -1139,6 +1188,8 @@
         const entry = disciplineDatabase[item.name];
         if (!entry) return;
 
+        const isCollapsed = !!collapsedDisciplines[item.name];
+
         const discWrapper = document.createElement('div');
         discWrapper.style.marginBottom = "25px";
         discWrapper.style.padding = "12px 15px";
@@ -1147,10 +1198,43 @@
         discWrapper.style.borderRadius = "0 4px 4px 0";
         discWrapper.id = `grimoire-entry-${item.name.replace(/\s+/g, '-')}`;
         
-        // Output format updated to: Name (Level X) [1]
-        let html = `<h3 style="margin: 0 0 12px 0; color: var(--accent-red); font-size: 1.1rem; text-transform: uppercase; border-bottom: 1px solid rgba(140, 126, 110, 0.3); padding-bottom: 4px;">${item.name} (Level ${item.dots})</h3>`;
+        // Header container with click-to-minimize chevron
+        const headerEl = document.createElement('div');
+        headerEl.style.display = "flex";
+        headerEl.style.justifyContent = "space-between";
+        headerEl.style.alignItems = "center";
+        headerEl.style.cursor = "pointer";
+        headerEl.style.borderBottom = isCollapsed ? "none" : "1px solid rgba(140, 126, 110, 0.3)";
+        headerEl.style.paddingBottom = "4px";
+        headerEl.style.marginBottom = isCollapsed ? "0" : "12px";
 
-        // Check if it is a non-leveled unified blood sorcery
+        const titleEl = document.createElement('h3');
+        titleEl.style.margin = "0";
+        titleEl.style.color = "var(--accent-red)";
+        titleEl.style.fontSize = "1.1rem";
+        titleEl.style.textTransform = "uppercase";
+        titleEl.textContent = `${item.name} (Level ${item.dots})`;
+
+        const chevronEl = document.createElement('span');
+        chevronEl.style.fontSize = "1.1rem";
+        chevronEl.style.transition = "transform 0.2s";
+        chevronEl.style.color = "var(--accent-red)";
+        chevronEl.style.fontWeight = "bold";
+        chevronEl.innerHTML = isCollapsed ? "&#9660;" : "&#9650;"; // Toggle arrow
+
+        headerEl.appendChild(titleEl);
+        headerEl.appendChild(chevronEl);
+        discWrapper.appendChild(headerEl);
+
+        const contentEl = document.createElement('div');
+        contentEl.style.display = isCollapsed ? "none" : "block";
+
+        headerEl.addEventListener('click', () => {
+          collapsedDisciplines[item.name] = !collapsedDisciplines[item.name];
+          renderGrimoireDisciplines();
+        });
+
+        let html = "";
         if (entry.length === 1 && entry[0].level === "Sorcery") {
           html += `
             <div style="margin-bottom: 5px; font-size: 0.9rem; line-height: 1.45;">
@@ -1159,7 +1243,7 @@
             </div>
           `;
         } else {
-          // Robust Level Filtering: displays all powers at or below currently trained dots [1]
+          // Robust Level Filtering
           const displayLevels = entry.filter(lvl => {
             return typeof lvl.level === 'number' && lvl.level <= item.dots;
           });
@@ -1175,7 +1259,8 @@
           });
         }
 
-        discWrapper.innerHTML = html;
+        contentEl.innerHTML = html;
+        discWrapper.appendChild(contentEl);
         container.appendChild(discWrapper);
       });
     }
@@ -1272,14 +1357,22 @@
       const charId = 'char_' + Date.now();
       const initialSheet = {
         id: charId,
-        meta: { name: 'New Character', clan: '', sire: '', generation: '12th', nature: '', demeanor: '', concept: '', chronicle: '' },
+        meta: { name: 'New Character', clan: '', sire: '', generation: '12', nature: '', demeanor: '', concept: '', chronicle: '' },
         attributes: { strength: 1, dexterity: 1, stamina: 1, charisma: 1, manipulation: 1, appearance: 1, perception: 1, intelligence: 1, wits: 1 },
         abilities: {},
         virtues: { virtue_1_type: 'Conscience', virtue_1_val: 1, virtue_2_type: 'Self-Control', virtue_2_val: 1, virtue_3_val: 1 },
         disciplines: [],
         backgrounds: [],
         mechanics: { roadName: '', roadValue: 0, auraValue: '', willpowerPerm: 0, willpowerTemp: Array(10).fill(false), bloodPoolTemp: Array(50).fill(false) },
-        health: { bruised: false, hurt: false, injured: false, wounded: false, mauled: false, crippled: false, incapacitated: false },
+        health: {
+          bruised_b: false, bruised_l: false, bruised_a: false,
+          hurt_b: false, hurt_l: false, hurt_a: false,
+          injured_b: false, injured_l: false, injured_a: false,
+          wounded_b: false, wounded_l: false, wounded_a: false,
+          mauled_b: false, mauled_l: false, mauled_a: false,
+          crippled_b: false, crippled_l: false, crippled_a: false,
+          incapacitated_b: false, incapacitated_l: false, incapacitated_a: false
+        },
         clan_weakness: '',
         merits: [],
         flaws: [],
@@ -1479,31 +1572,115 @@
       container.setAttribute('data-value', currentVal);
       renderDots(container);
       renderGrimoireDisciplines(); // Instantly synchronize Grimoire description updates [1]
+      
+      // Handle dynamic temporary Willpower pool sizing
+      if (container.getAttribute('data-id') === 'willpower-perm') {
+        updateWillpowerTempPool(currentVal);
+      }
+      
       queueAutoSave();
     }
 
     function buildTempPools() {
+      // Initialize willpower temp pool with actual willpower-perm value (defaults to 0)
+      const wpPermEl = document.querySelector('[data-id="willpower-perm"]');
+      const wpVal = wpPermEl ? parseInt(wpPermEl.getAttribute('data-value')) || 0 : 0;
+      updateWillpowerTempPool(wpVal);
+
+      // Initialize blood pool capacity based on current generation selection
+      updateBloodPoolCapacity();
+    }
+
+    function updateWillpowerTempPool(currentRating) {
       const wpPool = document.getElementById('willpower-temp-pool');
       if (!wpPool) return;
+      
+      // Cache currently checked states to preserve them
+      const states = [];
+      wpPool.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        states.push(cb.checked);
+      });
+      
       wpPool.innerHTML = '';
-      for (let i = 1; i <= 10; i++) {
+      const numCheckboxes = parseInt(currentRating) || 0;
+      for (let i = 1; i <= numCheckboxes; i++) {
         const cb = document.createElement('input');
         cb.type = 'checkbox';
         cb.id = `wp-temp-${i}`;
+        cb.checked = states[i - 1] || false;
         cb.addEventListener('change', queueAutoSave);
         wpPool.appendChild(cb);
       }
+    }
 
+    function updateBloodPoolCapacity() {
+      const genSelect = document.getElementById('char-generation');
       const bpPool = document.getElementById('blood-pool');
+      const bpSpendLimitLabel = document.getElementById('blood-pool-spend-limit');
       if (!bpPool) return;
+
+      const genVal = genSelect ? genSelect.value : "";
+      let capacity = 50;
+      let spendLimitText = "(Spend 1 Blood/Turn)";
+
+      if (genVal === "13") { capacity = 10; spendLimitText = "(Spend 1 Blood/Turn)"; }
+      else if (genVal === "12") { capacity = 11; spendLimitText = "(Spend 1 Blood/Turn)"; }
+      else if (genVal === "11") { capacity = 12; spendLimitText = "(Spend 1 Blood/Turn)"; }
+      else if (genVal === "10") { capacity = 13; spendLimitText = "(Spend 1 Blood/Turn)"; }
+      else if (genVal === "9") { capacity = 14; spendLimitText = "(Spend 2 Blood/Turn)"; }
+      else if (genVal === "8") { capacity = 15; spendLimitText = "(Spend 3 Blood/Turn)"; }
+      else if (genVal === "7") { capacity = 20; spendLimitText = "(Spend 4 Blood/Turn)"; }
+      else {
+        capacity = 50;
+        spendLimitText = "(Spend 1 Blood/Turn)";
+      }
+
+      if (bpSpendLimitLabel) {
+        bpSpendLimitLabel.textContent = spendLimitText;
+      }
+
+      // Cache currently checked states to preserve them
+      const states = [];
+      bpPool.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        states.push(cb.checked);
+      });
+
       bpPool.innerHTML = '';
-      for (let i = 1; i <= 50; i++) {
+      for (let i = 1; i <= capacity; i++) {
         const cb = document.createElement('input');
         cb.type = 'checkbox';
         cb.id = `bp-temp-${i}`;
+        cb.checked = states[i - 1] || false;
         cb.addEventListener('change', queueAutoSave);
         bpPool.appendChild(cb);
       }
+    }
+
+    function handleGenerationChange(selectEl) {
+      if (selectEl.value === 'custom') {
+        const customVal = prompt("Enter custom Generation:");
+        if (customVal && customVal.trim() !== '') {
+          let exists = false;
+          for (let opt of selectEl.options) {
+            if (opt.value === customVal) {
+              exists = true;
+              selectEl.value = customVal;
+              break;
+            }
+          }
+          if (!exists) {
+            const newOpt = document.createElement('option');
+            newOpt.value = customVal;
+            newOpt.text = customVal;
+            selectEl.add(newOpt);
+            selectEl.value = customVal;
+          }
+        } else {
+          selectEl.value = "";
+        }
+      }
+      updateBloodPoolCapacity();
+      queueAutoSave();
     }
 
     /* --- DYNAMIC LIST ADDITIONS --- */
@@ -1640,25 +1817,32 @@
       queueAutoSave();
     }
 
-    function addCustomRow(targetListId, type, name = '', costType = '', costValue = '') {
+    function addCustomRow(targetListId, type, name = '', costType = '', costValue = '', description = '') {
       const list = document.getElementById(targetListId);
       if (!list) return;
       const rowId = `custom-${type}-${dynamicRowId++}`;
       const placeholderName = type === 'merit' ? 'Merit Name...' : 'Flaw Name...';
       const placeholderVal = type === 'merit' ? 'Cost...' : 'Bonus...';
       
-      const row = document.createElement('div');
-      row.className = 'dynamic-row';
-      row.id = rowId;
+      const container = document.createElement('div');
+      container.id = rowId;
+      container.className = 'custom-trait-container';
+      container.style.marginBottom = "12px";
+      container.style.display = "flex";
+      container.style.flexDirection = "column";
+      container.style.width = "100%";
 
-      row.innerHTML = `
-        <input type="text" class="dynamic-name" style="width: 50%" placeholder="${placeholderName}" value="${name}" oninput="queueAutoSave()">
-        <input type="text" class="dynamic-type" style="width: 25%" placeholder="Type..." value="${costType}" oninput="queueAutoSave()">
-        <input type="text" class="dynamic-val" style="width: 15%" placeholder="${placeholderVal}" value="${costValue}" oninput="queueAutoSave()">
-        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
+      container.innerHTML = `
+        <div class="dynamic-row" style="display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 4px;">
+          <input type="text" class="dynamic-name" style="width: 50%" placeholder="${placeholderName}" value="${name}" oninput="queueAutoSave()">
+          <input type="text" class="dynamic-type" style="width: 23%" placeholder="Type..." value="${costType}" oninput="queueAutoSave()">
+          <input type="text" class="dynamic-val" style="width: 15%" placeholder="${placeholderVal}" value="${costValue}" oninput="queueAutoSave()">
+          <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();" style="font-size: 1.2rem;">&times;</button>
+        </div>
+        <textarea class="dynamic-desc" rows="2" style="width: 100%; box-sizing: border-box; font-family: inherit; font-size: 0.85rem; padding: 4px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-color); resize: vertical; margin-bottom: 8px;" placeholder="Description..." oninput="queueAutoSave()">${description}</textarea>
       `;
 
-      list.appendChild(row);
+      list.appendChild(container);
       queueAutoSave();
     }
 
@@ -1670,13 +1854,18 @@
       const row = document.createElement('div');
       row.className = 'dynamic-row';
       row.id = rowId;
+      row.style.display = "flex";
+      row.style.alignItems = "center";
+      row.style.justifyContent = "space-between";
+      row.style.width = "100%";
+      row.style.gap = "8px";
 
       row.innerHTML = `
-        <input type="text" class="dynamic-name" placeholder="Other Trait..." value="${name}" oninput="queueAutoSave()">
-        <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${val}">
+        <input type="text" class="dynamic-name" placeholder="Other Trait..." value="${name}" oninput="queueAutoSave()" style="flex-grow: 1; min-width: 50px;">
+        <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${val}" style="flex-shrink: 0;">
           <div class="dots-container"></div>
         </div>
-        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
+        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();" style="flex-shrink: 0;">&times;</button>
       `;
 
       list.appendChild(row);
@@ -1730,16 +1919,21 @@
       if (!list) return;
       const rowId = `derangement-${dynamicRowId++}`;
       
-      const row = document.createElement('div');
-      row.className = 'dynamic-row';
-      row.id = rowId;
+      const container = document.createElement('div');
+      container.id = rowId;
+      container.className = 'derangement-row-container';
+      container.style.display = "flex";
+      container.style.alignItems = "start";
+      container.style.gap = "8px";
+      container.style.marginBottom = "8px";
+      container.style.width = "100%";
 
-      row.innerHTML = `
-        <input type="text" class="dynamic-name" style="width: 90%" placeholder="Derangement..." value="${name}" oninput="queueAutoSave()">
-        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
+      container.innerHTML = `
+        <textarea class="dynamic-name" rows="3" style="flex-grow: 1; box-sizing: border-box; font-family: inherit; font-size: 0.9rem; padding: 6px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-color); resize: vertical;" placeholder="Derangement details..." oninput="queueAutoSave()">${name}</textarea>
+        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();" style="align-self: center; font-size: 1.2rem;">&times;</button>
       `;
 
-      list.appendChild(row);
+      list.appendChild(container);
       queueAutoSave();
     }
 
@@ -1854,13 +2048,27 @@
           bloodPoolTemp: []
         },
         health: {
-          bruised: document.getElementById('health-bruised').checked,
-          hurt: document.getElementById('health-hurt').checked,
-          injured: document.getElementById('health-injured').checked,
-          wounded: document.getElementById('health-wounded').checked,
-          mauled: document.getElementById('health-mauled').checked,
-          crippled: document.getElementById('health-crippled').checked,
-          incapacitated: document.getElementById('health-incapacitated').checked,
+          bruised_b: document.getElementById('health-bruised-b').checked,
+          bruised_l: document.getElementById('health-bruised-l').checked,
+          bruised_a: document.getElementById('health-bruised-a').checked,
+          hurt_b: document.getElementById('health-hurt-b').checked,
+          hurt_l: document.getElementById('health-hurt-l').checked,
+          hurt_a: document.getElementById('health-hurt-a').checked,
+          injured_b: document.getElementById('health-injured-b').checked,
+          injured_l: document.getElementById('health-injured-l').checked,
+          injured_a: document.getElementById('health-injured-a').checked,
+          wounded_b: document.getElementById('health-wounded-b').checked,
+          wounded_l: document.getElementById('health-wounded-l').checked,
+          wounded_a: document.getElementById('health-wounded-a').checked,
+          mauled_b: document.getElementById('health-mauled-b').checked,
+          mauled_l: document.getElementById('health-mauled-l').checked,
+          mauled_a: document.getElementById('health-mauled-a').checked,
+          crippled_b: document.getElementById('health-crippled-b').checked,
+          crippled_l: document.getElementById('health-crippled-l').checked,
+          crippled_a: document.getElementById('health-crippled-a').checked,
+          incapacitated_b: document.getElementById('health-incapacitated-b').checked,
+          incapacitated_l: document.getElementById('health-incapacitated-l').checked,
+          incapacitated_a: document.getElementById('health-incapacitated-a').checked,
         },
         clan_weakness: document.getElementById('clan-weakness').value,
         merits: [],
@@ -1952,19 +2160,21 @@
         if (name || val > 0) data.backgrounds.push({ name, rating: val });
       });
 
-      document.querySelectorAll('#merits-list .dynamic-row').forEach(row => {
+      document.querySelectorAll('#merits-list .custom-trait-container').forEach(container => {
         data.merits.push({
-          name: row.querySelector('.dynamic-name').value,
-          type: row.querySelector('.dynamic-type').value,
-          val: row.querySelector('.dynamic-val').value
+          name: container.querySelector('.dynamic-name').value,
+          type: container.querySelector('.dynamic-type').value,
+          val: container.querySelector('.dynamic-val').value,
+          desc: container.querySelector('.dynamic-desc').value
         });
       });
 
-      document.querySelectorAll('#flaws-list .dynamic-row').forEach(row => {
+      document.querySelectorAll('#flaws-list .custom-trait-container').forEach(container => {
         data.flaws.push({
-          name: row.querySelector('.dynamic-name').value,
-          type: row.querySelector('.dynamic-type').value,
-          val: row.querySelector('.dynamic-val').value
+          name: container.querySelector('.dynamic-name').value,
+          type: container.querySelector('.dynamic-type').value,
+          val: container.querySelector('.dynamic-val').value,
+          desc: container.querySelector('.dynamic-desc').value
         });
       });
 
@@ -1989,8 +2199,8 @@
         });
       });
 
-      document.querySelectorAll('#derangements-list .dynamic-row').forEach(row => {
-        data.derangements.push({ name: row.querySelector('.dynamic-name').value });
+      document.querySelectorAll('#derangements-list .derangement-row-container').forEach(container => {
+        data.derangements.push({ name: container.querySelector('.dynamic-name').value });
       });
 
       document.querySelectorAll('#combat-attacks-table tbody tr').forEach(row => {
@@ -2005,11 +2215,26 @@
         });
       });
 
-      for (let i = 1; i <= 10; i++) {
+      // Save dynamic temp willpower checkboxes
+      const wpPermVal = parseInt(document.querySelector('[data-id="willpower-perm"]').getAttribute('data-value')) || 0;
+      for (let i = 1; i <= wpPermVal; i++) {
         const el = document.getElementById(`wp-temp-${i}`);
         data.mechanics.willpowerTemp.push(el ? el.checked : false);
       }
-      for (let i = 1; i <= 50; i++) {
+
+      // Save dynamic blood pool checkboxes
+      const genSelect = document.getElementById('char-generation');
+      const genVal = genSelect ? genSelect.value : "";
+      let bpCapacity = 50;
+      if (genVal === "13") bpCapacity = 10;
+      else if (genVal === "12") bpCapacity = 11;
+      else if (genVal === "11") bpCapacity = 12;
+      else if (genVal === "10") bpCapacity = 13;
+      else if (genVal === "9") bpCapacity = 14;
+      else if (genVal === "8") bpCapacity = 15;
+      else if (genVal === "7") bpCapacity = 20;
+
+      for (let i = 1; i <= bpCapacity; i++) {
         const el = document.getElementById(`bp-temp-${i}`);
         data.mechanics.bloodPoolTemp.push(el ? el.checked : false);
       }
@@ -2025,11 +2250,49 @@
       document.getElementById('char-name').value = meta.name || '';
       document.getElementById('char-clan').value = meta.clan || '';
       document.getElementById('char-sire').value = meta.sire || '';
-      document.getElementById('char-generation').value = meta.generation || '';
       document.getElementById('char-nature').value = meta.nature || '';
       document.getElementById('char-demeanor').value = meta.demeanor || '';
       document.getElementById('char-concept').value = meta.concept || '';
       document.getElementById('char-chronicle').value = meta.chronicle || '';
+
+      // Generation Dropdown loading
+      const genSelect = document.getElementById('char-generation');
+      if (genSelect) {
+        const metaGen = meta.generation || '';
+        // Normalize, e.g. "12th" -> "12"
+        let normalizedGen = metaGen.replace(/th|rd|nd|st/g, '').trim();
+        
+        let exists = false;
+        for (let opt of genSelect.options) {
+          if (opt.value === normalizedGen) {
+            exists = true;
+            genSelect.value = normalizedGen;
+            break;
+          }
+        }
+        if (!exists && metaGen !== '') {
+          // Check if un-normalized custom selection already exists
+          for (let opt of genSelect.options) {
+            if (opt.value === metaGen) {
+              exists = true;
+              genSelect.value = metaGen;
+              break;
+            }
+          }
+          if (!exists) {
+            const newOpt = document.createElement('option');
+            newOpt.value = metaGen;
+            newOpt.text = metaGen;
+            genSelect.add(newOpt);
+            genSelect.value = metaGen;
+          }
+        } else if (metaGen === '') {
+          genSelect.value = '';
+        }
+      }
+
+      // Initialize blood pool checkboxes
+      updateBloodPoolCapacity();
 
       // Attributes
       if (data.attributes) {
@@ -2092,14 +2355,14 @@
         addDynamicRow('backgrounds-list', 'background');
       }
 
-      // Page 3 Lists
+      // Page 3 Lists (Merits and Flaws load description box)
       const meritsList = document.getElementById('merits-list');
       if (meritsList) meritsList.innerHTML = '';
-      if (data.merits) data.merits.forEach(m => addCustomRow('merits-list', 'merit', m.name, m.type, m.val));
+      if (data.merits) data.merits.forEach(m => addCustomRow('merits-list', 'merit', m.name, m.type, m.val, m.desc || ''));
 
       const flawsList = document.getElementById('flaws-list');
       if (flawsList) flawsList.innerHTML = '';
-      if (data.flaws) data.flaws.forEach(f => addCustomRow('flaws-list', 'flaw', f.name, f.type, f.val));
+      if (data.flaws) data.flaws.forEach(f => addCustomRow('flaws-list', 'flaw', f.name, f.type, f.val, f.desc || ''));
 
       const otList = document.getElementById('other-traits-list');
       if (otList) otList.innerHTML = '';
@@ -2144,10 +2407,15 @@
       if (aBearing) aBearing.value = mechanics.auraValue || '';
 
       const wpPerm = document.querySelector('[data-id="willpower-perm"]');
+      let wpRatingVal = 0;
       if (wpPerm) {
-        wpPerm.setAttribute('data-value', mechanics.willpowerPerm || 0);
+        wpRatingVal = mechanics.willpowerPerm || 0;
+        wpPerm.setAttribute('data-value', wpRatingVal);
         renderDots(wpPerm);
       }
+      
+      // Load temporary willpower checkboxes dynamically
+      updateWillpowerTempPool(wpRatingVal);
 
       if (mechanics.willpowerTemp) {
         mechanics.willpowerTemp.forEach((val, i) => {
@@ -2163,11 +2431,28 @@
         });
       }
 
-      // Health
+      // Health Loading (Backward compatibility supported)
       if (data.health) {
-        Object.keys(data.health).forEach(level => {
-          const cb = document.getElementById(`health-${level}`);
-          if (cb) cb.checked = data.health[level];
+        const healthKeys = [
+          'bruised-b', 'bruised-l', 'bruised-a',
+          'hurt-b', 'hurt-l', 'hurt-a',
+          'injured-b', 'injured-l', 'injured-a',
+          'wounded-b', 'wounded-l', 'wounded-a',
+          'mauled-b', 'mauled-l', 'mauled-a',
+          'crippled-b', 'crippled-l', 'crippled-a',
+          'incapacitated-b', 'incapacitated-l', 'incapacitated-a'
+        ];
+        healthKeys.forEach(k => {
+          const cb = document.getElementById(`health-${k}`);
+          if (cb) {
+            const dataKey = k.replace('-', '_');
+            let val = data.health[dataKey];
+            if (val === undefined) {
+              const baseLevel = k.split('-')[0];
+              val = data.health[baseLevel];
+            }
+            cb.checked = !!val;
+          }
         });
       }
 
