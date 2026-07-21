@@ -276,10 +276,6 @@
       margin-bottom: 25px;
     }
 
-    .info-grid label {
-      font-weight: bold;
-    }
-
     .info-group {
       display: flex;
       flex-direction: column;
@@ -481,7 +477,7 @@
 
   <div class="app-container">
     <header>
-      <h1>Vampire: The Dark Ages</h1>
+      <h2>Vampire: The Dark Ages</h2>
       <p>Sourcebook-Aligned V20 Dark Ages Interactive Web Application</p>
     </header>
 
@@ -907,9 +903,7 @@
         { level: 4, name: "Permanency", desc: "Extends the duration of an illusion indefinitely.", sys: "The player spends one blood point to make the illusion permanent until dismissed." },
         { level: 5, name: "Horrid Reality", desc: "Inflicts single-target illusions so real they deal actual, unsoakable damage.", sys: "A Horrid Reality illusion costs two Willpower points to create and must target an individual. <strong>Roll Manipulation + Subterfuge</strong> (difficulty the victim’s Perception + Self-Control/Instinct)." },
         { level: 6, name: "Fatuus Mastery", desc: "Negates Willpower/blood costs for lower-level Chimerstry powers.", sys: "Fatuus Mastery negates the Willpower and blood cost for using the first three levels of Chimerstry." },
-        { level: 6, name: "Shared Nightmare", desc: "Inflicts a Horrid Reality illusion on an entire crowd of targets simultaneously.", sys: "To use this power, the player must spend two Willpower points plus one blood point per target. <strong>Roll Manipulation + Subterfuge</strong> once, with a difficulty rating of the target’s <strong>Perception + Self-Control/Instinct</strong>." },
-        { level: 6, name: "Blade of the Demons", desc: "Creates an unholy, illusionary blade that deals aggravated damage.", sys: "Spend 1 Willpower point and 1 blood point per die of damage. Aggravated damage." },
-        { level: 6, name: "Far Fatuus", desc: "Allows the user to project illusions into any space they can see or imagine.", sys: "<strong>Roll Perception + Subterfuge</strong> (difficulty based on familiarity)." }
+        { level: 6, name: "Shared Nightmare", desc: "Inflicts a Horrid Reality illusion on an entire crowd of targets simultaneously.", sys: "To use this power, the player must spend two Willpower points plus one blood point per target. <strong>Roll Manipulation + Subterfuge</strong> once, with a difficulty rating of the target’s <strong>Perception + Self-Control/Instinct</strong>." }
       ],
       "Clan Sorcery": [
         { level: "Sorcery", name: "Clan Sorcery", desc: "Evocative, insular magical practices specific to individual clans and bloodlines (such as *Akhu*, *Dur-An-Ki*, or *Sadhana*).", sys: "All Blood Sorcery Paths and Rituals are activated by spending 1 blood point and <strong>Roll Intelligence + Occult</strong> (Difficulty 6) unless stated otherwise in the power's description." }
@@ -921,7 +915,7 @@
         { level: 4, name: "Psychomachia", desc: "Forces a victim's vice to manifest as a physical, hostile apparition they must battle.", sys: "After successfully using Sense the Sin, the vampire forces the target to <strong>Roll Virtue</strong> (difficulty of the Baali's Willpower) using their lowest Virtue." },
         { level: 5, name: "Condemnation", desc: "Places a powerful, long-term curse upon a victim.", sys: "<strong>Roll Intelligence + Occult</strong> (difficulty equal to the subject's Willpower)." },
         { level: 6, name: "Hell-Born Investiture", desc: "Grants demonic physical traits, such as flight or fire immunity.", sys: "The most typical manifestation of this power incorporates immunity to the damaging effects of fire." },
-        { level: 6, name: "Lure Diabolik", desc: "Speaks the dark truths of the void to strip Road dots from a target.", sys: "Spend 1 Willpower point and <strong>Roll Manipulation + Empathy</strong> vs target's Willpower points." }
+        { level: 6, name: "Lure Diabolik", desc: "Speaks the dark truths of the void to strip Road dots from a target, lowering their defenses against the Baali.", sys: "The Baali must speak the dark truths of the void to their victim in the language of Hell. Spend a point of Willpower and <strong>Roll Manipulation + Empathy</strong> at a difficulty equal to the victim's current Willpower." }
       ],
       "Dark Thaumaturgy": [
         { level: "Sorcery", name: "Dark Thaumaturgy", desc: "A corrupted, highly illicit discipline of blood sorcery fueled by pacts with demons, spirits, and the dark entities of the Outer Dark, offering terrifying destructive power at the cost of the user's soul.", sys: "All Blood Sorcery Paths and Rituals are activated by spending 1 blood point and <strong>Roll Intelligence + Occult</strong> (Difficulty 6) unless stated otherwise in the power's description." }
@@ -930,7 +924,7 @@
         { level: 1, name: "Passion", desc: "Stirs, inflames, or blunts a victim's current emotions.", sys: "<strong>Roll Charisma + Empathy</strong> vs target's <strong>Humanity</strong> or <strong>Path</strong> (as difficulty)." },
         { level: 2, name: "The Haunting", desc: "Floods the target's senses with hallucinations that they cannot ignore.", sys: "Spend 1 blood point and <strong>Roll Manipulation + Empathy</strong> vs target's <strong>Perception + Self-Control</strong> or <strong>Perception + Instinct</strong> (as difficulty)." },
         { level: 3, name: "Eyes of Chaos", desc: "Scrutinizes complex patterns, layout arrays, or social networks to divine hidden truths.", sys: "<strong>Roll Perception + Enigmas</strong> (difficulty varies based on available information)." },
-        { level: 4, name: "Fire Voice", desc: "Induces a Rotschreck-like fear of fire in a target or crowd.", sys: "<strong>Roll Manipulation + Empathy</strong> (difficulty 7)." },
+        { level: 4, name: "Fire Voice", desc: "Induces a Rotschreck-like fear of fire in a target or crowd.", sys: "<strong>Roll Manipulation + Empathy</strong> (difficulty 7). Each success adds another victim." },
         { level: 5, name: "Shedding the Mask", desc: "Overwhelms a victim's mind with raw, unmitigated madness.", sys: "The player spends a blood point and <strong>Roll Manipulation + Intimidation</strong> (difficulty of her victim’s current Willpower points)." },
         { level: 6, name: "The Call", desc: "Sends a general pulse or telepathic message over the Madness Network.", sys: "To Call, a Malkavian (and only a Malkavian) names another Malkavian of equal or lesser Generation, then <strong>Roll Perception + Empathy</strong> (difficulty 6)." },
         { level: 6, name: "Stain the Soul", desc: "Permanently inflicts a chosen Derangement upon a target's soul.", sys: "The player spends a Willpower point and <strong>Roll Manipulation + Empathy</strong> at a difficulty equal to the victim’s current Willpower points." }
@@ -942,8 +936,8 @@
         { level: 4, name: "Conditioning", desc: "Strips the victim's individual personality, locking them into a compliant puppet.", sys: "As an extended action, <strong>Roll Charisma + Leadership</strong>. Total successes needed is 5 * target's <strong>Self-Control</strong> or <strong>Instinct</strong>." },
         { level: 5, name: "Possession", desc: "Supplants the vampire's consciousness into a mortal body.", sys: "<strong>Roll Charisma + Intimidation</strong> vs target's <strong>Roll Willpower</strong> (both at difficulty 7) in a clash of wills." },
         { level: 6, name: "Chain the Psyche", desc: "Wracks disobedient thralled subjects with crippling physical pain.", sys: "Spend 1 blood point. <strong>Roll Manipulation + Intimidation</strong> vs target's <strong>Stamina + Empathy</strong> (as difficulty)." },
-        { level: 6, name: "Obedience", desc: "Allows use of Dominate through skin-to-skin contact, omitting eye contact.", sys: "Passive upgrade. No roll is required." },
-        { level: 6, name: "Loyalty", desc: "Shields your thralls from other users of Dominate.", sys: "Passive upgrade. Increases the difficulty of other's Dominate rolls by 3." }
+        { level: 6, name: "Obedience", desc: "Allows the use of all Dominate powers via skin-to-skin touch instead of eye contact.", sys: "Passive upgrade, no roll required." },
+        { level: 6, name: "Loyalty", desc: "Permanently protects controlled thralls, making it harder for other vampires to co-opt them.", sys: "Passive. Increases the difficulty of any hostile attempt to command or control the thrall by 3." }
       ],
       "Flight": [
         { level: 1, name: "Glide", desc: "Gargoyle glides safely, but cannot fly upward.", sys: "No roll, passive. Carrying over 2 lbs causes them to fall." },
@@ -990,7 +984,8 @@
         { level: 3, name: "Arms of Ahriman", desc: "Manifests physical shadow tentacles that can attack and grapple.", sys: "<strong>Roll Manipulation + Occult</strong> (difficulty 7)." },
         { level: 4, name: "Nightshades", desc: "Crafts lifelike images and silhouettes out of darkness.", sys: "<strong>Roll Wits + Occult</strong> (difficulty 7)." },
         { level: 5, name: "Tenebrous Avatar", desc: "Transforms the vampire's body into a fluid shadow form.", sys: "Spend 3 blood points, takes 3 turns." },
-        { level: 6, name: "The Darkness Within", desc: "Engulfs a target in Abyssal shadow, draining blood and causing terror.", sys: "Spend 1 blood point and <strong>Roll Willpower</strong> (difficulty 6). Engulfed target loses 2 blood per turn. Targets touched must succeed on a <strong>Roll Stamina</strong> (difficulty 6) each turn they remain in contact." }
+        { level: 6, name: "The Darkness Within", desc: "Engulfs a target in Abyssal shadow, draining blood and causing terror.", sys: "Spend 1 blood point and <strong>Roll Willpower</strong> (difficulty 6). Engulfed target loses 2 blood per turn. Targets touched must succeed on a <strong>Roll Stamina</strong> (difficulty 6) each turn they remain in contact." },
+        { level: 6, name: "Walk the Abyss", desc: "Steps into any nearby shadow and instantly emerges from another shadow in line of sight.", sys: "<strong>Roll Intelligence + Stealth</strong> (travel) or <strong>Roll Intelligence + Brawl</strong> (grasping objects) at difficulty 7." }
       ],
       "Ogham": [
         { level: 1, name: "Consecration of Esus", desc: "Awakens plant life in a designated area to entangle and block enemies.", sys: "Requires a mortal sacrifice and an oak tree. <strong>Roll Dexterity + Occult</strong> (difficulty 5)." },
@@ -1942,10 +1937,12 @@
       });
 
       for (let i = 1; i <= 10; i++) {
-        data.mechanics.willpowerTemp.push(document.getElementById(`wp-temp-${i}`).checked);
+        const el = document.getElementById(`wp-temp-${i}`);
+        data.mechanics.willpowerTemp.push(el ? el.checked : false);
       }
       for (let i = 1; i <= 50; i++) {
-        data.mechanics.bloodPoolTemp.push(document.getElementById(`bp-temp-${i}`).checked);
+        const el = document.getElementById(`bp-temp-${i}`);
+        data.mechanics.bloodPoolTemp.push(el ? el.checked : false);
       }
 
       return data;
@@ -2259,6 +2256,33 @@
       };
       reader.readAsText(file);
       event.target.value = '';
+    }
+
+    /* --- INITIALIZATION --- */
+
+    function initApp() {
+      try {
+        buildTempPools();
+      } catch (e) {
+        console.error("Error building temp pools:", e);
+      }
+      try {
+        initializeStaticDots();
+      } catch (e) {
+        console.error("Error initializing static dots:", e);
+      }
+      try {
+        renderDashboard();
+      } catch (e) {
+        console.error("Error rendering dashboard:", e);
+      }
+    }
+
+    // Indestructible document ready state handler to prevent execution skips [1]
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initApp);
+    } else {
+      initApp();
     }
   </script>
 </body>
