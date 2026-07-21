@@ -477,7 +477,7 @@
 
   <div class="app-container">
     <header>
-      <h2>Vampire: The Dark Ages</h2>
+      <h1>Vampire: The Dark Ages</h1>
       <p>Sourcebook-Aligned V20 Dark Ages Interactive Web Application</p>
     </header>
 
@@ -1389,11 +1389,17 @@
 
     function renderDots(container) {
       const dotsContainer = container.querySelector('.dots-container');
+      if (!dotsContainer) return;
       dotsContainer.innerHTML = '';
       
       const max = parseInt(container.getAttribute('data-max')) || 6;
       const min = parseInt(container.getAttribute('data-min')) || 0;
-      const currentVal = parseInt(container.getAttribute('data-value')) ?? parseInt(container.getAttribute('data-default')) ?? min;
+      
+      // Safe parsing to prevent NaN properties [1]
+      let currentVal = parseInt(container.getAttribute('data-value'));
+      if (isNaN(currentVal)) {
+        currentVal = parseInt(container.getAttribute('data-default')) || min;
+      }
       container.setAttribute('data-value', currentVal);
 
       for (let i = 1; i <= max; i++) {
@@ -1423,6 +1429,7 @@
 
     function buildTempPools() {
       const wpPool = document.getElementById('willpower-temp-pool');
+      if (!wpPool) return;
       wpPool.innerHTML = '';
       for (let i = 1; i <= 10; i++) {
         const cb = document.createElement('input');
@@ -1433,6 +1440,7 @@
       }
 
       const bpPool = document.getElementById('blood-pool');
+      if (!bpPool) return;
       bpPool.innerHTML = '';
       for (let i = 1; i <= 50; i++) {
         const cb = document.createElement('input');
@@ -1447,6 +1455,7 @@
 
     function addDynamicRow(targetListId, type, initialName = '', initialVal = 0) {
       const list = document.getElementById(targetListId);
+      if (!list) return;
       const rowId = `dynamic-${type}-${dynamicRowId++}`;
       
       const row = document.createElement('div');
@@ -1534,6 +1543,7 @@
 
     function addCustomRow(targetListId, type, name = '', costType = '', costValue = '') {
       const list = document.getElementById(targetListId);
+      if (!list) return;
       const rowId = `custom-${type}-${dynamicRowId++}`;
       const placeholderName = type === 'merit' ? 'Merit Name...' : 'Flaw Name...';
       const placeholderVal = type === 'merit' ? 'Cost...' : 'Bonus...';
@@ -1555,6 +1565,7 @@
 
     function addOtherTraitRow(targetListId, name = '', val = 0) {
       const list = document.getElementById(targetListId);
+      if (!list) return;
       const rowId = `other-trait-${dynamicRowId++}`;
       
       const row = document.createElement('div');
@@ -1576,6 +1587,7 @@
 
     function addRitualRow(targetListId, name = '', level = 1) {
       const list = document.getElementById(targetListId);
+      if (!list) return;
       const rowId = `ritual-${dynamicRowId++}`;
       
       const row = document.createElement('div');
@@ -1594,6 +1606,7 @@
 
     function addPathRow(targetListId, name = '', val = 0) {
       const list = document.getElementById(targetListId);
+      if (!list) return;
       const rowId = `path-${dynamicRowId++}`;
       
       const row = document.createElement('div');
@@ -1615,6 +1628,7 @@
 
     function addDerangementRow(targetListId, name = '') {
       const list = document.getElementById(targetListId);
+      if (!list) return;
       const rowId = `derangement-${dynamicRowId++}`;
       
       const row = document.createElement('div');
@@ -1632,6 +1646,7 @@
 
     function addCombatAttackRow(weapon = '', diff = '', dmg = '', range = '', rate = '', clip = '', conceal = '') {
       const tbody = document.querySelector('#combat-attacks-table tbody');
+      if (!tbody) return;
       const rowId = `combat-row-${dynamicRowId++}`;
       const tr = document.createElement('tr');
       tr.id = rowId;
@@ -1649,6 +1664,24 @@
       queueAutoSave();
     }
 
+    /* --- TAB SWITCHING SYSTEM --- */
+
+    function switchTab(tabId) {
+      // Hide all tab content
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      // Remove active class from all tab buttons
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      
+      // Show target tab container
+      const targetTab = document.getElementById(tabId);
+      if (targetTab) targetTab.classList.add('active');
+      
+      // Standard-compliant mapping for tab button state (tab-page-1 matches btn-page-1) [1]
+      const btnId = tabId.replace('tab-', 'btn-');
+      const activeBtn = document.getElementById(btnId);
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+
     /* --- CORE SYNC ENGINE --- */
 
     function queueAutoSave() {
@@ -1659,7 +1692,8 @@
     }
 
     function setSaveStatus(text) {
-      document.getElementById('save-status').innerText = text;
+      const el = document.getElementById('save-status');
+      if (el) el.innerText = text;
     }
 
     async function saveCurrentCharacter() {
@@ -1885,15 +1919,16 @@
     function loadSheetIntoDOM(data) {
       isLoadingSheet = true; // Block auto-saves during DOM creation [1]
 
-      // Info Header
-      document.getElementById('char-name').value = data.meta.name || '';
-      document.getElementById('char-clan').value = data.meta.clan || '';
-      document.getElementById('char-sire').value = data.meta.sire || '';
-      document.getElementById('char-generation').value = data.meta.generation || '';
-      document.getElementById('char-nature').value = data.meta.nature || '';
-      document.getElementById('char-demeanor').value = data.meta.demeanor || '';
-      document.getElementById('char-concept').value = data.meta.concept || '';
-      document.getElementById('char-chronicle').value = data.meta.chronicle || '';
+      // Protect against uninitialized sub-objects with safe fallbacks [1]
+      const meta = data.meta || {};
+      document.getElementById('char-name').value = meta.name || '';
+      document.getElementById('char-clan').value = meta.clan || '';
+      document.getElementById('char-sire').value = meta.sire || '';
+      document.getElementById('char-generation').value = meta.generation || '';
+      document.getElementById('char-nature').value = meta.nature || '';
+      document.getElementById('char-demeanor').value = meta.demeanor || '';
+      document.getElementById('char-concept').value = meta.concept || '';
+      document.getElementById('char-chronicle').value = meta.chronicle || '';
 
       // Attributes
       if (data.attributes) {
@@ -1918,31 +1953,38 @@
       }
 
       // Virtues
-      if (data.virtues) {
-        document.getElementById('virtue-1-type').value = data.virtues.virtue_1_type || 'Conscience';
-        const v1 = document.querySelector('[data-id="virtue_1"]');
-        v1.setAttribute('data-value', data.virtues.virtue_1_val || 1);
+      const virtues = data.virtues || {};
+      document.getElementById('virtue-1-type').value = virtues.virtue_1_type || 'Conscience';
+      const v1 = document.querySelector('[data-id="virtue_1"]');
+      if (v1) {
+        v1.setAttribute('data-value', virtues.virtue_1_val || 1);
         renderDots(v1);
+      }
 
-        document.getElementById('virtue-2-type').value = data.virtues.virtue_2_type || 'Self-Control';
-        const v2 = document.querySelector('[data-id="virtue_2"]');
-        v2.setAttribute('data-value', data.virtues.virtue_2_val || 1);
+      document.getElementById('virtue-2-type').value = virtues.virtue_2_type || 'Self-Control';
+      const v2 = document.querySelector('[data-id="virtue_2"]');
+      if (v2) {
+        v2.setAttribute('data-value', virtues.virtue_2_val || 1);
         renderDots(v2);
+      }
 
-        const v3 = document.querySelector('[data-id="virtue_3"]');
-        v3.setAttribute('data-value', data.virtues.virtue_3_val || 1);
+      const v3 = document.querySelector('[data-id="virtue_3"]');
+      if (v3) {
+        v3.setAttribute('data-value', virtues.virtue_3_val || 1);
         renderDots(v3);
       }
 
       // Disciplines & Backgrounds
-      document.getElementById('disciplines-list').innerHTML = '';
+      const discList = document.getElementById('disciplines-list');
+      if (discList) discList.innerHTML = '';
       if (data.disciplines && data.disciplines.length > 0) {
         data.disciplines.forEach(d => addDynamicRow('disciplines-list', 'discipline', d.name, d.rating));
       } else {
         addDynamicRow('disciplines-list', 'discipline');
       }
 
-      document.getElementById('backgrounds-list').innerHTML = '';
+      const bgList = document.getElementById('backgrounds-list');
+      if (bgList) bgList.innerHTML = '';
       if (data.backgrounds && data.backgrounds.length > 0) {
         data.backgrounds.forEach(b => addDynamicRow('backgrounds-list', 'background', b.name, b.rating));
       } else {
@@ -1950,60 +1992,74 @@
       }
 
       // Page 3 Lists
-      document.getElementById('merits-list').innerHTML = '';
+      const meritsList = document.getElementById('merits-list');
+      if (meritsList) meritsList.innerHTML = '';
       if (data.merits) data.merits.forEach(m => addCustomRow('merits-list', 'merit', m.name, m.type, m.val));
 
-      document.getElementById('flaws-list').innerHTML = '';
+      const flawsList = document.getElementById('flaws-list');
+      if (flawsList) flawsList.innerHTML = '';
       if (data.flaws) data.flaws.forEach(f => addCustomRow('flaws-list', 'flaw', f.name, f.type, f.val));
 
-      document.getElementById('other-traits-list').innerHTML = '';
+      const otList = document.getElementById('other-traits-list');
+      if (otList) otList.innerHTML = '';
       if (data.otherTraits) data.otherTraits.forEach(t => addOtherTraitRow('other-traits-list', t.name, t.val));
 
       // Page 2 Grimoire Lists
-      document.getElementById('rituals-list').innerHTML = '';
+      const ritList = document.getElementById('rituals-list');
+      if (ritList) ritList.innerHTML = '';
       if (data.rituals) data.rituals.forEach(r => addRitualRow('rituals-list', r.name, r.level));
 
-      document.getElementById('paths-list').innerHTML = '';
+      const pathList = document.getElementById('paths-list');
+      if (pathList) pathList.innerHTML = '';
       if (data.paths) data.paths.forEach(p => addPathRow('paths-list', p.name, p.val));
 
-      document.getElementById('grimoire-notes').value = data.grimoire_notes || '';
+      const gNotes = document.getElementById('grimoire-notes');
+      if (gNotes) gNotes.value = data.grimoire_notes || '';
 
-      document.getElementById('derangements-list').innerHTML = '';
+      const derList = document.getElementById('derangements-list');
+      if (derList) derList.innerHTML = '';
       if (data.derangements) data.derangements.forEach(d => addDerangementRow('derangements-list', d.name));
 
       // Page 3 Combat Attacks
       const combatBody = document.querySelector('#combat-attacks-table tbody');
-      combatBody.innerHTML = '';
-      if (data.combatAttacks) {
-        data.combatAttacks.forEach(a => addCombatAttackRow(a.weapon, a.diff, a.dmg, a.range, a.rate, a.clip, a.conceal));
+      if (combatBody) {
+        combatBody.innerHTML = '';
+        if (data.combatAttacks) {
+          data.combatAttacks.forEach(a => addCombatAttackRow(a.weapon, a.diff, a.dmg, a.range, a.rate, a.clip, a.conceal));
+        }
       }
 
       // Mechanics
-      if (data.mechanics) {
-        document.getElementById('road-name').value = data.mechanics.roadName || '';
-        const rRating = document.querySelector('[data-id="road-rating"]');
-        rRating.setAttribute('data-value', data.mechanics.roadValue || 0);
+      const mechanics = data.mechanics || {};
+      const rName = document.getElementById('road-name');
+      if (rName) rName.value = mechanics.roadName || '';
+      const rRating = document.querySelector('[data-id="road-rating"]');
+      if (rRating) {
+        rRating.setAttribute('data-value', mechanics.roadValue || 0);
         renderDots(rRating);
+      }
 
-        document.getElementById('aura-bearing').value = data.mechanics.auraValue || '';
+      const aBearing = document.getElementById('aura-bearing');
+      if (aBearing) aBearing.value = mechanics.auraValue || '';
 
-        const wpPerm = document.querySelector('[data-id="willpower-perm"]');
-        wpPerm.setAttribute('data-value', data.mechanics.willpowerPerm || 0);
+      const wpPerm = document.querySelector('[data-id="willpower-perm"]');
+      if (wpPerm) {
+        wpPerm.setAttribute('data-value', mechanics.willpowerPerm || 0);
         renderDots(wpPerm);
+      }
 
-        if (data.mechanics.willpowerTemp) {
-          data.mechanics.willpowerTemp.forEach((val, i) => {
-            const cb = document.getElementById(`wp-temp-${i + 1}`);
-            if (cb) cb.checked = val;
-          });
-        }
+      if (mechanics.willpowerTemp) {
+        mechanics.willpowerTemp.forEach((val, i) => {
+          const cb = document.getElementById(`wp-temp-${i + 1}`);
+          if (cb) cb.checked = val;
+        });
+      }
 
-        if (data.mechanics.bloodPoolTemp) {
-          data.mechanics.bloodPoolTemp.forEach((val, i) => {
-            const cb = document.getElementById(`bp-temp-${i + 1}`);
-            if (cb) cb.checked = val;
-          });
-        }
+      if (mechanics.bloodPoolTemp) {
+        mechanics.bloodPoolTemp.forEach((val, i) => {
+          const cb = document.getElementById(`bp-temp-${i + 1}`);
+          if (cb) cb.checked = val;
+        });
       }
 
       // Health
@@ -2014,131 +2070,128 @@
         });
       }
 
-      document.getElementById('clan-weakness').value = data.clan_weakness || '';
+      const cWeakness = document.getElementById('clan-weakness');
+      if (cWeakness) cWeakness.value = data.clan_weakness || '';
 
       // Armor
-      if (data.armor) {
-        document.getElementById('armor-class').value = data.armor.class || '';
-        document.getElementById('armor-rating').value = data.armor.rating || '';
-        document.getElementById('armor-penalty').value = data.armor.penalty || '';
-        document.getElementById('armor-desc').value = data.armor.desc || '';
-      }
+      const armor = data.armor || {};
+      const aClass = document.getElementById('armor-class');
+      if (aClass) aClass.value = armor.class || '';
+      const aRating = document.getElementById('armor-rating');
+      if (aRating) aRating.value = armor.rating || '';
+      const aPenalty = document.getElementById('armor-penalty');
+      if (aPenalty) aPenalty.value = armor.penalty || '';
+      const aDesc = document.getElementById('armor-desc');
+      if (aDesc) aDesc.value = armor.desc || '';
 
       // Exp
-      if (data.exp) {
-        document.getElementById('exp-total').value = data.exp.total || '';
-        document.getElementById('exp-spent').value = data.exp.spent || '';
-        document.getElementById('exp-spent-on').value = data.exp.spentOn || '';
-      }
+      const exp = data.exp || {};
+      const eTotal = document.getElementById('exp-total');
+      if (eTotal) eTotal.value = exp.total || '';
+      const eSpent = document.getElementById('exp-spent');
+      if (eSpent) eSpent.value = exp.spent || '';
+      const eSpentOn = document.getElementById('exp-spent-on');
+      if (eSpentOn) eSpentOn.value = exp.spentOn || '';
 
       // Page 4 Expanded Backgrounds
-      if (data.backgrounds_expanded) {
-        document.getElementById('bg-allies').value = data.backgrounds_expanded.allies || '';
-        document.getElementById('bg-mentor').value = data.backgrounds_expanded.mentor || '';
-        document.getElementById('bg-contacts').value = data.backgrounds_expanded.contacts || '';
-        document.getElementById('bg-resources').value = data.backgrounds_expanded.resources || '';
-        document.getElementById('bg-fame').value = data.backgrounds_expanded.fame || '';
-        document.getElementById('bg-retainers').value = data.backgrounds_expanded.retainers || '';
-        document.getElementById('bg-herd').value = data.backgrounds_expanded.herd || '';
-        document.getElementById('bg-status').value = data.backgrounds_expanded.status || '';
-        document.getElementById('bg-other').value = data.backgrounds_expanded.other || '';
-      }
+      const bgExpanded = data.backgrounds_expanded || {};
+      const bgAllies = document.getElementById('bg-allies');
+      if (bgAllies) bgAllies.value = bgExpanded.allies || '';
+      const bgMentor = document.getElementById('bg-mentor');
+      if (bgMentor) bgMentor.value = bgExpanded.mentor || '';
+      const bgContacts = document.getElementById('bg-contacts');
+      if (bgContacts) bgContacts.value = bgExpanded.contacts || '';
+      const bgResources = document.getElementById('bg-resources');
+      if (bgResources) bgResources.value = bgExpanded.resources || '';
+      const bgFame = document.getElementById('bg-fame');
+      if (bgFame) bgFame.value = bgExpanded.fame || '';
+      const bgRetainers = document.getElementById('bg-retainers');
+      if (bgRetainers) bgRetainers.value = bgExpanded.retainers || '';
+      const bgHerd = document.getElementById('bg-herd');
+      if (bgHerd) bgHerd.value = bgExpanded.herd || '';
+      const bgStatus = document.getElementById('bg-status');
+      if (bgStatus) bgStatus.value = bgExpanded.status || '';
+      const bgOther = document.getElementById('bg-other');
+      if (bgOther) bgOther.value = bgExpanded.other || '';
 
       // Possessions
-      if (data.possessions) {
-        document.getElementById('poss-gear').value = data.possessions.gear || '';
-        document.getElementById('poss-equip').value = data.possessions.equip || '';
-        document.getElementById('poss-feed').value = data.possessions.feed || '';
-        document.getElementById('poss-trans').value = data.possessions.trans || '';
-      }
+      const possessions = data.possessions || {};
+      const pGear = document.getElementById('poss-gear');
+      if (pGear) pGear.value = possessions.gear || '';
+      const pEquip = document.getElementById('poss-equip');
+      if (pEquip) pEquip.value = possessions.equip || '';
+      const pFeed = document.getElementById('poss-feed');
+      if (pFeed) pFeed.value = possessions.feed || '';
+      const pTrans = document.getElementById('poss-trans');
+      if (pTrans) pTrans.value = possessions.trans || '';
 
       // Haven
-      if (data.haven) {
-        document.getElementById('haven-location').value = data.haven.location || '';
-        document.getElementById('haven-desc').value = data.haven.desc || '';
-      }
+      const haven = data.haven || {};
+      const hLoc = document.getElementById('haven-location');
+      if (hLoc) hLoc.value = haven.location || '';
+      const hDesc = document.getElementById('haven-desc');
+      if (hDesc) hDesc.value = haven.desc || '';
 
       // Page 5 History & Description
-      if (data.narrative) {
-        document.getElementById('narrative-prelude').value = data.narrative.prelude || '';
-        document.getElementById('narrative-goals').value = data.narrative.goals || '';
-      }
+      const narrative = data.narrative || {};
+      const nPrelude = document.getElementById('narrative-prelude');
+      if (nPrelude) nPrelude.value = narrative.prelude || '';
+      const nGoals = document.getElementById('narrative-goals');
+      if (nGoals) nGoals.value = narrative.goals || '';
 
-      if (data.desc) {
-        document.getElementById('desc-age').value = data.desc.age || '';
-        document.getElementById('desc-apparent').value = data.desc.apparent || '';
-        document.getElementById('desc-dob').value = data.desc.dob || '';
-        document.getElementById('desc-rip').value = data.desc.rip || '';
-        document.getElementById('desc-hair').value = data.desc.hair || '';
-        document.getElementById('desc-eyes').value = data.desc.eyes || '';
-        document.getElementById('desc-race').value = data.desc.race || '';
-        document.getElementById('desc-nationality').value = data.desc.nationality || '';
-        document.getElementById('desc-height').value = data.desc.height || '';
-        document.getElementById('desc-weight').value = data.desc.weight || '';
-        document.getElementById('desc-sex').value = data.desc.sex || '';
-      }
+      const desc = data.desc || {};
+      const dAge = document.getElementById('desc-age');
+      if (dAge) dAge.value = desc.age || '';
+      const dApp = document.getElementById('desc-apparent');
+      if (dApp) dApp.value = desc.apparent || '';
+      const dDob = document.getElementById('desc-dob');
+      if (dDob) dDob.value = desc.dob || '';
+      const dRip = document.getElementById('desc-rip');
+      if (dRip) dRip.value = desc.rip || '';
+      const dHair = document.getElementById('desc-hair');
+      if (dHair) dHair.value = desc.hair || '';
+      const dEyes = document.getElementById('desc-eyes');
+      if (dEyes) dEyes.value = desc.eyes || '';
+      const dRace = document.getElementById('desc-race');
+      if (dRace) dRace.value = desc.race || '';
+      const dNat = document.getElementById('desc-nationality');
+      if (dNat) dNat.value = desc.nationality || '';
+      const dHeight = document.getElementById('desc-height');
+      if (dHeight) dHeight.value = desc.height || '';
+      const dWeight = document.getElementById('desc-weight');
+      if (dWeight) dWeight.value = desc.weight || '';
+      const dSex = document.getElementById('desc-sex');
+      if (dSex) dSex.value = desc.sex || '';
 
-      if (data.vis) {
-        document.getElementById('vis-coterie').value = data.vis.coterie || '';
-        document.getElementById('vis-sketch').value = data.vis.sketch || '';
-      }
+      const vis = data.vis || {};
+      const vCoterie = document.getElementById('vis-coterie');
+      if (vCoterie) vCoterie.value = vis.coterie || '';
+      const vSketch = document.getElementById('vis-sketch');
+      if (vSketch) vSketch.value = vis.sketch || '';
 
       isLoadingSheet = false; // Restore normal auto-saving [1]
       renderGrimoireDisciplines(); // Synchronize ledger
     }
 
-    /* --- EXTERNAL FILE IO --- */
+    /* --- INITIALIZATION --- */
 
-    function triggerManualExport(id) {
-      const exportId = id || activeCharacterId;
-      if (!exportId) return;
-
-      const charData = JSON.parse(localStorage.getItem(exportId));
-      if (!charData) return;
-
-      const filename = `${charData.meta.name || 'Unnamed'}_V20DA_Aligned.json`;
-      const blob = new Blob([JSON.stringify(charData, null, 2)], { type: 'application/json' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = filename;
-      link.click();
-    }
-
-    function importCharacter(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = async function(e) {
-        try {
-          const data = JSON.parse(e.target.result);
-          const newId = 'char_' + Date.now();
-          data.id = newId;
-
-          localStorage.setItem(newId, JSON.stringify(data));
-          saveLocalIndex(newId, data.meta.name, data.meta.clan, data.mechanics ? data.mechanics.roadName : '');
-
-          if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
-            try {
-              await fetch(API_URL, {
-                method: "POST",
-                body: JSON.stringify(data)
-              });
-            } catch (err) {
-              console.warn("Cloud import failed, backed up locally.");
-            }
-          }
-
-          await renderDashboard();
-          alert("Character imported successfully.");
-        } catch (err) {
-          alert("Could not parse file.");
-          console.error(err);
-        }
-      };
-      reader.readAsText(file);
-      event.target.value = '';
-    }
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        buildTempPools();
+      } catch (e) {
+        console.error("Error building temp pools:", e);
+      }
+      try {
+        initializeStaticDots();
+      } catch (e) {
+        console.error("Error initializing static dots:", e);
+      }
+      try {
+        await renderDashboard();
+      } catch (e) {
+        console.error("Error rendering dashboard:", e);
+      }
+    });
   </script>
 </body>
 </html>
