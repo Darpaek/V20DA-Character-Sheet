@@ -477,7 +477,7 @@
 
   <div class="app-container">
     <header>
-      <h2>Vampire: The Dark Ages</h2>
+      <h1>Vampire: The Dark Ages</h1>
       <p>Sourcebook-Aligned V20 Dark Ages Interactive Web Application</p>
     </header>
 
@@ -842,8 +842,9 @@
     let activeCharacterId = null;
     let saveTimeout = null;
     let dynamicRowId = 0;
+    let isLoadingSheet = false; // Flag to prevent auto-saves while sheet DOM is initializing [1]
 
-    // Strict V20 Core Rulebook Discipline Database
+    // Strict V20 Core Rulebook Discipline Database [1]
     const disciplineDatabase = {
       "Abombwe": [
         { level: 1, name: "Predator's Communion", desc: "Senses nearby predators (vampires, shapeshifters, predatory animals).", sys: "Spend 1 blood point. <strong>Roll Perception + Survival</strong> (difficulty 6)." },
@@ -1063,7 +1064,7 @@
         { level: 6, name: "Samiel's Vengeance", desc: "Guarantees a physical melee attack hits with unblockable, maximum successes.", sys: "Spend 3 blood points. Automatically hit as if all Dexterity + Melee successes were rolled." }
       ],
       "Valeren - Watcher": [
-        { level: 1, name: "Sense Cycle", desc: "Senses omens and the cycle of life entire.", sys: "Spend one Willpower point and <strong>Roll Perception + Enigmas</strong> or <strong>Roll Empathy</strong> (difficulty 7). Each success allows asking the Storyteller one question." },
+        { level: 1, name: "Sense Cycle", desc: "Senses omens and the cycle of life entire.", sys: "Spend one Willpower point and Roll Perception + Enigmas or Roll Empathy (difficulty 7). Each success allows asking the Storyteller one question." },
         { level: 2, name: "Peaceful Touch", desc: "Calms the bloodlust of a hostile target through touch.", sys: "The Watcher spends a blood point and a Willpower point, and touches a foe hostile to him." },
         { level: 3, name: "Pariah's Caress", desc: "Charges blood to redirect local hostility and suspicion onto a victim.", sys: "Spends a blood point and touch the victim then <strong>Roll Manipulation + Empathy</strong> (difficulty 7)." },
         { level: 4, name: "Peacemaker", desc: "Erects an aura of peace in a room, mitigating combat and temper.", sys: "The player spends two Willpower points to erect the Peacemaker aura, which must be inside a chamber no larger than a ballroom." },
@@ -1080,7 +1081,7 @@
       ]
     };
 
-    // Dynamically populates and renders active Page 1 Disciplines in the Grimoire Tab
+    // Dynamically populates and renders active Page 1 Disciplines in the Grimoire Tab [1]
     function renderGrimoireDisciplines() {
       const container = document.getElementById('dynamic-grimoire-disciplines');
       if (!container) return;
@@ -1124,7 +1125,7 @@
             </div>
           `;
         } else {
-          // Render only up to the trained dot value
+          // Render only up to the trained dot value [1]
           const displayLevels = entry.slice(0, item.dots);
           displayLevels.forEach(lvl => {
             html += `
@@ -1142,23 +1143,32 @@
       });
     }
 
-    async function getCharacterList() {
-      if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+    function getLocalIndex() {
+      try {
         const list = localStorage.getItem('v20_da_characters_index');
         return list ? JSON.parse(list) : [];
+      } catch (e) {
+        console.error("Index corrupted, resetting local log:", e);
+        localStorage.setItem('v20_da_characters_index', '[]');
+        return [];
+      }
+    }
+
+    async function getCharacterList() {
+      if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+        return getLocalIndex();
       }
       try {
         const response = await fetch(API_URL);
         return await response.json();
       } catch (err) {
         console.warn("Cloud list fetch failed, falling back to LocalStorage:", err);
-        const list = localStorage.getItem('v20_da_characters_index');
-        return list ? JSON.parse(list) : [];
+        return getLocalIndex();
       }
     }
 
     function saveLocalIndex(charId, name, clan, road) {
-      const list = JSON.parse(localStorage.getItem('v20_da_characters_index') || '[]');
+      const list = getLocalIndex();
       const index = list.findIndex(item => item.id === charId);
       if (index !== -1) {
         list[index].name = name;
@@ -1174,6 +1184,7 @@
     async function renderDashboard() {
       const list = await getCharacterList();
       const listContainer = document.getElementById('character-list');
+      if (!listContainer) return;
       listContainer.innerHTML = '';
 
       if (list.length === 0) {
@@ -1247,7 +1258,7 @@
         }
       }
 
-      openEditor(charId);
+      await openEditor(charId);
     }
 
     async function openEditor(id) {
@@ -1255,15 +1266,20 @@
       setSaveStatus('Loading draft...');
 
       if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
-        const sheetData = JSON.parse(localStorage.getItem(id));
-        if (sheetData) {
-          loadSheetIntoDOM(sheetData);
-          document.getElementById('dashboard-view').classList.remove('active');
-          document.getElementById('editor-view').classList.add('active');
-          switchTab('tab-page-1');
-          setSaveStatus('Draft Loaded');
-        } else {
-          setSaveStatus('Draft not found');
+        try {
+          const sheetData = JSON.parse(localStorage.getItem(id));
+          if (sheetData) {
+            loadSheetIntoDOM(sheetData);
+            document.getElementById('dashboard-view').classList.remove('active');
+            document.getElementById('editor-view').classList.add('active');
+            switchTab('tab-page-1');
+            setSaveStatus('Draft Loaded');
+          } else {
+            setSaveStatus('Draft not found');
+          }
+        } catch (e) {
+          console.error("Error loading sheet from local storage:", e);
+          setSaveStatus('Error loading sheet');
         }
         return;
       }
@@ -1278,14 +1294,18 @@
         setSaveStatus('Draft Loaded (Cloud)');
       } catch (err) {
         console.warn("Cloud fetch failed, trying local fallback...", err);
-        const sheetData = JSON.parse(localStorage.getItem(id));
-        if (sheetData) {
-          loadSheetIntoDOM(sheetData);
-          document.getElementById('dashboard-view').classList.remove('active');
-          document.getElementById('editor-view').classList.add('active');
-          switchTab('tab-page-1');
-          setSaveStatus('Draft Loaded (Local Fallback)');
-        } else {
+        try {
+          const sheetData = JSON.parse(localStorage.getItem(id));
+          if (sheetData) {
+            loadSheetIntoDOM(sheetData);
+            document.getElementById('dashboard-view').classList.remove('active');
+            document.getElementById('editor-view').classList.add('active');
+            switchTab('tab-page-1');
+            setSaveStatus('Draft Loaded (Local Fallback)');
+          } else {
+            setSaveStatus('Failed to load draft');
+          }
+        } catch (e) {
           setSaveStatus('Failed to load draft');
         }
       }
@@ -1299,7 +1319,7 @@
       activeCharacterId = null;
       document.getElementById('editor-view').classList.remove('active');
       document.getElementById('dashboard-view').classList.add('active');
-      renderDashboard();
+      await renderDashboard();
     }
 
     async function cloneCharacter(id) {
@@ -1335,15 +1355,14 @@
         }
       }
 
-      renderDashboard();
+      await renderDashboard();
     }
 
     async function deleteCharacter(id) {
       if (!confirm("Are you sure you want to permanently delete this character?")) return;
 
       localStorage.removeItem(id);
-      let localList = JSON.parse(localStorage.getItem('v20_da_characters_index') || '[]');
-      localList = localList.filter(item => item.id !== id);
+      const localList = getLocalIndex().filter(item => item.id !== id);
       localStorage.setItem('v20_da_characters_index', JSON.stringify(localList));
 
       if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
@@ -1357,7 +1376,7 @@
         }
       }
 
-      renderDashboard();
+      await renderDashboard();
     }
 
     /* --- DOM DOTS SYSTEM --- */
@@ -1398,7 +1417,7 @@
 
       container.setAttribute('data-value', currentVal);
       renderDots(container);
-      renderGrimoireDisciplines(); // Instantly synchronize Grimoire description updates
+      renderGrimoireDisciplines(); // Instantly update dynamic grimoire sheet rendering [1]
       queueAutoSave();
     }
 
@@ -1633,6 +1652,7 @@
     /* --- CORE SYNC ENGINE --- */
 
     function queueAutoSave() {
+      if (isLoadingSheet) return; // Prevent loop saves during dynamic loading [1]
       setSaveStatus('Saving changes...');
       if (saveTimeout) clearTimeout(saveTimeout);
       saveTimeout = setTimeout(saveCurrentCharacter, 1000);
@@ -1863,6 +1883,8 @@
     }
 
     function loadSheetIntoDOM(data) {
+      isLoadingSheet = true; // Block auto-saves during DOM creation [1]
+
       // Info Header
       document.getElementById('char-name').value = data.meta.name || '';
       document.getElementById('char-clan').value = data.meta.clan || '';
@@ -2061,8 +2083,8 @@
         document.getElementById('vis-sketch').value = data.vis.sketch || '';
       }
 
-      // Trigger final sync to make sure grimoire updates properly
-      renderGrimoireDisciplines();
+      isLoadingSheet = false; // Restore normal auto-saving [1]
+      renderGrimoireDisciplines(); // Synchronize ledger
     }
 
     /* --- EXTERNAL FILE IO --- */
@@ -2107,7 +2129,7 @@
             }
           }
 
-          renderDashboard();
+          await renderDashboard();
           alert("Character imported successfully.");
         } catch (err) {
           alert("Could not parse file.");
