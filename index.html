@@ -424,6 +424,11 @@
       accent-color: var(--accent-red);
     }
 
+    .status-area {
+      display: flex;
+      flex-direction: column;
+    }
+
     .text-area-group {
       margin-top: 15px;
       display: flex;
@@ -992,7 +997,7 @@
         { level: 1, name: "Whispers to the Wild", desc: "Establishes telepathic communication with an animal.", sys: "No roll is necessary to talk with an animal. However, the vampire must make eye contact to initiate Whispers to the Wild. Once she’s established the power, she does not need to maintain eye contact for the current scene." },
         { level: 2, name: "Call the Wild", desc: "Summons local animals of a chosen species to the vampire's location.", sys: "Name a type of animal. This can be highly specific or general. <strong>Roll Charisma + Survival</strong> (difficulty 6)." },
         { level: 3, name: "Song of Serenity", desc: "Dulls strong emotions in a target, suppressing frenzy or crushing a mortal's will.", sys: "<strong>Roll Manipulation + Intimidation</strong> if asserting dominance through fear, or <strong>Roll Manipulation + Empathy</strong> to soothe the victim into complacency. Both rolls are difficulty 7. This is an extended action, requiring successes equal to the victim’s Willpower dots." },
-        { level: 4, name: "Subsume the Spirit", desc: "Possesses the mind and physical body of a targeted animal.", sys: "The vampire must make eye contact with the animal. <strong>Roll Manipulation + Animal Ken</strong> (difficulty 8)." },
+        { level: 4, name: "Subsume the Spirit", desc: "Possesses the mind and physical body of a targeted animal.", sys: "<strong>Roll Manipulation + Animal Ken</strong> (difficulty 8)." },
         { level: 5, name: "Unleash the Beast", desc: "Ejects the vampire's own Beast into another target, driving them into a violent frenzy.", sys: "The vampire must establish eye contact to eject her Beast. <strong>Roll Manipulation + Self-Control/Instinct</strong> (difficulty 8)." },
         { level: 6, name: "Animal Succulence", desc: "Maximizes nourishment, allowing the user to thrive longer on animal blood.", sys: "No roll is needed; once learned, this power is always in effect. Each blood point taken from an animal effectively becomes two." },
         { level: 6, name: "The Twin Souls", desc: "Establishes a permanent, shared sensory and mental bond with a touched animal.", sys: "The vampire touches the animal. <strong>Roll Perception + Animal Ken</strong> (difficulty 6). Maintaining the power requires one Willpower point per turn." },
@@ -1010,7 +1015,7 @@
       ],
       "Bardo": [
         { level: 1, name: "Restore Humanitas", desc: "Attempts to restore lost Humanity points without spending experience.", sys: "When the vampire loses a dot of Road of Humanity, he can attempt to regain it without spending experience points. <strong>Roll Conscience</strong> (difficulty equal to the level of Road of Humanity being regained)." },
-        { level: 2, name: "Banishing Sign of Thoth", desc: "Wards off targeted incoming magical attacks and Disciplines.", sys: "The player spends a blood point and <strong>Roll Dexterity + Occult</strong> (difficulty 7)." },
+        { level: 2, name: "Banishing Sign of Thoth", desc: "Wards off targeted magical attacks and Disciplines.", sys: "The player spends a blood point and <strong>Roll Dexterity + Occult</strong> (difficulty 7)." },
         { level: 3, name: "Gift of Apis", desc: "Allows the vampire to nourish themselves on animal blood as if it were human.", sys: "Animal blood is just as nourishing to the character as human blood." },
         { level: 4, name: "Pillar of Osiris", desc: "Consecrates a haven to increase inner calm, lowering Discipline difficulties by three.", sys: "Creating the Pillar of Osiris requires a night-long ritual. The player spends a Willpower point and <strong>Roll Willpower</strong>." },
         { level: 5, name: "Revelation", desc: "Projects cosmic, paralyzing truths into a target's mind.", sys: "The vampire speaks and his player spends a point of Willpower and <strong>Roll Manipulation + Occult</strong> (difficulty of the listener’s current Willpower)." },
@@ -1155,7 +1160,7 @@
         { level: 6, name: "Earth Control", desc: "Glides through natural soil and rock as if it were water.", sys: "No roll required. Moves at half normal walking speed." },
         { level: 6, name: "Ephemeral Slumber", desc: "Allows the user to sleep in mist form during the day.", sys: "Spend 1 Willpower point while activating Lurking Mists." },
         { level: 6, name: "Flesh of Marble", desc: "Hardens the body's skin into stone-like density.", sys: "Spend 3 blood points, reflexive. Reduces damage dice pools by half." },
-        { level: 6, name: "Loki's Gift", desc: "Assumes the exact physical form of the last individual fed upon.", sys: "Spend 2 blood points, takes 2 turns." },
+        { level: 6, name: "Loki's Gift", desc: "Assumes the form of the last thing she fed upon, be it human, Cainite, or animal.", sys: "After a vampire drinks from a victim, she may assume the victim’s form. The transformation costs two blood points and takes two turns to complete." },
         { level: 6, name: "Reversion to the True Form", desc: "The vampire prevents shapeshifters from shifting.", sys: "Touch the victim and spend 1 Willpower point. <strong>Roll Manipulation + Animal Ken</strong> (difficult of target's Willpower)." }
       ],
       "Quietus Cruscitus": [
@@ -1169,7 +1174,7 @@
       "Quietus Hematus": [
         { level: 1, name: "Blood Tempering", desc: "Infuses items with blood to prevent environmental decay.", sys: "Spend 1 blood point per size. <strong>Roll Intelligence + Crafts</strong> (difficulty 6)." },
         { level: 2, name: "Truth of Blood", desc: "Uses target's blood in a goblet to divine the exact truth behind spoken words.", sys: "Spend 1 Willpower point. <strong>Roll Perception + Subterfuge</strong> (difficulty equal to the target's Willpower)." },
-        { level: 3, name: "Cleansed in Blood", desc: "Purges supernatural mind-controlling taints from another target's soul.", sys: "Spend 1 Willpower point. <strong>Roll Willpower</strong> vs difficulty of the targeting power + 4." },
+        { level: 3, name: "Cleansed in Blood", desc: "Purges supernatural taints from another target's soul.", sys: "Spend 1 Willpower point. <strong>Roll Willpower</strong> vs difficulty of the targeting power + 4." },
         { level: 4, name: "Ripples of the Heart", desc: "Imprints a specific emotion onto blood to manipulate those who ingest it.", sys: "Spend 1 blood point. <strong>Roll Charisma + Empathy</strong> (difficulty 7)." },
         { level: 5, name: "Blood Sweat", desc: "Forces a victim's blood to pour forth as sweat, leaving them weakened.", sys: "Touch target's fresh blood. Spend 1 Willpower and <strong>Roll Manipulation + Intimidation</strong> vs target's current Willpower points (as difficulty)." },
         { level: 6, name: "Blood Awakening", desc: "Scans the memories stored inside recently ingested blood.", sys: "Drink 1 blood point. <strong>Roll Perception + Empathy</strong> (difficulty 7)." }
@@ -1194,7 +1199,7 @@
         { level: 1, name: "Hourglass of the Mind", desc: "Innate, perfect clock and time sense.", sys: "This Discipline duplicates the Celestial At-tunement Merit." },
         { level: 2, name: "Locked Contemplation", desc: "Freezes the user's mind in a present turn, or places others in a trance.", sys: "The primary effect of this power may be activated reflexively. The player spends one Willpower point and <strong>Roll Wits + Alertness</strong> (difficulty 6)." },
         { level: 3, name: "Leaden Movement", desc: "Greatly slows the speed and damage of a moving target.", sys: "This power may be activated reflexively. The player spends a blood point and <strong>Roll Intelligence + Occult</strong> (difficulty target's speed - Temporis dots)." },
-        { level: 4, name: "Patience of the Norns", desc: "Suspends multiple targets or objects in a frozen temporal stasis.", sys: "Aside from the following exceptions, this power otherwise works according to the rules for Leaden Movement. To slow multiple targets, the player spends a blood point and a Willpower point." },
+        { level: 4, name: "Patience of the Norns", desc: "Suspends multiple targets or objects in a frozen stasis.", sys: "Aside from the following exceptions, this power otherwise works according to the rules for Leaden Movement. To slow multiple targets, the player spends a blood point and a Willpower point." },
         { level: 5, name: "Clotho's Gift", desc: "Drastically accelerates the user's speed, granting multiple full actions.", sys: "The player spends three blood points and <strong>Roll Intelligence + Occult</strong> (difficulty 7)." },
         { level: 6, name: "Kiss of Lachesis", desc: "Ages or de-ages targets by decades or centuries with a touch.", sys: "Touch target. Spend 2 blood points and <strong>Roll Manipulation + Occult</strong> vs 4 + target's Stamina." }
       ],
@@ -1202,7 +1207,7 @@
         { level: "Sorcery", name: "Thaumaturgy", desc: "The highly structured, Hermetic discipline of blood magic developed by the Tremere, utilizing predictable Paths and meticulously researched Rituals.", sys: "All Blood Sorcery Paths and Rituals are activated by spending 1 blood point and <strong>Roll Intelligence + Occult</strong> (Difficulty 6) unless stated otherwise in the power's description." }
       ],
       "Valeren - Healer": [
-        { level: 1, name: "Sense Vitality", desc: "Instantly reads a target's physical and spiritual health markers.", sys: "The player makes a <strong>Roll Perception + Empathy</strong> or <strong>Roll Medicine</strong> (difficulty 7)." },
+        { level: 1, name: "Sense Vitality", desc: "Instantly reads a target's health markers.", sys: "The player makes a <strong>Roll Perception + Empathy</strong> or <strong>Roll Medicine</strong> (difficulty 7)." },
         { level: 2, name: "Gift of Sleep", desc: "Blocks physical pain, or puts a living creature into deep sleep.", sys: "If used on the willing, the power requires a touch and a <strong>Roll Willpower</strong> (difficulty 6) to block the subject's pain." },
         { level: 3, name: "Healer's Touch", desc: "Restores wounds or purges infectious diseases through physical contact.", sys: "Touch the target. The target's wounds may be healed by the expenditure of blood points." },
         { level: 4, name: "Shepherd's Watch", desc: "Erects an invisible protective barrier in a 10-foot radius.", sys: "The Salubri spends two Willpower points to erect a force barrier. Contested Willpower Rolls to enter barrier is <strong>Roll Willpower</strong> (difficulty 8)." },
@@ -1575,7 +1580,11 @@
         id: charId,
         meta: { name: 'New Character', clan: '', sire: '', generation: '12', nature: '', demeanor: '', concept: '', chronicle: '' },
         attributes: { strength: 1, dexterity: 1, stamina: 1, charisma: 1, manipulation: 1, appearance: 1, perception: 1, intelligence: 1, wits: 1 },
-        abilities: {},
+        abilities: {
+          alertness: 0, athletics: 0, awareness: 0, brawl: 0, empathy: 0, expression: 0, intimidation: 0, leadership: 0, legerdemain: 0, subterfuge: 0,
+          animal_ken: 0, archery: 0, commerce: 0, crafts: 0, etiquette: 0, melee: 0, performance: 0, ride: 0, stealth: 0, survival: 0,
+          academics: 0, enigmas: 0, hearth_wisdom: 0, investigation: 0, law: 0, medicine: 0, occult: 0, politics: 0, seneschal: 0, theology: 0
+        },
         virtues: { virtue_1_type: 'Conscience', virtue_1_val: 1, virtue_2_type: 'Self-Control', virtue_2_val: 1, virtue_3_val: 1 },
         disciplines: [],
         backgrounds: [],
@@ -2625,27 +2634,31 @@
       // Initialize blood pool checkboxes
       updateBloodPoolCapacity();
 
-      // Attributes
-      if (data.attributes) {
-        Object.keys(data.attributes).forEach(id => {
-          const el = document.querySelector(`[data-id="${id}"]`);
-          if (el) {
-            el.setAttribute('data-value', data.attributes[id]);
-            renderDots(el);
-          }
-        });
-      }
+      // Attributes - Clean sweep loading logic from static schema definition
+      const attributesList = ['strength', 'dexterity', 'stamina', 'charisma', 'manipulation', 'appearance', 'perception', 'intelligence', 'wits'];
+      attributesList.forEach(id => {
+        const el = document.querySelector(`[data-id="${id}"]`);
+        if (el) {
+          const val = (data.attributes && data.attributes[id] !== undefined) ? data.attributes[id] : 1;
+          el.setAttribute('data-value', val);
+          renderDots(el);
+        }
+      });
 
-      // Abilities
-      if (data.abilities) {
-        Object.keys(data.abilities).forEach(id => {
-          const el = document.querySelector(`[data-id="${id}"]`);
-          if (el) {
-            el.setAttribute('data-value', data.abilities[id] || 0);
-            renderDots(el);
-          }
-        });
-      }
+      // Abilities - Clean sweep loading logic from static schema definition
+      const abilitiesList = [
+        'alertness', 'athletics', 'awareness', 'brawl', 'empathy', 'expression', 'intimidation', 'leadership', 'legerdemain', 'subterfuge',
+        'animal_ken', 'archery', 'commerce', 'crafts', 'etiquette', 'melee', 'performance', 'ride', 'stealth', 'survival',
+        'academics', 'enigmas', 'hearth_wisdom', 'investigation', 'law', 'medicine', 'occult', 'politics', 'seneschal', 'theology'
+      ];
+      abilitiesList.forEach(id => {
+        const el = document.querySelector(`[data-id="${id}"]`);
+        if (el) {
+          const val = (data.abilities && data.abilities[id] !== undefined) ? data.abilities[id] : 0;
+          el.setAttribute('data-value', val);
+          renderDots(el);
+        }
+      });
 
       // Virtues
       const virtues = data.virtues || {};
