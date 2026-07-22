@@ -497,7 +497,9 @@
     /* Dropdown customization for perfect readability */
     .discipline-select-container select option,
     .generation-select-container select option,
-    .clan-select-container select option {
+    .clan-select-container select option,
+    .nature-select-container select option,
+    .demeanor-select-container select option {
       color: var(--text-dark) !important;
       background-color: var(--parchment) !important;
     }
@@ -629,8 +631,110 @@
                 <span class="gen-caret" style="position: absolute; right: 5px; pointer-events: none; color: var(--accent-red); font-size: 0.7rem; font-family: sans-serif;">▼</span>
               </div>
             </div>
-            <div class="info-group"><label>Nature</label><input type="text" id="char-nature" oninput="queueAutoSave()"></div>
-            <div class="info-group"><label>Demeanor</label><input type="text" id="char-demeanor" oninput="queueAutoSave()"></div>
+            <div class="info-group">
+              <label>Nature</label>
+              <div class="nature-select-container" style="position: relative; display: inline-flex; align-items: center; width: 100%;">
+                <select id="char-nature" onchange="handleNatureChange(this)" style="width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border-color); font-family: inherit; font-size: 1rem; padding: 3px 0; color: var(--text-dark); cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none;">
+                  <option value="">Select Nature...</option>
+                  <option value="custom">Custom...</option>
+                  <option value="Architect">Architect</option>
+                  <option value="Autocrat">Autocrat</option>
+                  <option value="Beast">Beast</option>
+                  <option value="Bon Vivant">Bon Vivant</option>
+                  <option value="Bravo">Bravo</option>
+                  <option value="Caregiver">Caregiver</option>
+                  <option value="Celebrant">Celebrant</option>
+                  <option value="Chameleon">Chameleon</option>
+                  <option value="Child">Child</option>
+                  <option value="Competitor">Competitor</option>
+                  <option value="Conformist">Conformist</option>
+                  <option value="Conniver">Conniver</option>
+                  <option value="Creep Show">Creep Show</option>
+                  <option value="Curmudgeon">Curmudgeon</option>
+                  <option value="Dabbler">Dabbler</option>
+                  <option value="Defender">Defender</option>
+                  <option value="Deviant">Deviant</option>
+                  <option value="Enigma">Enigma</option>
+                  <option value="Eye of the Storm">Eye of the Storm</option>
+                  <option value="Fanatic">Fanatic</option>
+                  <option value="Gallant">Gallant</option>
+                  <option value="Guru">Guru</option>
+                  <option value="Idealist">Idealist</option>
+                  <option value="Jester">Jester</option>
+                  <option value="Loner">Loner</option>
+                  <option value="Martyr">Martyr</option>
+                  <option value="Masochist">Masochist</option>
+                  <option value="Mercenary">Mercenary</option>
+                  <option value="Monster">Monster</option>
+                  <option value="Pedagogue">Pedagogue</option>
+                  <option value="Penitent">Penitent</option>
+                  <option value="Perfectionist">Perfectionist</option>
+                  <option value="Philosopher">Philosopher</option>
+                  <option value="Rebel">Rebel</option>
+                  <option value="Rogue">Rogue</option>
+                  <option value="Sadist">Sadist</option>
+                  <option value="Soldier">Soldier</option>
+                  <option value="Survivor">Survivor</option>
+                  <option value="Thrill-Seeker">Thrill-Seeker</option>
+                  <option value="Traditionalist">Traditionalist</option>
+                  <option value="Tyrant">Tyrant</option>
+                  <option value="Visionary">Visionary</option>
+                </select>
+                <span class="nature-caret" style="position: absolute; right: 5px; pointer-events: none; color: var(--accent-red); font-size: 0.7rem; font-family: sans-serif;">▼</span>
+              </div>
+            </div>
+            <div class="info-group">
+              <label>Demeanor</label>
+              <div class="demeanor-select-container" style="position: relative; display: inline-flex; align-items: center; width: 100%;">
+                <select id="char-demeanor" onchange="handleDemeanorChange(this)" style="width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border-color); font-family: inherit; font-size: 1rem; padding: 3px 0; color: var(--text-dark); cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none;">
+                  <option value="">Select Demeanor...</option>
+                  <option value="custom">Custom...</option>
+                  <option value="Architect">Architect</option>
+                  <option value="Autocrat">Autocrat</option>
+                  <option value="Beast">Beast</option>
+                  <option value="Bon Vivant">Bon Vivant</option>
+                  <option value="Bravo">Bravo</option>
+                  <option value="Caregiver">Caregiver</option>
+                  <option value="Celebrant">Celebrant</option>
+                  <option value="Chameleon">Chameleon</option>
+                  <option value="Child">Child</option>
+                  <option value="Competitor">Competitor</option>
+                  <option value="Conformist">Conformist</option>
+                  <option value="Conniver">Conniver</option>
+                  <option value="Creep Show">Creep Show</option>
+                  <option value="Curmudgeon">Curmudgeon</option>
+                  <option value="Dabbler">Dabbler</option>
+                  <option value="Defender">Defender</option>
+                  <option value="Deviant">Deviant</option>
+                  <option value="Enigma">Enigma</option>
+                  <option value="Eye of the Storm">Eye of the Storm</option>
+                  <option value="Fanatic">Fanatic</option>
+                  <option value="Gallant">Gallant</option>
+                  <option value="Guru">Guru</option>
+                  <option value="Idealist">Idealist</option>
+                  <option value="Jester">Jester</option>
+                  <option value="Loner">Loner</option>
+                  <option value="Martyr">Martyr</option>
+                  <option value="Masochist">Masochist</option>
+                  <option value="Mercenary">Mercenary</option>
+                  <option value="Monster">Monster</option>
+                  <option value="Pedagogue">Pedagogue</option>
+                  <option value="Penitent">Penitent</option>
+                  <option value="Perfectionist">Perfectionist</option>
+                  <option value="Philosopher">Philosopher</option>
+                  <option value="Rebel">Rebel</option>
+                  <option value="Rogue">Rogue</option>
+                  <option value="Sadist">Sadist</option>
+                  <option value="Soldier">Soldier</option>
+                  <option value="Survivor">Survivor</option>
+                  <option value="Thrill-Seeker">Thrill-Seeker</option>
+                  <option value="Traditionalist">Traditionalist</option>
+                  <option value="Tyrant">Tyrant</option>
+                  <option value="Visionary">Visionary</option>
+                </select>
+                <span class="demeanor-caret" style="position: absolute; right: 5px; pointer-events: none; color: var(--accent-red); font-size: 0.7rem; font-family: sans-serif;">▼</span>
+              </div>
+            </div>
             <div class="info-group"><label>Concept</label><input type="text" id="char-concept" oninput="queueAutoSave()"></div>
             <div class="info-group"><label>Chronicle</label><input type="text" id="char-chronicle" oninput="queueAutoSave()"></div>
           </div>
@@ -1028,6 +1132,178 @@
     let isLoadingSheet = false; // Flag to prevent auto-saves while sheet DOM is initializing
     const collapsedDisciplines = {}; // Persistent Grimoire minimizes
 
+    // Aligned V20 Core Archetype Database
+    const archetypesDatabase = {
+      "Architect": {
+        description: "The Architect holds to a purpose greater than herself and is fulfilled when creating something of lasting value for others. She works to provide necessities to those around her.",
+        willpower: "Regain a point of Willpower whenever you establish something of importance or lasting value."
+      },
+      "Autocrat": {
+        description: "The Autocrat pursues power and control for its own sake.",
+        willpower: "Regain a point of Willpower when you exercise control over a group or organization."
+      },
+      "Beast": {
+        description: "The Beast only respects actual deeds and believes civilization is a trap set for the weak. What counts is personal achievement.",
+        willpower: "Regain a point of Willpower when you beat civilized competition through personal action."
+      },
+      "Bon Vivant": {
+        description: "The Bon Vivant lives life to the fullest, making use of every second.",
+        willpower: "Regain a point of Willpower when you truly enjoy yourself. At the Storyteller’s discretion, a particularly fabulous revel may yield multiple Willpower points."
+      },
+      "Bravo": {
+        description: "The Bravo believes that might makes right. Power matters, and while physical power is the best kind, any will do.",
+        willpower: "Regain a point of Willpower any time you achieve your agenda through physical or social brutishness or intimidation."
+      },
+      "Caregiver": {
+        description: "The Caregiver takes comfort in consoling others, and people often come to her with their problems.",
+        willpower: "Regain a point of Willpower whenever you successfully protect or nurture someone."
+      },
+      "Celebrant": {
+        description: "The Celebrant takes joy in her cause and indulges in her chosen passion as deeply as possible. She pursues it out of enthusiasm, not duty.",
+        willpower: "Regain a point of Willpower whenever you pursue your cause or convert another character to the same passion."
+      },
+      "Chameleon": {
+        description: "The Chameleon is independent and careful. He studies behavior and mannerisms to pass himself off as someone else later.",
+        willpower: "Regain a point of Willpower whenever you fool someone into thinking you’re someone else for your own benefit."
+      },
+      "Child": {
+        description: "The Child is immature in personality and temperament. She can care for herself if need be, but would rather have someone cater to her desires.",
+        willpower: "Regain a point of Willpower whenever you convince someone to help you with no gain to himself."
+      },
+      "Competitor": {
+        description: "The Competitor approaches every task and social interaction as a new challenge to meet and contest to win.",
+        willpower: "Regain a point of Willpower whenever you succeed in a dramatic situation. Especially difficult victories may allow you to regain multiple Willpower points at the Storyteller’s discretion."
+      },
+      "Conformist": {
+        description: "The Conformist is a follower, throwing in with the rest of the group and lending aid to the cause.",
+        willpower: "Regain a point of Willpower whenever the group or your supported leader achieves a goal due to your support."
+      },
+      "Conniver": {
+        description: "The Conniver finds the fast track to success and wealth through trickery and manipulation.",
+        willpower: "Regain a point of Willpower whenever you trick someone into doing something or convince them to help you against their best interests."
+      },
+      "Creep Show": {
+        description: "The Creep Show revels in shocking and disgusting those around her. It’s a facade to intimidate and control others, but others buy into it and think she’s the Devil incarnate.",
+        willpower: "Regain a point of Willpower whenever someone recoils from you in horror or reacts in fear."
+      },
+      "Curmudgeon": {
+        description: "The Curmudgeon is bitter and cynical, finding flaws in everything and seeing little humor in life or unlife. Fatalistic and pessimistic, he has very little esteem for others.",
+        willpower: "Regain a point of Willpower whenever someone takes a specific negative action, just like you said they would. You must predict this failure aloud."
+      },
+      "Dabbler": {
+        description: "The Dabbler is interested in everything but focuses on nothing. He flits from idea to idea without actually finishing anything.",
+        willpower: "Regain a point of Willpower whenever you find a new enthusiasm and drop your old one completely."
+      },
+      "Defender": {
+        description: "The Defender struggles to defend her chosen cause in the face of its enemies. It may be some fragile innovation or hope of future progress.",
+        willpower: "Regain a point of Willpower whenever you successfully defend your cause."
+      },
+      "Deviant": {
+        description: "The Deviant is a freak, ostracized from society by non-mainstream tastes or beliefs and feels the world stands against them.",
+        willpower: "Regain a point of Willpower any time you are able to flout social mores without retribution."
+      },
+      "Enigma": {
+        description: "The Enigma’s actions are bizarre, puzzling, and inexplicable. Her erratic actions suggest she’s eccentric, if not completely crazy.",
+        willpower: "Regain a point of Willpower whenever someone is perplexed by actions you take that later turn out to be a fruitful endeavor."
+      },
+      "Eye of the Storm": {
+        description: "The Eye of the Storm retains a calm appearance but chaos seems to follow him.",
+        willpower: "Regain a point of Willpower whenever a ruckus, riot, or less violent but chaotic phenomenon occurs around you."
+      },
+      "Fanatic": {
+        description: "The Fanatic has a purpose that consumes her existence. She may even feel guilty undertaking an object that deviates from the higher goal.",
+        willpower: "Regain a point of Willpower whenever you accomplish something directly relating to your cause."
+      },
+      "Gallant": {
+        description: "The Gallant is a flamboyant soul, always seeking attention in the company of others, if only to earn their adoration.",
+        willpower: "Regain a point of Willpower whenever you successfully impress another person."
+      },
+      "Guru": {
+        description: "The Guru’s enlightenment draws others to her. Her presence motivates others to engage in spiritual or ideological pursuits.",
+        willpower: "Regain a point of Willpower whenever your guidance moves a person to an enlightened action he normally would not have taken."
+      },
+      "Idealist": {
+        description: "The Idealist believes in some higher goal or morality and tries to reconcile his beliefs with the demands of vampiric existence, often acting contrary to his self-interest in doing so.",
+        willpower: "Regain a point of Willpower any time an action furthers your goals and brings your ideal closer to fruition."
+      },
+      "Jester": {
+        description: "The Jester sees the world as a veil of folly and deceit, and enlightens others through the subtle ways of humor.",
+        willpower: "Regain a point of Willpower whenever you raise the spirits of those in great misery, or when you undermine a bully or tyrant by making him the object of ridicule."
+      },
+      "Loner": {
+        description: "The Loner prefers her own company to that of others, and the feeling is often reciprocated.",
+        willpower: "Regain a point of Willpower when you accomplish something by yourself that still benefits the coterie as a whole in some way."
+      },
+      "Martyr": {
+        description: "The Martyr suffers for his cause, enduring her trials out of the belief that her discomfort will ultimately improve the world.",
+        willpower: "Regain a point of Willpower when you suffer some damage or loss of a definable resource for your ideals or another’s immediate gain."
+      },
+      "Masochist": {
+        description: "The Masochist exists to test her limits and gains satisfaction in humiliation, suffering, denial, and physical pain.",
+        willpower: "Regain a point of Willpower when your own suffering leads to some tangible gain for you, or whenever you experience pain in a unique way."
+      },
+      "Mercenary": {
+        description: "The Mercenary believes anything can be a commodity. Appearance and influence are everything when it comes to a sale, and no advantage is wasted.",
+        willpower: "Regain a point of Willpower whenever you make a successful sale of any commodity or service."
+      },
+      "Monster": {
+        description: "The Monster knows she is a creature of darkness and acts like it. Evil and suffering are tools. She doesn’t commit evil for evil’s sake but rather as a means to understand what she’s become.",
+        willpower: "Regain a point of Willpower whenever you commit a specific atrocity. Storytellers should be careful when rewarding this Archetype. A player who chooses violence as an atrocity shouldn’t regain Willpower every combat, but perhaps only when she needs to roll a degeneration check. Rewards should come as a result of the character challenging his own descent into the Beast."
+      },
+      "Pedagogue": {
+        description: "The Pedagogue knows it all and makes sure his message is heard – at length, if necessary.",
+        willpower: "Regain a point of Willpower whenever you see or learn of someone who has benefited from the wisdom you share with them."
+      },
+      "Penitent": {
+        description: "The Penitent atones for the grave sin she commits simply by being who she is and feels compelled to “make up” for inflicting herself on the world.",
+        willpower: "Regain a point of Willpower whenever you feel that you have achieved absolution for a given sin."
+      },
+      "Perfectionist": {
+        description: "The Perfectionist demands flawless execution from herself as well as others.",
+        willpower: "Regain a point of Willpower whenever you motivate another character to succeed as a result of your own shining example."
+      },
+      "Philosopher": {
+        description: "The Philosopher critically examines every situation looking for logical outcomes and patterns.",
+        willpower: "Regain a point of Willpower any time a logical, systematic approach to a problem helps you solve it, or information gathered logically is of use in another similar situation."
+      },
+      "Rebel": {
+        description: "The Rebel is a malcontent, never satisfied with the status quo or the system as it is. He does everything in his power to undermine authority.",
+        willpower: "Regain a point of Willpower whenever your actions adversely affect your chosen opposition."
+      },
+      "Rogue": {
+        description: "The Rogue only cares about one thing: herself. She is not necessarily a thug or bully; she simply has her own best interests in mind at all times.",
+        willpower: "Regain a point of Willpower whenever your self-centered disposition leads you to profit."
+      },
+      "Sadist": {
+        description: "The Sadist exists to inflict pain and suffering on others. Killing is too easy. She seeks the slowest, most painful means to push others to the ultimate limits.",
+        willpower: "Regain a point of Willpower whenever you inflict pain upon someone for no reason other than your own pleasure."
+      },
+      "Soldier": {
+        description: "The Soldier is not a blindly loyal follower. While she exists for orders, she does not adhere to them unquestioningly. More independent than a Conformist but too tied to the idea of command to be a Loner, the Soldier applies her own techniques to others’ goals and ambition lies within the established hierarchy and structure.",
+        willpower: "Regain a point of Willpower when you achieve your orders’ objectives."
+      },
+      "Survivor": {
+        description: "The Survivor always manages to pull through, no matter the odds or opposition. The Survivor’s utter refusal to accept defeat often makes the difference between success and failure.",
+        willpower: "Regain a point of Willpower whenever you survive a threatening situation through sheer tenacity, or when your counsel causes someone else to persist in spite of opposition."
+      },
+      "Thrill-Seeker": {
+        description: "The Thrill-Seeker lives for the rush of danger and actively pursues hazardous and possibly deadly situations. He is not actively suicidal or self-destructive; he simply seeks the stimulation of risk.",
+        willpower: "Regain a point of Willpower any time you succeed at a dangerous task you have deliberately undertaken."
+      },
+      "Traditionalist": {
+        description: "The Traditionalist prefers to accomplish her goals with time-tested methods. The status quo is acceptable, even preferable to change.",
+        willpower: "Regain a point of Willpower any time the proven way turns out to be the best. Also, regain a point of Willpower any time you adhere to one of your previously espoused positions and it proves a wise course of action."
+      },
+      "Tyrant": {
+        description: "The Tyrant seeks to be in charge or guide a group, bringing order out of strife.",
+        willpower: "Regain a point of Willpower when you influence or aid a group in the completion of a difficult task."
+      },
+      "Visionary": {
+        description: "The Visionary tests accepted societal limits and seeks what few others have the courage to imagine. She encourages society to offer what it is capable of offering instead of what it actually does offer. She is responsible for bringing about progress and change.",
+        willpower: "Regain a point of Willpower each time you are able to convince others to have faith in your vision of the future."
+      }
+    };
+
     // Strict V20 Core Rulebook Discipline Database
     const disciplineDatabase = {
       "Abombwe": [
@@ -1276,7 +1552,7 @@
         { level: 3, name: "Pariah's Caress", desc: "Charges blood to redirect local hostility and suspicion onto a victim.", sys: "Spends a blood point and touch the victim then <strong>Roll Manipulation + Empathy</strong> (difficulty 7)." },
         { level: 4, name: "Peacemaker", desc: "Erects an aura of peace in a room, mitigating combat and temper.", sys: "The player spends two Willpower points to erect the Peacemaker aura, which must be inside a chamber no larger than a ballroom." },
         { level: 5, name: "Soul's Breath", desc: "Siphons blood and Willpower from a target's breath.", sys: "The Watcher must be facing a victim within speaking distance. <strong>Roll Intelligence + Occult</strong> (difficulty 6)." },
-        { level: 6, name: "Safe Passage", desc: "Passively inhibits anyone attempting to hunt or track the user.", sys: "Passive, always on. <strong>Roll Willpower</strong> (difficulty 6) to redirect sighting interest." }
+        { level: 6, name: "Safe Passage", desc: "Passively inhibits anyone attempting to hunt or track the user.", sys: "Safe Passage is always “on,” though the Watcher may release the effect if she wishes. All attempts to hunt or track the Salubri with hostile intent suffer a -2 penalty." }
       ],
       "Vicissitude": [
         { level: 1, name: "Malleable Visage", desc: "Cosmically alters the vampire's own skin, fat, and muscle.", sys: "The player must spend one blood point for each desired change and <strong>Roll Intelligence + Body Crafts</strong> (difficulty 6)." },
@@ -1986,18 +2262,16 @@
           selectEl.value = "";
         }
         queueAutoSave();
-        return; // Add nothing and do not clear for custom
+        return; 
       }
 
       if (val) {
         const entry = clanDatabase[val];
         if (entry) {
-          // Clear and populate weakness text box
           const weaknessTxt = document.getElementById('clan-weakness');
           if (weaknessTxt) {
             weaknessTxt.value = entry.weakness || '';
           }
-          // Append standard Disciplines to the bottom of the existing list (Do NOT clear)
           const list = document.getElementById('disciplines-list');
           if (list) {
             entry.disciplines.forEach(discName => {
@@ -2006,9 +2280,96 @@
           }
         }
       } else {
-        // Clear only the weakness if reset to empty selection, leaving Disciplines intact
         const weaknessTxt = document.getElementById('clan-weakness');
         if (weaknessTxt) weaknessTxt.value = '';
+      }
+      queueAutoSave();
+    }
+
+    function handleNatureChange(selectEl) {
+      const val = selectEl.value;
+      const notesLeft = document.getElementById('meta-notes-left');
+      
+      if (val === 'custom') {
+        const customVal = prompt("Enter custom Nature:");
+        if (customVal && customVal.trim() !== '') {
+          const cleaned = customVal.trim();
+          let exists = false;
+          for (let opt of selectEl.options) {
+            if (opt.value === cleaned) {
+              exists = true;
+              selectEl.value = cleaned;
+              break;
+            }
+          }
+          if (!exists) {
+            const newOpt = document.createElement('option');
+            newOpt.value = cleaned;
+            newOpt.text = cleaned;
+            selectEl.add(newOpt);
+            selectEl.value = cleaned;
+          }
+        } else {
+          selectEl.value = "";
+          if (notesLeft) notesLeft.value = "";
+        }
+        queueAutoSave();
+        return;
+      }
+
+      if (val) {
+        const entry = archetypesDatabase[val];
+        if (entry) {
+          if (notesLeft) {
+            notesLeft.value = entry.willpower || '';
+          }
+        }
+      } else {
+        if (notesLeft) notesLeft.value = "";
+      }
+      queueAutoSave();
+    }
+
+    function handleDemeanorChange(selectEl) {
+      const val = selectEl.value;
+      const notesRight = document.getElementById('meta-notes-right');
+      
+      if (val === 'custom') {
+        const customVal = prompt("Enter custom Demeanor:");
+        if (customVal && customVal.trim() !== '') {
+          const cleaned = customVal.trim();
+          let exists = false;
+          for (let opt of selectEl.options) {
+            if (opt.value === cleaned) {
+              exists = true;
+              selectEl.value = cleaned;
+              break;
+            }
+          }
+          if (!exists) {
+            const newOpt = document.createElement('option');
+            newOpt.value = cleaned;
+            newOpt.text = cleaned;
+            selectEl.add(newOpt);
+            selectEl.value = cleaned;
+          }
+        } else {
+          selectEl.value = "";
+          if (notesRight) notesRight.value = "";
+        }
+        queueAutoSave();
+        return;
+      }
+
+      if (val) {
+        const entry = archetypesDatabase[val];
+        if (entry) {
+          if (notesRight) {
+            notesRight.value = entry.description || '';
+          }
+        }
+      } else {
+        if (notesRight) notesRight.value = "";
       }
       queueAutoSave();
     }
@@ -2022,7 +2383,6 @@
       const reader = new FileReader();
       reader.onload = function(e) {
         const base64Data = e.target.result;
-        // Update preview immediately
         const imgPreview = document.getElementById('vis-image-preview');
         if (imgPreview) {
           imgPreview.src = base64Data;
@@ -2067,7 +2427,6 @@
       row.style.marginBottom = "7px";
       row.style.gap = "5px";
 
-      // Blank input line, with the delete button perfectly structured before the 6 dots
       row.innerHTML = `
         <input type="text" class="dynamic-name" style="background: transparent; border: none; border-bottom: 1px dashed var(--border-color); font-family: inherit; font-size: 0.9rem; flex-grow: 1; min-width: 50px; color: var(--text-dark);" placeholder="Custom ${type}..." value="${initialName}" oninput="queueAutoSave()">
         <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();" style="color: var(--accent-red); font-weight: bold; background: none; border: none; cursor: pointer; padding: 0 5px; font-size: 1.1rem; flex-shrink: 0;">&times;</button>
@@ -2122,12 +2481,10 @@
             </select>
             <span class="disc-caret" style="position: absolute; right: 5px; pointer-events: none; color: var(--accent-red); font-size: 0.7rem; font-family: sans-serif;">▼</span>
             <div class="disc-link-overlay" style="position: absolute; left: 0; top: 0; bottom: 0; right: 20px; display: flex; align-items: center; pointer-events: none;">
-              <!-- Handled dynamically in updateDisciplineOverlay -->
             </div>
           </div>
         `;
       } else {
-        // Keeps text fields for Backgrounds and other list variants
         nameFieldHTML = `<input type="text" class="dynamic-name" placeholder="Name..." value="${initialName}" oninput="queueAutoSave()">`;
       }
 
@@ -2174,10 +2531,8 @@
       if (!val) {
         overlay.innerHTML = `<span style="color: #8c7e6e; pointer-events: none; font-family: inherit; font-size: 0.9rem; font-style: italic;">Select Discipline...</span>`;
       } else if (standardDisciplines.includes(val)) {
-        // Standard Discipline -> Styled hyperlinked anchor linking to Page 2 Grimoire
         overlay.innerHTML = `<a href="#" onclick="navigateToDiscipline('${val}'); return false;" style="color: var(--accent-red); text-decoration: underline; pointer-events: auto; font-weight: bold; font-family: inherit; font-size: 0.9rem; z-index: 2;">${val}</a>`;
       } else {
-        // Custom Discipline -> Plain text
         overlay.innerHTML = `<span style="color: var(--text-dark); pointer-events: none; font-family: inherit; font-size: 0.9rem;">${val}</span>`;
       }
     }
@@ -2186,7 +2541,6 @@
       if (selectEl.value === 'custom') {
         const customName = prompt("Enter the name of the custom Discipline:");
         if (customName && customName.trim() !== '') {
-          // Check if this option already exists to avoid duplication
           let exists = false;
           for (let opt of selectEl.options) {
             if (opt.value === customName) {
@@ -2196,7 +2550,6 @@
             }
           }
           if (!exists) {
-            // Dynamically append the custom option and select it
             const newOpt = document.createElement('option');
             newOpt.value = customName;
             newOpt.text = customName;
@@ -2204,7 +2557,6 @@
             selectEl.value = customName;
           }
         } else {
-          // Reset back to blank if prompt was cancelled or empty
           selectEl.value = "";
         }
       }
@@ -2356,16 +2708,12 @@
     /* --- TAB SWITCHING SYSTEM --- */
 
     function switchTab(tabId) {
-      // Hide all tab content
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-      // Remove active class from all tab buttons
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       
-      // Show target tab container
       const targetTab = document.getElementById(tabId);
       if (targetTab) targetTab.classList.add('active');
       
-      // Standard-compliant mapping for tab button state (tab-page-1 matches btn-page-1)
       const btnId = tabId.replace('tab-', 'btn-');
       const activeBtn = document.getElementById(btnId);
       if (activeBtn) activeBtn.classList.add('active');
@@ -2374,7 +2722,7 @@
     /* --- CORE SYNC ENGINE --- */
 
     function queueAutoSave() {
-      if (isLoadingSheet) return; // Prevent loops during DOM updates
+      if (isLoadingSheet) return; 
       setSaveStatus('Saving changes...');
       if (saveTimeout) clearTimeout(saveTimeout);
       saveTimeout = setTimeout(saveCurrentCharacter, 1000);
@@ -2390,7 +2738,6 @@
 
       const data = compileSheetData();
       
-      // Always store backup in LocalStorage
       localStorage.setItem(activeCharacterId, JSON.stringify(data));
       saveLocalIndex(activeCharacterId, data.meta.name, data.meta.clan, data.mechanics.roadName);
 
@@ -2554,7 +2901,6 @@
         data.abilities[id] = parseInt(document.querySelector(`[data-id="${id}"]`).getAttribute('data-value'));
       });
 
-      // Compile Page 1 Custom dynamic Abilities
       document.querySelectorAll('#custom-talents-list .custom-ability-row').forEach(row => {
         const name = row.querySelector('.dynamic-name').value;
         const val = parseInt(row.querySelector('.trait').getAttribute('data-value')) || 0;
@@ -2638,14 +2984,12 @@
         });
       });
 
-      // Save dynamic temp willpower checkboxes
       const wpPermVal = parseInt(document.querySelector('[data-id="willpower-perm"]').getAttribute('data-value')) || 0;
       for (let i = 1; i <= wpPermVal; i++) {
         const el = document.getElementById(`wp-temp-${i}`);
         data.mechanics.willpowerTemp.push(el ? el.checked : false);
       }
 
-      // Save dynamic blood pool checkboxes
       const genSelect = document.getElementById('char-generation');
       const genVal = genSelect ? genSelect.value : "";
       let bpCapacity = 50;
@@ -2666,22 +3010,17 @@
     }
 
     function loadSheetIntoDOM(data) {
-      isLoadingSheet = true; // Block auto-saves during DOM creation
+      isLoadingSheet = true; 
 
-      // Protect against uninitialized sub-objects with safe fallbacks
       const meta = data.meta || {};
       document.getElementById('char-name').value = meta.name || '';
       document.getElementById('char-sire').value = meta.sire || '';
-      document.getElementById('char-nature').value = meta.nature || '';
-      document.getElementById('char-demeanor').value = meta.demeanor || '';
       document.getElementById('char-concept').value = meta.concept || '';
       document.getElementById('char-chronicle').value = meta.chronicle || '';
 
-      // Load side-by-side meta textareas
       document.getElementById('meta-notes-left').value = data.meta_notes_left || '';
       document.getElementById('meta-notes-right').value = data.meta_notes_right || '';
 
-      // Load specialties textareas
       document.getElementById('specialties-talents').value = data.specialties_talents || '';
       document.getElementById('specialties-skills').value = data.specialties_skills || '';
       document.getElementById('specialties-knowledges').value = data.specialties_knowledges || '';
@@ -2713,7 +3052,6 @@
       const genSelect = document.getElementById('char-generation');
       if (genSelect) {
         const metaGen = meta.generation || '';
-        // Normalize, e.g. "12th" -> "12"
         let normalizedGen = metaGen.replace(/th|rd|nd|st/g, '').trim();
         
         let exists = false;
@@ -2725,7 +3063,6 @@
           }
         }
         if (!exists && metaGen !== '') {
-          // Check if un-normalized custom selection already exists
           for (let opt of genSelect.options) {
             if (opt.value === metaGen) {
               exists = true;
@@ -2745,10 +3082,55 @@
         }
       }
 
-      // Initialize blood pool checkboxes
+      // Nature Dropdown loading
+      const natureSelect = document.getElementById('char-nature');
+      if (natureSelect) {
+        const metaNature = meta.nature || '';
+        let exists = false;
+        for (let opt of natureSelect.options) {
+          if (opt.value === metaNature) {
+            exists = true;
+            natureSelect.value = metaNature;
+            break;
+          }
+        }
+        if (!exists && metaNature !== '') {
+          const newOpt = document.createElement('option');
+          newOpt.value = metaNature;
+          newOpt.text = metaNature;
+          natureSelect.add(newOpt);
+          natureSelect.value = metaNature;
+        } else if (metaNature === '') {
+          natureSelect.value = '';
+        }
+      }
+
+      // Demeanor Dropdown loading
+      const demeanorSelect = document.getElementById('char-demeanor');
+      if (demeanorSelect) {
+        const metaDemeanor = meta.demeanor || '';
+        let exists = false;
+        for (let opt of demeanorSelect.options) {
+          if (opt.value === metaDemeanor) {
+            exists = true;
+            demeanorSelect.value = metaDemeanor;
+            break;
+          }
+        }
+        if (!exists && metaDemeanor !== '') {
+          const newOpt = document.createElement('option');
+          newOpt.value = metaDemeanor;
+          newOpt.text = metaDemeanor;
+          demeanorSelect.add(newOpt);
+          demeanorSelect.value = metaDemeanor;
+        } else if (metaDemeanor === '') {
+          demeanorSelect.value = '';
+        }
+      }
+
       updateBloodPoolCapacity();
 
-      // Attributes - Clean sweep loading logic from static schema definition
+      // Attributes
       const attributesList = ['strength', 'dexterity', 'stamina', 'charisma', 'manipulation', 'appearance', 'perception', 'intelligence', 'wits'];
       attributesList.forEach(id => {
         const el = document.querySelector(`[data-id="${id}"]`);
@@ -2759,7 +3141,7 @@
         }
       });
 
-      // Abilities - Clean sweep loading logic from static schema definition
+      // Abilities
       const abilitiesList = [
         'alertness', 'athletics', 'awareness', 'brawl', 'empathy', 'expression', 'intimidation', 'leadership', 'legerdemain', 'subterfuge',
         'animal_ken', 'archery', 'commerce', 'crafts', 'etiquette', 'melee', 'performance', 'ride', 'stealth', 'survival',
@@ -2774,7 +3156,6 @@
         }
       });
 
-      // Clear Page 1 Custom Ability lists
       const customTalentsList = document.getElementById('custom-talents-list');
       const customSkillsList = document.getElementById('custom-skills-list');
       const customKnowledgesList = document.getElementById('custom-knowledges-list');
@@ -2782,7 +3163,6 @@
       if (customSkillsList) customSkillsList.innerHTML = '';
       if (customKnowledgesList) customKnowledgesList.innerHTML = '';
 
-      // Populate Page 1 Custom dynamic Abilities
       if (data.customAbilities) {
         data.customAbilities.forEach(item => {
           if (item.type === 'talent') {
@@ -2834,7 +3214,7 @@
         addDynamicRow('backgrounds-list', 'background');
       }
 
-      // Page 3 Lists (Merits and Flaws load description box)
+      // Page 3 Lists
       const meritsList = document.getElementById('merits-list');
       if (meritsList) meritsList.innerHTML = '';
       if (data.merits) data.merits.forEach(m => addCustomRow('merits-list', 'merit', m.name, m.type, m.val, m.desc || ''));
@@ -2893,7 +3273,6 @@
         renderDots(wpPerm);
       }
       
-      // Load temporary willpower checkboxes dynamically
       updateWillpowerTempPool(wpRatingVal);
 
       if (mechanics.willpowerTemp) {
@@ -2910,7 +3289,7 @@
         });
       }
 
-      // Health Loading (Backward compatibility supported)
+      // Health Loading
       if (data.health) {
         const healthKeys = [
           'bruised-b', 'bruised-l', 'bruised-a',
@@ -3034,7 +3413,6 @@
       const vSketch = document.getElementById('vis-sketch');
       if (vSketch) vSketch.value = vis.sketch || '';
 
-      // Load portrait image preview
       const imgPreview = document.getElementById('vis-image-preview');
       const delBtn = document.getElementById('vis-image-delete');
       if (imgPreview && delBtn) {
@@ -3049,8 +3427,8 @@
         }
       }
 
-      isLoadingSheet = false; // Restore normal auto-saving
-      renderGrimoireDisciplines(); // Synchronize ledger
+      isLoadingSheet = false; 
+      renderGrimoireDisciplines(); 
     }
 
     /* --- PRIVILEGED FILE IO --- */
@@ -3126,7 +3504,6 @@
       }
     }
 
-    // Indestructible document ready state handler to prevent execution skips
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", initApp);
     } else {
