@@ -491,7 +491,8 @@
 
     /* Dropdown customization for perfect readability */
     .discipline-select-container select option,
-    .generation-select-container select option {
+    .generation-select-container select option,
+    .clan-select-container select option {
       color: var(--text-dark) !important;
       background-color: var(--parchment) !important;
     }
@@ -561,7 +562,50 @@
           <!-- Character Info Header -->
           <div class="info-grid">
             <div class="info-group"><label>Name</label><input type="text" id="char-name" oninput="queueAutoSave()"></div>
-            <div class="info-group"><label>Clan</label><input type="text" id="char-clan" oninput="queueAutoSave()"></div>
+            <div class="info-group">
+              <label>Clan</label>
+              <div class="clan-select-container" style="position: relative; display: inline-flex; align-items: center; width: 100%;">
+                <select id="char-clan" onchange="handleClanChange(this)" style="width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border-color); font-family: inherit; font-size: 1rem; padding: 3px 0; color: var(--text-dark); cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none;">
+                  <option value="">Select Clan...</option>
+                  <option value="custom">Custom...</option>
+                  <option value="Assamite (Sorceror Caste)">Assamite (Sorceror Caste)</option>
+                  <option value="Assamite (Vizier Caste)">Assamite (Vizier Caste)</option>
+                  <option value="Assamite (Warrior Caste)">Assamite (Warrior Caste)</option>
+                  <option value="Brujah">Brujah</option>
+                  <option value="Cappadocians">Cappadocians</option>
+                  <option value="Followers of Set">Followers of Set</option>
+                  <option value="Gangrel">Gangrel</option>
+                  <option value="Lasombra">Lasombra</option>
+                  <option value="Malkavians">Malkavians</option>
+                  <option value="Nosferatu">Nosferatu</option>
+                  <option value="Ravnos">Ravnos</option>
+                  <option value="Toreador">Toreador</option>
+                  <option value="Tremere">Tremere</option>
+                  <option value="Tzimisce">Tzimisce</option>
+                  <option value="Ventrue">Ventrue</option>
+                  <option value="Ahrimanes">Ahrimanes</option>
+                  <option value="Anda">Anda</option>
+                  <option value="Baali">Baali</option>
+                  <option value="Bonsam">Bonsam</option>
+                  <option value="Children of Osiris">Children of Osiris</option>
+                  <option value="Danava">Danava</option>
+                  <option value="Gargoyles">Gargoyles</option>
+                  <option value="Giovani">Giovani</option>
+                  <option value="Impundulu">Impundulu</option>
+                  <option value="Kiasyd">Kiasyd</option>
+                  <option value="Lamiae">Lamiae</option>
+                  <option value="Lhiannan">Lhiannan</option>
+                  <option value="Nagaraja">Nagaraja</option>
+                  <option value="Niktuku">Niktuku</option>
+                  <option value="Ramanga">Ramanga</option>
+                  <option value="Salubri (Healer Caste)">Salubri (Healer Caste)</option>
+                  <option value="Salubri (Warrior Caste)">Salubri (Warrior Caste)</option>
+                  <option value="Salubri (Watcher Caste)">Salubri (Watcher Caste)</option>
+                  <option value="True Brujah">True Brujah</option>
+                </select>
+                <span class="clan-caret" style="position: absolute; right: 5px; pointer-events: none; color: var(--accent-red); font-size: 0.7rem; font-family: sans-serif;">▼</span>
+              </div>
+            </div>
             <div class="info-group"><label>Sire</label><input type="text" id="char-sire" oninput="queueAutoSave()"></div>
             <div class="info-group">
               <label>Generation</label>
@@ -1071,11 +1115,11 @@
         { level: 3, name: "Arms of Ahriman", desc: "Manifests physical shadow tentacles that can attack and grapple.", sys: "<strong>Roll Manipulation + Occult</strong> (difficulty 7)." },
         { level: 4, name: "Nightshades", desc: "Crafts lifelike images and silhouettes out of darkness.", sys: "<strong>Roll Wits + Occult</strong> (difficulty 7)." },
         { level: 5, name: "Tenebrous Avatar", desc: "Transforms the vampire's body into a fluid shadow form.", sys: "Spend 3 blood points, takes 3 turns." },
-        { level: 6, name: "The Darkness Within", desc: "Engulfs a target in Abyssal shadow, draining blood and causing terror.", sys: "Spend 1 blood point and <strong>Roll Willpower</strong> (difficulty 6). Engulfed target loses 2 blood per turn. Targets touched must succeed on a <strong>Roll Stamina</strong> (difficulty 6) each turn they remain in contact with the cloud." },
+        { level: 6, name: "The Darkness Within", desc: "Envelops a target in Abyssal shadow, draining blood and causing terror.", sys: "Spend 1 blood point and <strong>Roll Willpower</strong> (difficulty 6). Engulfed target loses 2 blood per turn. Targets touched must succeed on a <strong>Roll Stamina</strong> (difficulty 6) each turn they remain in contact with the cloud." },
         { level: 6, name: "Walk the Abyss", desc: "Steps into any nearby shadow and instantly emerges from another shadow in line of sight.", sys: "<strong>Roll Intelligence + Stealth</strong> (travel) or <strong>Roll Intelligence + Brawl</strong> (grasping objects) at difficulty 7." }
       ],
       "Ogham": [
-        { level: 1, name: "Consecration of Esus", desc: "Awakens plant life in a designated area to entangle and block enemies.", sys: "Requires a mortal sacrifice and an oak tree. <strong>Roll Dexterity + Occult</strong> (difficulty 5)." },
+        { level: 1, name: "Consecration of Esus", desc: "Awakens plant life to act in her defense; roots and grass entangle feet, and trees creak and stir.", sys: "Requires a mortal sacrifice and an oak tree. <strong>Roll Dexterity + Occult</strong> (difficulty 5)." },
         { level: 2, name: "Woad of Teutates", desc: "Invokes war runes to protect the vampire from wound penalties and boost attacks.", sys: "Requires a mortal warrior. <strong>Roll Stamina + Occult</strong> (difficulty 6)." },
         { level: 3, name: "Mallacht of the Cyoeraeth", desc: "Etches a target's name on a victim to inflict a devastating, sickening curse.", sys: "Requires a companion of the target. <strong>Roll Charisma + Occult</strong> (difficulty 7)." },
         { level: 4, name: "Woad of Taranis", desc: "Grants complete immunity to Rotschreck and allows the user to soak fire and sunlight.", sys: "Requires burning a victim in a Wicker Man. <strong>Roll Stamina + Occult</strong> (difficulty 8)." },
@@ -1110,13 +1154,13 @@
         { level: 6, name: "Adaptation", desc: "Body rapidly shifts to ignore extreme environmental hazards (falls, temperatures).", sys: "Spend 1 blood point, automatic." },
         { level: 6, name: "Earth Control", desc: "Glides through natural soil and rock as if it were water.", sys: "No roll required. Moves at half normal walking speed." },
         { level: 6, name: "Ephemeral Slumber", desc: "Allows the user to sleep in mist form during the day.", sys: "Spend 1 Willpower point while activating Lurking Mists." },
-        { level: 6, name: "Flesh of Marble", desc: "Hardens the body's skin into fine, poreless stone.", sys: "Spend 3 blood points, reflexive. Reduces damage dice pools by half." },
+        { level: 6, name: "Flesh of Marble", desc: "Hardens the body's skin into stone-like density.", sys: "Spend 3 blood points, reflexive. Reduces damage dice pools by half." },
         { level: 6, name: "Loki's Gift", desc: "Assumes the exact physical form of the last individual fed upon.", sys: "Spend 2 blood points, takes 2 turns." },
         { level: 6, name: "Reversion to the True Form", desc: "The vampire prevents shapeshifters from shifting.", sys: "Touch the victim and spend 1 Willpower point. <strong>Roll Manipulation + Animal Ken</strong> (difficult of target's Willpower)." }
       ],
       "Quietus Cruscitus": [
         { level: 1, name: "Blood Essence", desc: "Calcifies a victim's heart into a glass-like flask preserving their soul.", sys: "Exsanguinate the victim, touch them, and calcify their heart. <strong>Roll Wits + Subterfuge</strong> or an extended <strong>Roll Willpower</strong> (difficulty 9)." },
-        { level: 2, name: "Scorpion's Touch", desc: "Transmutes blood into a contact poison that drains target's Stamina.", sys: "The player spends the number of blood points it wants to convert to poison. <strong>Roll Willpower</strong> (difficulty 6). The poison permanently damages the victim's Stamina equal to the successes on the <strong>Roll Willpower</strong> minus the successes on a <strong>Roll Stamina</strong>." },
+        { level: 2, name: "Scorpion's Touch", desc: "Transmutes blood into a contact poison that drains target's Stamina.", sys: "The player spends the number of blood points it wants to convert to poison. <strong>Roll Willpower</strong> (difficulty 6)." },
         { level: 3, name: "Dagon's Call", desc: "Internally bursts a target's blood vessels from afar.", sys: "The character's blood must be in the target's bloodstream for at least an hour. Spend a Willpower Point and <strong>Roll Perception + Awareness</strong> (difficulty equal to the vampire's current proximity or time elapsed)." },
         { level: 4, name: "Baal's Caress", desc: "Converts blood into an acidic, weapon-coating toxin dealing aggravated damage.", sys: "The player spends the number of blood points it wants to convert to poison. <strong>Roll Willpower</strong> (difficulty 6). Weapons coated in venom cause aggravated damage." },
         { level: 5, name: "Quicken the Mortal's Blood", desc: "Doubles the efficiency of blood points harvested from feeding.", sys: "Double the effectiveness of drinking mortal blood. <strong>Roll Stamina + Occult</strong> (difficulty 6)." },
@@ -1127,7 +1171,7 @@
         { level: 2, name: "Truth of Blood", desc: "Uses target's blood in a goblet to divine the exact truth behind spoken words.", sys: "Spend 1 Willpower point. <strong>Roll Perception + Subterfuge</strong> (difficulty equal to the target's Willpower)." },
         { level: 3, name: "Cleansed in Blood", desc: "Purges supernatural mind-controlling taints from another target's soul.", sys: "Spend 1 Willpower point. <strong>Roll Willpower</strong> vs difficulty of the targeting power + 4." },
         { level: 4, name: "Ripples of the Heart", desc: "Imprints a specific emotion onto blood to manipulate those who ingest it.", sys: "Spend 1 blood point. <strong>Roll Charisma + Empathy</strong> (difficulty 7)." },
-        { level: 5, name: "Blood Sweat", desc: "Forces a victim's blood to pour forth as sweat, leaving them weakened and compromised.", sys: "Touch target's fresh blood. Spend 1 Willpower and <strong>Roll Manipulation + Intimidation</strong> vs target's current Willpower points (as difficulty)." },
+        { level: 5, name: "Blood Sweat", desc: "Forces a victim's blood to pour forth as sweat, leaving them weakened.", sys: "Touch target's fresh blood. Spend 1 Willpower and <strong>Roll Manipulation + Intimidation</strong> vs target's current Willpower points (as difficulty)." },
         { level: 6, name: "Blood Awakening", desc: "Scans the memories stored inside recently ingested blood.", sys: "Drink 1 blood point. <strong>Roll Perception + Empathy</strong> (difficulty 7)." }
       ],
       "Serpentis": [
@@ -1178,7 +1222,7 @@
         { level: 2, name: "Peaceful Touch", desc: "Calms the bloodlust of a hostile target through touch.", sys: "The Watcher spends a blood point and a Willpower point, and touches a foe hostile to him." },
         { level: 3, name: "Pariah's Caress", desc: "Charges blood to redirect local hostility and suspicion onto a victim.", sys: "Spends a blood point and touch the victim then <strong>Roll Manipulation + Empathy</strong> (difficulty 7)." },
         { level: 4, name: "Peacemaker", desc: "Erects an aura of peace in a room, mitigating combat and temper.", sys: "The player spends two Willpower points to erect the Peacemaker aura, which must be inside a chamber no larger than a ballroom." },
-        { level: 5, name: "Soul's Breath", desc: "Siphons blood and Willpower from a target's breath.", sys: "The Salubri must be facing a victim within speaking distance. <strong>Roll Intelligence + Occult</strong> (difficulty 6)." },
+        { level: 5, name: "Soul's Breath", desc: "Siphons blood and Willpower from a target's breath.", sys: "The Watcher must be facing a victim within speaking distance. <strong>Roll Intelligence + Occult</strong> (difficulty 6)." },
         { level: 6, name: "Safe Passage", desc: "Passively inhibits anyone attempting to hunt or track the user.", sys: "Passive, always on. <strong>Roll Willpower</strong> (difficulty 6) to redirect sighting interest." }
       ],
       "Vicissitude": [
@@ -1189,6 +1233,146 @@
         { level: 5, name: "The Body Impolitic", desc: "Severs a physical limb and imbues it with independent life to act as a servant.", sys: "By infusing an extremity with blood, the Tzimisce gives it awareness and a life of its own." },
         { level: 6, name: "Chiropteran Marauder", desc: "Advanced zulo form with bat-like wings, allowing flight up to 25 mph.", sys: "Spend 3 blood points. Grow wings; claws deal Strength + 2 aggravated damage." }
       ]
+    };
+
+    // V20 Sourcebook-Aligned Clan Database
+    const clanDatabase = {
+      "Assamite (Sorceror Caste)": {
+        disciplines: ["Clan Sorcery", "Auspex", "Celerity"],
+        weakness: "Sorcerers have a difficult time hiding their arcane nature. All mystical attempts to determine magic use on or around the character are made at a -2 difficulty and are considered two levels higher for the purposes of opposed powers and rolls."
+      },
+      "Assamite (Vizier Caste)": {
+        disciplines: ["Auspex", "Presence", "Quietus Hematus"],
+        weakness: "Assamite viziers are rigorous to a fault. Each character has an obsession with her highest intellectual or creative Ability, which acts as a derangement. While the derangement is active, the character’s aura glows in a way as to provide hints to the vizier’s true Nature, as well as the object of her obsession, visible to Auspex users. Additionally, Assamites darken with age. This is a slow process. But over the centuries, Assamite skin blackens to a matte onyx."
+      },
+      "Assamite (Warrior Caste)": {
+        disciplines: ["Celerity", "Obfuscate", "Quietus Cruscitus"],
+        weakness: "Warriors are marked with their tradition of diablerie. Warrior Assamites always confirm as positive for diablerie whenever scrutinized with supernatural powers, even if the character has never tasted the blood of another Cainite."
+      },
+      "Brujah": {
+        disciplines: ["Celerity", "Potence", "Presence"],
+        weakness: "The passion that inspires the Brujah from night to night can send them into fits of rage if left unchecked. The difficulties of rolls to resist or guide frenzy are two higher than normal. Additionally, a Brujah may never spend Willpower to avoid frenzy. However, they may spend a point of Willpower to end a frenzy that has already begun."
+      },
+      "Cappadocians": {
+        disciplines: ["Auspex", "Fortitude", "Necromancy"],
+        weakness: "The Cappadocian affinity for death is marked indelibly on the visage of its clan members. All Cappadocians appear ashy and corpselike, and are unable to affect the appearance of life like other vampires by spending vitae. This condition becomes more pronounced as the Necromancer ages, with the eldest Cappadocians appearing as mummified corpses. This grim visage presents the Cappadocian with a +2 difficulty on any Social rolls that would be hindered by a corpselike appearance."
+      },
+      "Followers of Set": {
+        disciplines: ["Obfuscate", "Presence", "Serpentis"],
+        weakness: "The enmity between Set and Horus, sun god and son of Set’s hated brother Osiris, is eternal. The Followers of Set carry Horus’ curse more heavily than other vampires and take twice the amount of aggravated damage from any exposure to sunlight than members of other clans."
+      },
+      "Gangrel": {
+        disciplines: ["Animalism", "Fortitude", "Protean"],
+        weakness: "When a Gangrel frenzies, her Beast rises to the surface, and the wildness in her blood finds purchase in her flesh and in her mind. She may develop a small physical or mental animal trait that suits either local vampire mythology, or a predatory or scavenging animal in the region. Examples include overgrown eyebrows, patches of fur, or an hour of torpor after feeding. The net result is that the trait should give them a +1 difficulty penalty and one automatic failure on some relevant dice pool. The trait and the penalty remain until the player accepts the automatic failure."
+      },
+      "Lasombra": {
+        disciplines: ["Dominate", "Obtenebration", "Potence"],
+        weakness: "Lasombra cannot be seen in any sort of reflective surface, which makes it difficult to conceal their supernatural nature from mortals. Additionally, members of the Clan of Shadows cannot abide the presence of bright light; they take an additional level of aggravated damage from any exposure to sunlight."
+      },
+      "Malkavians": {
+        disciplines: ["Auspex", "Dementation", "Obfuscate"],
+        weakness: "Malkav’s children each suffer from an imbalance of the humors that’ll never truly fade. At character creation, choose one derangement. This derangement can never be cured, and a Malkavian may only use Willpower to ignore it for a turn at a time. Even powerful gifts of the blood such as Valeren may only push it aside for a night. After such an effort, however, the derangement comes back in full force. For a week thereafter, the Malkavian cannot use Willpower to resist her derangement at all."
+      },
+      "Nosferatu": {
+        disciplines: ["Animalism", "Obfuscate", "Potence"],
+        weakness: "All Nosferatu wear the blood’s corruption on their face. As a result, all Nosferatu start with zero dots in Appearance, and this cannot be raised. Because of this, they automatically fail any first impression roll (except to intimidate) and have difficulty with many social interactions."
+      },
+      "Ravnos": {
+        disciplines: ["Animalism", "Chimerstry", "Fortitude"],
+        weakness: "While the Ravnos are masters of changing the reality around them, they have a harder time changing their own fundamental reality. All Ravnos have a key personality trait, chosen at character creation, which they are incapable of resisting if the opportunity to express itself presents itself. This can be some kind of virtuous act, such as defending the weak, or something more sinister, such as taking advantage of someone in a lesser position. Often the trait is tied to the jati the Ravnos belongs to. When presented with the opportunity to indulge in her virtue or vice, she does so unless the player succeeds on a Self-Control or Instinct roll (difficulty 6)."
+      },
+      "Toreador": {
+        disciplines: ["Auspex", "Celerity", "Presence"],
+        weakness: "The Toreador has the shortest attention span of all Cainites. Once struck by beauty, it’s as if Cupid’s dart pierced them. If they encounter beauty (Storyteller and player work together to determine appropriate triggers), they must roll Self-Control or Instinct (difficulty 5). If they fail, the daydream of their senses continues until the scene concludes or object departs."
+      },
+      "Tremere": {
+        disciplines: ["Auspex", "Dominate", "Thaumaturgy"],
+        weakness: "The Tremere’s rush to exploit the powers of vampiric blood comes with its own disadvantages: they are particularly vulnerable to blood bonds when they drink the blood of other Damned. The first draught of blood that a Tremere consumes counts as two for the purposes of establishing a bond, meaning that the next drink will complete it."
+      },
+      "Tzimisce": {
+        disciplines: ["Animalism", "Auspex", "Vicissitude"],
+        weakness: "Tzimisce draw their mandate to rule from the very land itself, but this comes with a price. A Tzimisce must rest with at least two handfuls of native soil — that is, soil from a place of importance to them, usually their home or their grave. For each day of rest without it, halve all dice pools (round down), cumulatively, until the pool reaches one die. A full day of proper rest with her native soil will restore the dice pools to their normal value."
+      },
+      "Ventrue": {
+        disciplines: ["Dominate", "Fortitude", "Presence"],
+        weakness: "Rarefied taste has its cost, as the Ventrue are restricted to one particular type of mortal (merchants, French, Catholics, small children). This choice severely limits their feeding pool. They can consume mortal blood outside of this selected preference, but it does not forestall the Beast or provide nourishment."
+      },
+      "Ahrimanes": {
+        disciplines: ["Animalism", "Potence", "Spiritus"],
+        weakness: "An Ahrimane’s blood resists the ties of bondage. She can create neither blood bonds nor ghouls."
+      },
+      "Anda": {
+        disciplines: ["Animalism", "Fortitude", "Protean"],
+        weakness: "The Anda suffer from a kind of loneliness that comes with being cut off from the vast majority of their people, and most especially, from the warm waking face of Tengri. For one hour after sunset, and for the last hour before sunrise, their dice pools are limited by their Road rating as if they were acting during the day."
+      },
+      "Baali": {
+        disciplines: ["Daimonion", "Presence", "Obfuscate"],
+        weakness: "The Torment in the blood of Caine recoils from religious symbols, and the Baali are particularly vulnerable. Unless those religious symbols have lain abandoned for half a century, any individual brandishing a religious symbol at a Devil is considered to have a True Faith rating one higher than their actual rating."
+      },
+      "Bonsam": {
+        disciplines: ["Abombwe", "Obfuscate", "Potence"],
+        weakness: "Possessed by a darkness before time, a Bonsam inspires primordial terror in mortals. Mortals who fail at a Courage roll (difficulty 7) when seeing a Bonsam in his true form either flee in terror or gather up weapons to kill the monster, depending on the size of the mortal group and the Nature of its leader. This fear can be overcome however, and a mortal who has succeeded at this check need not roll again upon meeting the same Bonsam (or at Storyteller’s discretion, any Bonsam)."
+      },
+      "Children of Osiris": {
+        disciplines: ["Bardo"],
+        weakness: "Original clan’s weakness. In addition, the initiation rite to enter the sect renders a new applicant’s blood inert and he is no longer able to Embrace."
+      },
+      "Danava": {
+        disciplines: ["Dominate", "Fortitude", "Thaumaturgy"],
+        weakness: "Like their cousins to the west, the Danava have particularly refined palates when it comes to those they choose as prey, but animals such as cows or pigs are taboo in the extreme. Danava receive no sustenance from animal blood. Members of the bloodline first ritually offer their victims to their gods as a matter of course, but such observances need not be strict or long lasting. Without a ritual of at least thirty seconds, blood offers half sustenance."
+      },
+      "Gargoyles": {
+        disciplines: ["Flight", "Fortitude", "Potence"],
+        weakness: "Gargoyles are social creatures, while an individual may operate singly without impairment, should a Gargoyle ever truly find herself alone in the world — without master, mate, childer, or friend — her dice pools are halved until the condition is rectified. Working in conjunction with a complete stranger can alleviate these penalties on a scene-by-scene basis, but only a mutually acknowledged relationship can restore the Gargoyle fully. Additionally, Gargoyles are particularly susceptible to mind control and domination; their Willpower is always considered two less when resisting such powers."
+      },
+      "Giovani": {
+        disciplines: ["Auspex", "Fortitude", "Necromancy"],
+        weakness: "Like other members of the Cappadocian clan, the Giovani have an ashen quality to their skin which makes humans eerily aware of their otherness. The few bloodline members closest to Augustus himself are perfectly able to appear as if blood was still pumping through their veins, but their Kiss is excruciatingly painful. Some believe the horrors he saw as a mortal man carried through his blood, but this weakness doesn’t seem to have a clear pattern or cause."
+      },
+      "Impundulu": {
+        disciplines: ["Necromancy", "Fortitude", "Presence"],
+        weakness: "An Impundulu only gains sustenance from the Bomkazi. As the witches are independently powerful and their relationship with the Impundulu is voluntary, the Impundulu does well to treat any Bomkazi as an equal ally as opposed to a retainer, with all the complications this might entail."
+      },
+      "Kiasyd": {
+        disciplines: ["Mytherceria"],
+        weakness: "Due to her mark of the fae, the difficulty of rolls to recognize the Kiasyd as otherworldly decrease by one (more if her mark is particularly obvious). Additionally, her fae heritage makes the Kiasyd vulnerable to cold iron. Not only do weapons made from cold iron inflict aggravated damage to her, but such damage triggers an immediate roll to avoid either frenzy or Rötschreck as befitting her Nature."
+      },
+      "Lamiae": {
+        disciplines: ["Fortitude", "Necromancy", "Potence"],
+        weakness: "The Lamiae are not touched by death in the way that the Cappadocians are. No, the Lilin say, they are blessed by that great and terrible Mother that lies beyond death. Her merciless and terrible love brings ruin to those who are weak enough to not withstand it. The bite of the Lamiae brings the Seed of Lilith, a wasting plague that rot away the members of a still-living body until eventually killing mortal victims. The plague causes one lethal damage per night (with a nightly Stamina roll, difficulty 7 to resist) for a fortnight. Any Cainite that consumes Lamia blood will also be carriers of the disease until all Lamia blood is purged from their bodies."
+      },
+      "Lhiannan": {
+        disciplines: ["Animalism", "Presence", "Ogham"],
+        weakness: "The rumors surrounding the Lhiannan and their desperation likely formed from their inherent weakness. Every Lhiannan, from the moment of the Embrace, feels the shard of spirit within her. The sire feels the weakness as she shares her own spirit with her newly-made childe. When a Lhiannan Embraces, her Generation raises by one at the conclusion of the Embrace. For example, if a Ninth Generation Lhiannan Embraces a childe, her blood becomes Tenth Generation blood. The newly-Embraced childe also carries Tenth Generation blood. The sire becomes a generational sibling with her new childe. The eldest known Lhiannan wonder how the bloodline propagated in spite of this flaw, but if any have the answer, they’re not sharing. Lhiannan draw strength from nature, and their power diminishes within urban areas. For each week a Lhiannan spends outside of the wild, her dice pools are reduced by one. These penalties are cumulative, but can never reduce a dice pool lower than her unmodified Stamina. The Lhiannan must sleep a full day in the wilds to remove all the penalties upon waking."
+      },
+      "Nagaraja": {
+        disciplines: ["Auspex", "Dominate", "Necromancy"],
+        weakness: "As the preta of myth, the Flesh-Eaters must consume fresh raw meat to maintain their strength, marking them as untouchable and precluding sustenance without murder. This meat must come from living humans or fresh corpses. They suffer from the Ragged Bite and Flesh Eater Flaws with no recompense. Nagaraja teeth come in sharp rows, and can’t be retracted, but inflict +2 dice of damage in combat when biting."
+      },
+      "Niktuku": {
+        disciplines: ["Auspex", "Celerity", "Potence"],
+        weakness: "The Hungry suffer from an inability to gain sustenance from kine blood. For every three blood points they drain, they gain only one to their system. Cainite vitae nourishes them normally. Additionally, age is difficult and transforming on the bloodline. For every hundred years since their Embrace, the Hungry lose a point from their Appearance Attribute. That dot does not vanish; instead, it moves to any one Physical Attribute that can bear the increase. They grow slowly but decidedly bent, twisted, and deadly, slowly aging grotesques that blame the Nosferatu for their condition."
+      },
+      "Ramanga": {
+        disciplines: ["Obtenebration", "Obfuscate", "Presence"],
+        weakness: "A Ramanga’s use of Presence and Aizina (Obtenebration), when impacting others, is at +1 difficulty normally. However, if she has a physical piece of the victim, this penalty is negated."
+      },
+      "Salubri (Healer Caste)": {
+        disciplines: ["Auspex", "Presence", "Valeren - Healer"],
+        weakness: "If a Salubri learns but one dot of Valeren, he manifests the Discipline’s signature third eye. Salubri Healers must succeed on a Willpower roll (difficulty 6) if they attempt to feed on the unwilling; if they fail, they must find a willing vessel or suffer a two-die penalty on all rolls for the remainder of the night. Victims enthralled by Presence count as willing vessels."
+      },
+      "Salubri (Warrior Caste)": {
+        disciplines: ["Auspex", "Fortitude", "Valeren - Warrior"],
+        weakness: "If a Salubri learns but one dot of Valeren, she manifests the Discipline’s signature third eye. Salubri Warriors must test their strength and establish martial dominance; they must succeed on a Willpower roll (difficulty 6) if they attempt to feed on someone whom they have not vanquished in a fight, or suffer a two-die penalty on all rolls for the rest of the night. This may be defined as a duel to the death, or a simple brawl to Incapacitated. A few Warrior Herds comprise of companions who’ve been beaten down in the training yard."
+      },
+      "Salubri (Watcher Caste)": {
+        disciplines: ["Auspex", "Obfuscate", "Valeren"],
+        weakness: "If a Salubri learns but one dot of Valeren, they manifest the Discipline’s signature third eye. Ironically, Watchers can be remarkably short-sighted, having a tendency to fixate on their preferred small details and ignore the larger conceptual picture. Watchers must choose a field of study narrow enough for a Knowledge specialty, such as the Ten Thousand Demons, a specific mortal culture, or the esoterics of Necromancy. Watchers must succeed on a Willpower roll (difficulty 6) to pass up an opportunity (as defined by the Storyteller) to acquire or study knowledge of their field, or lose two dice from all pools for the remainder of the night."
+      },
+      "True Brujah": {
+        disciplines: ["Potence", "Presence", "Temporis"],
+        weakness: "True Brujah become dispassionate soon after their Embrace (if they weren’t already) and this only gets worse as the years take their toll. The difficulty of all Conscience and Conviction rolls are increased by two (maximum 9). Purchasing ratings in Conscience, Conviction, and Roads cost double the normal experience costs."
+      }
     };
 
     // Dynamically populates and renders active Page 1 Disciplines in the Grimoire Tab
@@ -1712,6 +1896,60 @@
         }
       }
       updateBloodPoolCapacity();
+      queueAutoSave();
+    }
+
+    function handleClanChange(selectEl) {
+      const val = selectEl.value;
+      if (val === 'custom') {
+        const customClanName = prompt("Enter custom Clan/Bloodline name:");
+        if (customClanName && customClanName.trim() !== '') {
+          let exists = false;
+          for (let opt of selectEl.options) {
+            if (opt.value === customClanName) {
+              exists = true;
+              selectEl.value = customClanName;
+              break;
+            }
+          }
+          if (!exists) {
+            const newOpt = document.createElement('option');
+            newOpt.value = customClanName;
+            newOpt.text = customClanName;
+            selectEl.add(newOpt);
+            selectEl.value = customClanName;
+          }
+        } else {
+          selectEl.value = "";
+        }
+        queueAutoSave();
+        return; // Add nothing and do not clear for custom
+      }
+
+      if (val) {
+        const entry = clanDatabase[val];
+        if (entry) {
+          // Clear and populate weakness text box
+          const weaknessTxt = document.getElementById('clan-weakness');
+          if (weaknessTxt) {
+            weaknessTxt.value = entry.weakness || '';
+          }
+          // Clear and populate standard Disciplines
+          const list = document.getElementById('disciplines-list');
+          if (list) {
+            list.innerHTML = '';
+            entry.disciplines.forEach(discName => {
+              addDynamicRow('disciplines-list', 'discipline', discName, 0);
+            });
+          }
+        }
+      } else {
+        // Clear both if reset to empty selection
+        const weaknessTxt = document.getElementById('clan-weakness');
+        if (weaknessTxt) weaknessTxt.value = '';
+        const list = document.getElementById('disciplines-list');
+        if (list) list.innerHTML = '';
+      }
       queueAutoSave();
     }
 
@@ -2322,12 +2560,34 @@
       // Protect against uninitialized sub-objects with safe fallbacks
       const meta = data.meta || {};
       document.getElementById('char-name').value = meta.name || '';
-      document.getElementById('char-clan').value = meta.clan || '';
       document.getElementById('char-sire').value = meta.sire || '';
       document.getElementById('char-nature').value = meta.nature || '';
       document.getElementById('char-demeanor').value = meta.demeanor || '';
       document.getElementById('char-concept').value = meta.concept || '';
       document.getElementById('char-chronicle').value = meta.chronicle || '';
+
+      // Clan Dropdown loading
+      const clanSelect = document.getElementById('char-clan');
+      if (clanSelect) {
+        const metaClan = meta.clan || '';
+        let exists = false;
+        for (let opt of clanSelect.options) {
+          if (opt.value === metaClan) {
+            exists = true;
+            clanSelect.value = metaClan;
+            break;
+          }
+        }
+        if (!exists && metaClan !== '') {
+          const newOpt = document.createElement('option');
+          newOpt.value = metaClan;
+          newOpt.text = metaClan;
+          clanSelect.add(newOpt);
+          clanSelect.value = metaClan;
+        } else if (metaClan === '') {
+          clanSelect.value = '';
+        }
+      }
 
       // Generation Dropdown loading
       const genSelect = document.getElementById('char-generation');
