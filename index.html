@@ -611,7 +611,8 @@
               <label>Generation</label>
               <div class="generation-select-container" style="position: relative; display: inline-flex; align-items: center; width: 100%;">
                 <select id="char-generation" onchange="handleGenerationChange(this)" style="width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border-color); font-family: inherit; font-size: 1rem; padding: 3px 0; color: var(--text-dark); cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none;">
-                  <option value="">Select Gen...</option>
+                  <option value="">Select Generation...</option>
+                  <option value="custom">Custom...</option>
                   <option value="13">13th</option>
                   <option value="12">12th</option>
                   <option value="11">11th</option>
@@ -619,7 +620,6 @@
                   <option value="9">9th</option>
                   <option value="8">8th</option>
                   <option value="7">7th</option>
-                  <option value="custom">Custom...</option>
                 </select>
                 <span class="gen-caret" style="position: absolute; right: 5px; pointer-events: none; color: var(--accent-red); font-size: 0.7rem; font-family: sans-serif;">▼</span>
               </div>
@@ -1934,21 +1934,18 @@
           if (weaknessTxt) {
             weaknessTxt.value = entry.weakness || '';
           }
-          // Clear and populate standard Disciplines
+          // Append standard Disciplines to the bottom of the existing list (Do NOT clear)
           const list = document.getElementById('disciplines-list');
           if (list) {
-            list.innerHTML = '';
             entry.disciplines.forEach(discName => {
               addDynamicRow('disciplines-list', 'discipline', discName, 0);
             });
           }
         }
       } else {
-        // Clear both if reset to empty selection
+        // Clear only the weakness if reset to empty selection, leaving Disciplines intact
         const weaknessTxt = document.getElementById('clan-weakness');
         if (weaknessTxt) weaknessTxt.value = '';
-        const list = document.getElementById('disciplines-list');
-        if (list) list.innerHTML = '';
       }
       queueAutoSave();
     }
