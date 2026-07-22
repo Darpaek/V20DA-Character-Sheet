@@ -635,13 +635,13 @@
             <div class="info-group"><label>Chronicle</label><input type="text" id="char-chronicle" oninput="queueAutoSave()"></div>
           </div>
 
-          <!-- Two side-by-side notes boxes with neat vertical whitespace -->
+          <!-- Two side-by-side empty notes boxes with neat vertical whitespace -->
           <div class="two-col-grid" style="margin-top: 10px; margin-bottom: 25px; gap: 20px;">
             <div class="column">
-              <textarea id="meta-notes-left" rows="3" style="width: 100%; box-sizing: border-box; font-family: inherit; font-size: 0.9rem; padding: 6px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-color); resize: vertical;" placeholder="Nature / Demeanor notes..." oninput="queueAutoSave()"></textarea>
+              <textarea id="meta-notes-left" rows="3" style="width: 100%; box-sizing: border-box; font-family: inherit; font-size: 0.9rem; padding: 6px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-color); resize: vertical;" oninput="queueAutoSave()"></textarea>
             </div>
             <div class="column">
-              <textarea id="meta-notes-right" rows="3" style="width: 100%; box-sizing: border-box; font-family: inherit; font-size: 0.9rem; padding: 6px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-color); resize: vertical;" placeholder="Concept / Chronicle notes..." oninput="queueAutoSave()"></textarea>
+              <textarea id="meta-notes-right" rows="3" style="width: 100%; box-sizing: border-box; font-family: inherit; font-size: 0.9rem; padding: 6px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-color); resize: vertical;" oninput="queueAutoSave()"></textarea>
             </div>
           </div>
 
@@ -1109,7 +1109,7 @@
         { level: 2, name: "The Haunting", desc: "Floods the target's senses with hallucinations that they cannot ignore.", sys: "Spend 1 blood point and <strong>Roll Manipulation + Empathy</strong> vs target's <strong>Perception + Self-Control</strong> or <strong>Perception + Instinct</strong> (as difficulty)." },
         { level: 3, name: "Eyes of Chaos", desc: "Scrutinizes complex patterns, layout arrays, or social networks to divine hidden truths.", sys: "<strong>Roll Perception + Enigmas</strong> (difficulty varies based on available information)." },
         { level: 4, name: "Fire Voice", desc: "Induces a Rotschreck-like fear of fire in a target or crowd.", sys: "<strong>Roll Manipulation + Empathy</strong> (difficulty 7). Each success adds another victim." },
-        { level: 5, name: "Shedding the Mask", desc: "Overwhelms a victim's mind with raw, unmitigated madness.", sys: "The player spends a blood point and <strong>Roll Manipulation + Intimidation</strong> (difficulty of her victim’s current Willpower points)." },
+        { level: 5, name: "Shedding the Mask", desc: "Overwhelms a victim's mind with raw, unmitigated madness.", sys: "The player spends a blood point and <strong>Roll Manipulation + Empathy</strong> (difficulty of his vic tim’s Perception + Self-Control/Instinct)." },
         { level: 6, name: "The Call", desc: "Sends a general pulse or telepathic message over the Madness Network.", sys: "To Call, a Malkavian (and only a Malkavian) names another Malkavian of equal or lesser Generation, then <strong>Roll Perception + Empathy</strong> (difficulty 6)." },
         { level: 6, name: "Stain the Soul", desc: "Permanently inflicts a chosen Derangement upon a target's soul.", sys: "The player spends a Willpower point and <strong>Roll Manipulation + Empathy</strong> at a difficulty equal to the victim’s current Willpower points." }
       ],
@@ -2067,7 +2067,7 @@
       row.style.marginBottom = "7px";
       row.style.gap = "5px";
 
-      // Blank input line, with the delete button perfectly structured before the 6 dots [2]
+      // Blank input line, with the delete button perfectly structured before the 6 dots
       row.innerHTML = `
         <input type="text" class="dynamic-name" style="background: transparent; border: none; border-bottom: 1px dashed var(--border-color); font-family: inherit; font-size: 0.9rem; flex-grow: 1; min-width: 50px; color: var(--text-dark);" placeholder="Custom ${type}..." value="${initialName}" oninput="queueAutoSave()">
         <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();" style="color: var(--accent-red); font-weight: bold; background: none; border: none; cursor: pointer; padding: 0 5px; font-size: 1.1rem; flex-shrink: 0;">&times;</button>
@@ -2136,7 +2136,7 @@
         <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${initialVal}">
           <div class="dots-container"></div>
         </div>
-        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave(); renderGrimoireDisciplines();">&times;</button>
+        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();" style="align-self: center; font-size: 1.2rem;">&times;</button>
       `;
 
       list.appendChild(row);
@@ -2554,7 +2554,7 @@
         data.abilities[id] = parseInt(document.querySelector(`[data-id="${id}"]`).getAttribute('data-value'));
       });
 
-      // Compile Page 1 Custom dynamic Abilities [2]
+      // Compile Page 1 Custom dynamic Abilities
       document.querySelectorAll('#custom-talents-list .custom-ability-row').forEach(row => {
         const name = row.querySelector('.dynamic-name').value;
         const val = parseInt(row.querySelector('.trait').getAttribute('data-value')) || 0;
@@ -2677,11 +2677,11 @@
       document.getElementById('char-concept').value = meta.concept || '';
       document.getElementById('char-chronicle').value = meta.chronicle || '';
 
-      // Load side-by-side meta textareas [4]
+      // Load side-by-side meta textareas
       document.getElementById('meta-notes-left').value = data.meta_notes_left || '';
       document.getElementById('meta-notes-right').value = data.meta_notes_right || '';
 
-      // Load specialties textareas [3]
+      // Load specialties textareas
       document.getElementById('specialties-talents').value = data.specialties_talents || '';
       document.getElementById('specialties-skills').value = data.specialties_skills || '';
       document.getElementById('specialties-knowledges').value = data.specialties_knowledges || '';
@@ -2774,7 +2774,7 @@
         }
       });
 
-      // Clear Page 1 Custom Ability lists [2]
+      // Clear Page 1 Custom Ability lists
       const customTalentsList = document.getElementById('custom-talents-list');
       const customSkillsList = document.getElementById('custom-skills-list');
       const customKnowledgesList = document.getElementById('custom-knowledges-list');
@@ -2782,7 +2782,7 @@
       if (customSkillsList) customSkillsList.innerHTML = '';
       if (customKnowledgesList) customKnowledgesList.innerHTML = '';
 
-      // Populate Page 1 Custom dynamic Abilities [2]
+      // Populate Page 1 Custom dynamic Abilities
       if (data.customAbilities) {
         data.customAbilities.forEach(item => {
           if (item.type === 'talent') {
