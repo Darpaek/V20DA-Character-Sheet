@@ -635,6 +635,16 @@
             <div class="info-group"><label>Chronicle</label><input type="text" id="char-chronicle" oninput="queueAutoSave()"></div>
           </div>
 
+          <!-- Two side-by-side notes boxes with neat vertical whitespace -->
+          <div class="two-col-grid" style="margin-top: 10px; margin-bottom: 25px; gap: 20px;">
+            <div class="column">
+              <textarea id="meta-notes-left" rows="3" style="width: 100%; box-sizing: border-box; font-family: inherit; font-size: 0.9rem; padding: 6px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-color); resize: vertical;" placeholder="Nature / Demeanor notes..." oninput="queueAutoSave()"></textarea>
+            </div>
+            <div class="column">
+              <textarea id="meta-notes-right" rows="3" style="width: 100%; box-sizing: border-box; font-family: inherit; font-size: 0.9rem; padding: 6px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-color); resize: vertical;" placeholder="Concept / Chronicle notes..." oninput="queueAutoSave()"></textarea>
+            </div>
+          </div>
+
           <h2>Attributes</h2>
           <div class="three-col-grid">
             <div class="column">
@@ -660,7 +670,11 @@
           <h2>Abilities</h2>
           <div class="three-col-grid">
             <div class="column">
-              <h3 class="column-header">Talents</h3>
+              <!-- Right-aligned + Add button on talents header -->
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 3px; margin-bottom: 10px;">
+                <span style="text-transform: uppercase; letter-spacing: 1px; color: var(--accent-red); font-size: 0.95rem; font-weight: bold;">Talents</span>
+                <button class="btn btn-secondary btn-small" onclick="addCustomAbilityRow('custom-talents-list', 'talent'); return false;">+ Add</button>
+              </div>
               <div class="trait" data-id="alertness" data-min="0" data-max="6" data-default="0"><label>Alertness</label><div class="dots-container"></div></div>
               <div class="trait" data-id="athletics" data-min="0" data-max="6" data-default="0"><label>Athletics</label><div class="dots-container"></div></div>
               <div class="trait" data-id="awareness" data-min="0" data-max="6" data-default="0"><label>Awareness</label><div class="dots-container"></div></div>
@@ -671,9 +685,21 @@
               <div class="trait" data-id="leadership" data-min="0" data-max="6" data-default="0"><label>Leadership</label><div class="dots-container"></div></div>
               <div class="trait" data-id="legerdemain" data-min="0" data-max="6" data-default="0"><label>Legerdemain</label><div class="dots-container"></div></div>
               <div class="trait" data-id="subterfuge" data-min="0" data-max="6" data-default="0"><label>Subterfuge</label><div class="dots-container"></div></div>
+              
+              <!-- Custom Abilities placeholder -->
+              <div id="custom-talents-list"></div>
+
+              <!-- Specialties subheader & text box -->
+              <div style="text-align: center; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; color: #5a5045; margin-top: 15px; margin-bottom: 4px;">Specialties</div>
+              <textarea id="specialties-talents" rows="3" style="width: 100%; box-sizing: border-box; font-family: inherit; font-size: 0.9rem; padding: 6px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-color); resize: vertical; margin-bottom: 15px;" oninput="queueAutoSave()"></textarea>
             </div>
+            
             <div class="column">
-              <h3 class="column-header">Skills</h3>
+              <!-- Right-aligned + Add button on skills header -->
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 3px; margin-bottom: 10px;">
+                <span style="text-transform: uppercase; letter-spacing: 1px; color: var(--accent-red); font-size: 0.95rem; font-weight: bold;">Skills</span>
+                <button class="btn btn-secondary btn-small" onclick="addCustomAbilityRow('custom-skills-list', 'skill'); return false;">+ Add</button>
+              </div>
               <div class="trait" data-id="animal_ken" data-min="0" data-max="6" data-default="0"><label>Animal Ken</label><div class="dots-container"></div></div>
               <div class="trait" data-id="archery" data-min="0" data-max="6" data-default="0"><label>Archery</label><div class="dots-container"></div></div>
               <div class="trait" data-id="commerce" data-min="0" data-max="6" data-default="0"><label>Commerce</label><div class="dots-container"></div></div>
@@ -684,9 +710,21 @@
               <div class="trait" data-id="ride" data-min="0" data-max="6" data-default="0"><label>Ride</label><div class="dots-container"></div></div>
               <div class="trait" data-id="stealth" data-min="0" data-max="6" data-default="0"><label>Stealth</label><div class="dots-container"></div></div>
               <div class="trait" data-id="survival" data-min="0" data-max="6" data-default="0"><label>Survival</label><div class="dots-container"></div></div>
+              
+              <!-- Custom Abilities placeholder -->
+              <div id="custom-skills-list"></div>
+
+              <!-- Specialties subheader & text box -->
+              <div style="text-align: center; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; color: #5a5045; margin-top: 15px; margin-bottom: 4px;">Specialties</div>
+              <textarea id="specialties-skills" rows="3" style="width: 100%; box-sizing: border-box; font-family: inherit; font-size: 0.9rem; padding: 6px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-color); resize: vertical; margin-bottom: 15px;" oninput="queueAutoSave()"></textarea>
             </div>
+            
             <div class="column">
-              <h3 class="column-header">Knowledges</h3>
+              <!-- Right-aligned + Add button on knowledges header -->
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 3px; margin-bottom: 10px;">
+                <span style="text-transform: uppercase; letter-spacing: 1px; color: var(--accent-red); font-size: 0.95rem; font-weight: bold;">Knowledges</span>
+                <button class="btn btn-secondary btn-small" onclick="addCustomAbilityRow('custom-knowledges-list', 'knowledge'); return false;">+ Add</button>
+              </div>
               <div class="trait" data-id="academics" data-min="0" data-max="6" data-default="0"><label>Academics</label><div class="dots-container"></div></div>
               <div class="trait" data-id="enigmas" data-min="0" data-max="6" data-default="0"><label>Enigmas</label><div class="dots-container"></div></div>
               <div class="trait" data-id="hearth_wisdom" data-min="0" data-max="6" data-default="0"><label>Hearth Wisdom</label><div class="dots-container"></div></div>
@@ -697,6 +735,13 @@
               <div class="trait" data-id="politics" data-min="0" data-max="6" data-default="0"><label>Politics</label><div class="dots-container"></div></div>
               <div class="trait" data-id="seneschal" data-min="0" data-max="6" data-default="0"><label>Seneschal</label><div class="dots-container"></div></div>
               <div class="trait" data-id="theology" data-min="0" data-max="6" data-default="0"><label>Theology</label><div class="dots-container"></div></div>
+              
+              <!-- Custom Abilities placeholder -->
+              <div id="custom-knowledges-list"></div>
+
+              <!-- Specialties subheader & text box -->
+              <div style="text-align: center; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; color: #5a5045; margin-top: 15px; margin-bottom: 4px;">Specialties</div>
+              <textarea id="specialties-knowledges" rows="3" style="width: 100%; box-sizing: border-box; font-family: inherit; font-size: 0.9rem; padding: 6px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-color); resize: vertical; margin-bottom: 15px;" oninput="queueAutoSave()"></textarea>
             </div>
           </div>
 
@@ -911,6 +956,9 @@
             <div class="text-area-group"><label>Location</label><textarea id="haven-location" oninput="queueAutoSave()"></textarea></div>
             <div class="text-area-group"><label>Description</label><textarea id="haven-desc" oninput="queueAutoSave()"></textarea></div>
           </div>
+
+          <!-- Bottom divider on page 4 with exact whitespace specifications -->
+          <div style="border-bottom: 1px solid var(--border-color); margin-top: 35px; margin-bottom: 35px; width: 100%;"></div>
         </div>
 
         <!-- PAGE 5: HISTORY -->
@@ -1017,7 +1065,7 @@
         { level: 1, name: "Restore Humanitas", desc: "Attempts to restore lost Humanity points without spending experience.", sys: "When the vampire loses a dot of Road of Humanity, he can attempt to regain it without spending experience points. <strong>Roll Conscience</strong> (difficulty equal to the level of Road of Humanity being regained)." },
         { level: 2, name: "Banishing Sign of Thoth", desc: "Wards off targeted magical attacks and Disciplines.", sys: "The player spends a blood point and <strong>Roll Dexterity + Occult</strong> (difficulty 7)." },
         { level: 3, name: "Gift of Apis", desc: "Allows the vampire to nourish themselves on animal blood as if it were human.", sys: "Animal blood is just as nourishing to the character as human blood." },
-        { level: 4, name: "Pillar of Osiris", desc: "Consecrates a haven to increase inner calm, lowering Discipline difficulties by three.", sys: "Creating the Pillar of Osiris requires a night-long ritual. The player spends a Willpower point and <strong>Roll Willpower</strong>." },
+        { level: 4, name: "Pillar of Osiris", desc: "Consecrates a haven to increase calm, lowering Discipline difficulties by three.", sys: "Creating the Pillar of Osiris requires a night-long ritual. The player spends a Willpower point and <strong>Roll Willpower</strong>." },
         { level: 5, name: "Revelation", desc: "Projects cosmic, paralyzing truths into a target's mind.", sys: "The vampire speaks and his player spends a point of Willpower and <strong>Roll Manipulation + Occult</strong> (difficulty of the listener’s current Willpower)." },
         { level: 6, name: "Boon of Anubis", desc: "Protects a mortal from being Embraced, restoring their life if drained.", sys: "Spend a point of Willpower and <strong>Roll Road of Humanity</strong>." }
       ],
@@ -1579,12 +1627,18 @@
       const initialSheet = {
         id: charId,
         meta: { name: 'New Character', clan: '', sire: '', generation: '12', nature: '', demeanor: '', concept: '', chronicle: '' },
+        meta_notes_left: '',
+        meta_notes_right: '',
         attributes: { strength: 1, dexterity: 1, stamina: 1, charisma: 1, manipulation: 1, appearance: 1, perception: 1, intelligence: 1, wits: 1 },
         abilities: {
           alertness: 0, athletics: 0, awareness: 0, brawl: 0, empathy: 0, expression: 0, intimidation: 0, leadership: 0, legerdemain: 0, subterfuge: 0,
           animal_ken: 0, archery: 0, commerce: 0, crafts: 0, etiquette: 0, melee: 0, performance: 0, ride: 0, stealth: 0, survival: 0,
           academics: 0, enigmas: 0, hearth_wisdom: 0, investigation: 0, law: 0, medicine: 0, occult: 0, politics: 0, seneschal: 0, theology: 0
         },
+        customAbilities: [],
+        specialties_talents: '',
+        specialties_skills: '',
+        specialties_knowledges: '',
         virtues: { virtue_1_type: 'Conscience', virtue_1_val: 1, virtue_2_type: 'Self-Control', virtue_2_val: 1, virtue_3_val: 1 },
         disciplines: [],
         backgrounds: [],
@@ -1999,6 +2053,34 @@
 
     /* --- DYNAMIC LIST ADDITIONS --- */
 
+    function addCustomAbilityRow(targetListId, type, initialName = '', initialVal = 0) {
+      const list = document.getElementById(targetListId);
+      if (!list) return;
+      const rowId = `custom-ability-row-${dynamicRowId++}`;
+
+      const row = document.createElement('div');
+      row.className = 'custom-ability-row';
+      row.id = rowId;
+      row.style.display = "flex";
+      row.style.alignItems = "center";
+      row.style.justifyContent = "space-between";
+      row.style.marginBottom = "7px";
+      row.style.gap = "5px";
+
+      // Blank input line, with the delete button perfectly structured before the 6 dots [2]
+      row.innerHTML = `
+        <input type="text" class="dynamic-name" style="background: transparent; border: none; border-bottom: 1px dashed var(--border-color); font-family: inherit; font-size: 0.9rem; flex-grow: 1; min-width: 50px; color: var(--text-dark);" placeholder="Custom ${type}..." value="${initialName}" oninput="queueAutoSave()">
+        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();" style="color: var(--accent-red); font-weight: bold; background: none; border: none; cursor: pointer; padding: 0 5px; font-size: 1.1rem; flex-shrink: 0;">&times;</button>
+        <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${initialVal}" style="flex-shrink: 0; margin-bottom: 0;">
+          <div class="dots-container"></div>
+        </div>
+      `;
+
+      list.appendChild(row);
+      renderDots(row.querySelector('.trait'));
+      queueAutoSave();
+    }
+
     function addDynamicRow(targetListId, type, initialName = '', initialVal = 0) {
       const list = document.getElementById(targetListId);
       if (!list) return;
@@ -2345,8 +2427,14 @@
           concept: document.getElementById('char-concept').value,
           chronicle: document.getElementById('char-chronicle').value,
         },
+        meta_notes_left: document.getElementById('meta-notes-left').value,
+        meta_notes_right: document.getElementById('meta-notes-right').value,
         attributes: {},
         abilities: {},
+        customAbilities: [],
+        specialties_talents: document.getElementById('specialties-talents').value,
+        specialties_skills: document.getElementById('specialties-skills').value,
+        specialties_knowledges: document.getElementById('specialties-knowledges').value,
         virtues: {
           virtue_1_type: document.getElementById('virtue-1-type').value,
           virtue_1_val: parseInt(document.querySelector('[data-id="virtue_1"]').getAttribute('data-value')),
@@ -2466,6 +2554,23 @@
         data.abilities[id] = parseInt(document.querySelector(`[data-id="${id}"]`).getAttribute('data-value'));
       });
 
+      // Compile Page 1 Custom dynamic Abilities [2]
+      document.querySelectorAll('#custom-talents-list .custom-ability-row').forEach(row => {
+        const name = row.querySelector('.dynamic-name').value;
+        const val = parseInt(row.querySelector('.trait').getAttribute('data-value')) || 0;
+        data.customAbilities.push({ type: 'talent', name, val });
+      });
+      document.querySelectorAll('#custom-skills-list .custom-ability-row').forEach(row => {
+        const name = row.querySelector('.dynamic-name').value;
+        const val = parseInt(row.querySelector('.trait').getAttribute('data-value')) || 0;
+        data.customAbilities.push({ type: 'skill', name, val });
+      });
+      document.querySelectorAll('#custom-knowledges-list .custom-ability-row').forEach(row => {
+        const name = row.querySelector('.dynamic-name').value;
+        const val = parseInt(row.querySelector('.trait').getAttribute('data-value')) || 0;
+        data.customAbilities.push({ type: 'knowledge', name, val });
+      });
+
       document.querySelectorAll('#disciplines-list .dynamic-row').forEach(row => {
         const name = row.querySelector('.dynamic-name').value;
         const val = parseInt(row.querySelector('.trait').getAttribute('data-value'));
@@ -2572,6 +2677,15 @@
       document.getElementById('char-concept').value = meta.concept || '';
       document.getElementById('char-chronicle').value = meta.chronicle || '';
 
+      // Load side-by-side meta textareas [4]
+      document.getElementById('meta-notes-left').value = data.meta_notes_left || '';
+      document.getElementById('meta-notes-right').value = data.meta_notes_right || '';
+
+      // Load specialties textareas [3]
+      document.getElementById('specialties-talents').value = data.specialties_talents || '';
+      document.getElementById('specialties-skills').value = data.specialties_skills || '';
+      document.getElementById('specialties-knowledges').value = data.specialties_knowledges || '';
+
       // Clan Dropdown loading
       const clanSelect = document.getElementById('char-clan');
       if (clanSelect) {
@@ -2659,6 +2773,27 @@
           renderDots(el);
         }
       });
+
+      // Clear Page 1 Custom Ability lists [2]
+      const customTalentsList = document.getElementById('custom-talents-list');
+      const customSkillsList = document.getElementById('custom-skills-list');
+      const customKnowledgesList = document.getElementById('custom-knowledges-list');
+      if (customTalentsList) customTalentsList.innerHTML = '';
+      if (customSkillsList) customSkillsList.innerHTML = '';
+      if (customKnowledgesList) customKnowledgesList.innerHTML = '';
+
+      // Populate Page 1 Custom dynamic Abilities [2]
+      if (data.customAbilities) {
+        data.customAbilities.forEach(item => {
+          if (item.type === 'talent') {
+            addCustomAbilityRow('custom-talents-list', 'talent', item.name, item.val);
+          } else if (item.type === 'skill') {
+            addCustomAbilityRow('custom-skills-list', 'skill', item.name, item.val);
+          } else if (item.type === 'knowledge') {
+            addCustomAbilityRow('custom-knowledges-list', 'knowledge', item.name, item.val);
+          }
+        });
+      }
 
       // Virtues
       const virtues = data.virtues || {};
