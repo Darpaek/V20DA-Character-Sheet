@@ -509,7 +509,8 @@
     .generation-select-container select option,
     .clan-select-container select option,
     .nature-select-container select option,
-    .demeanor-select-container select option {
+    .demeanor-select-container select option,
+    .road-select-container select option {
       color: var(--text-dark) !important;
       background-color: var(--parchment) !important;
     }
@@ -900,7 +901,52 @@
               <div style="border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
                 <div class="info-group">
                   <label>Road / Path Name</label>
-                  <input type="text" id="road-name" placeholder="e.g., Road of Humanity" oninput="queueAutoSave()">
+                  <div class="road-select-container" style="position: relative; display: inline-flex; align-items: center; width: 100%;">
+                    <select id="road-name" onchange="handleRoadChange(this)" style="width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border-color); font-family: inherit; font-size: 1rem; padding: 3px 0; color: var(--text-dark); cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none;">
+                      <option value="">Select Road / Path...</option>
+                      <option value="custom">Custom...</option>
+                      <option value="The Road of the Beast">The Road of the Beast</option>
+                      <option value="Path of the Hunter">Path of the Hunter</option>
+                      <option value="Path of Journeys">Path of Journeys</option>
+                      <option value="Path of Liberation">Path of Liberation</option>
+                      <option value="The Road of Heaven">The Road of Heaven</option>
+                      <option value="The Path of Christ (Christianity)">The Path of Christ (Christianity)</option>
+                      <option value="Derech Chaim – The Path of Life (Judaism)">Derech Chaim – The Path of Life (Judaism)</option>
+                      <option value="The Path of the Prophet (Islam)">The Path of the Prophet (Islam)</option>
+                      <option value="The Path of the Eightfold Wheel">The Path of the Eightfold Wheel</option>
+                      <option value="The Path of Watchful Gods">The Path of Watchful Gods</option>
+                      <option value="Path of the Archangel">Path of the Archangel</option>
+                      <option value="Path of the Pure">Path of the Pure</option>
+                      <option value="The Road of Humanity">The Road of Humanity</option>
+                      <option value="Path of Breath">Path of Breath</option>
+                      <option value="Path of Community">Path of Community</option>
+                      <option value="Path of Illumination">Path of Illumination</option>
+                      <option value="The Road of Kings">The Road of Kings</option>
+                      <option value="Path of Chivalry">Path of Chivalry</option>
+                      <option value="Path of Devaraja">Path of Devaraja</option>
+                      <option value="Path of Daena">Path of Daena</option>
+                      <option value="The Road of Lilith">The Road of Lilith</option>
+                      <option value="Path of Thorns">Path of Thorns</option>
+                      <option value="Path of Veils">Path of Veils</option>
+                      <option value="Path of Making">Path of Making</option>
+                      <option value="The Road of Metamorphosis">The Road of Metamorphosis</option>
+                      <option value="The Road of Sin">The Road of Sin</option>
+                      <option value="Path of Pleasure">Path of Pleasure</option>
+                      <option value="Path of the Devil">Path of the Devil</option>
+                      <option value="Path of Screams">Path of Screams</option>
+                      <option value="The Road of Bones">The Road of Bones</option>
+                      <option value="The Road of Yasa">The Road of Yasa</option>
+                      <option value="The Road of Blood">The Road of Blood</option>
+                      <option value="The Road of the Abyss">The Road of the Abyss</option>
+                      <option value="The Road of Set">The Road of Set</option>
+                      <option value="Path of Apep">Path of Apep</option>
+                      <option value="The Road of Paradox">The Road of Paradox</option>
+                      <option value="The Code of Samiel">The Code of Samiel</option>
+                      <option value="The Road of Angra Mainyu">The Road of Angra Mainyu</option>
+                      <option value="The Road of Ahura Mazda">The Road of Ahura Mazda</option>
+                    </select>
+                    <span class="road-caret" style="position: absolute; right: 5px; pointer-events: none; color: var(--accent-red); font-size: 0.7rem; font-family: sans-serif;">▼</span>
+                  </div>
                 </div>
                 <div class="trait" data-id="road-rating" data-min="0" data-max="10" data-default="0"><label>Road Value</label><div class="dots-container"></div></div>
                 <div class="info-group" style="margin-top: 10px;">
@@ -2487,6 +2533,34 @@
       queueAutoSave();
     }
 
+    function handleRoadChange(selectEl) {
+      const val = selectEl.value;
+      if (val === 'custom') {
+        const customRoadName = prompt("Enter custom Road / Path name:");
+        if (customRoadName && customRoadName.trim() !== '') {
+          const cleaned = customRoadName.trim();
+          let exists = false;
+          for (let opt of selectEl.options) {
+            if (opt.value === cleaned) {
+              exists = true;
+              selectEl.value = cleaned;
+              break;
+            }
+          }
+          if (!exists) {
+            const newOpt = document.createElement('option');
+            newOpt.value = cleaned;
+            newOpt.text = cleaned;
+            selectEl.add(newOpt);
+            selectEl.value = cleaned;
+          }
+        } else {
+          selectEl.value = "";
+        }
+      }
+      queueAutoSave();
+    }
+
     /* --- PORTRAIT HANDLERS --- */
 
     function handleImageUpload(event) {
@@ -3386,8 +3460,28 @@
 
       // Mechanics
       const mechanics = data.mechanics || {};
-      const rName = document.getElementById('road-name');
-      if (rName) rName.value = mechanics.roadName || '';
+      const rNameSelect = document.getElementById('road-name');
+      if (rNameSelect) {
+        const metaRoad = mechanics.roadName || '';
+        let exists = false;
+        for (let opt of rNameSelect.options) {
+          if (opt.value === metaRoad) {
+            exists = true;
+            rNameSelect.value = metaRoad;
+            break;
+          }
+        }
+        if (!exists && metaRoad !== '') {
+          const newOpt = document.createElement('option');
+          newOpt.value = metaRoad;
+          newOpt.text = metaRoad;
+          rNameSelect.add(newOpt);
+          rNameSelect.value = metaRoad;
+        } else if (metaRoad === '') {
+          rNameSelect.value = '';
+        }
+      }
+
       const rRating = document.querySelector('[data-id="road-rating"]');
       if (rRating) {
         rRating.setAttribute('data-value', mechanics.roadValue || 0);
@@ -3679,4 +3773,3 @@
   </script>
 </body>
 </html>
-      
