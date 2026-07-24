@@ -126,7 +126,7 @@
       text-transform: uppercase;
       font-size: 0.8rem;
       border-radius: 4px;
-      transition: background 0.2s;
+      transition: background 0.2s, box-shadow 0.2s;
     }
 
     .btn:hover {
@@ -158,6 +158,26 @@
     .btn-small {
       padding: 5px 10px;
       font-size: 0.75rem;
+    }
+
+    /* NPC Toggle Button Styling */
+    .btn-npc {
+      background-color: #3e3530;
+      border: 1px solid var(--border-color);
+      color: white;
+    }
+
+    .btn-npc:hover {
+      background-color: #524740;
+    }
+
+    .btn-npc.active {
+      background-color: #cc1111;
+      color: #ffffff;
+      border-color: #ff4d4d;
+      box-shadow: 0 0 10px #ff3333, 0 0 5px #ff6666;
+      font-weight: bold;
+      text-shadow: 0 0 3px #ffffff;
     }
 
     /* Sheet Container Styling */
@@ -563,6 +583,7 @@
           <div>
             <button class="btn btn-secondary btn-small" onclick="closeEditor()">&larr; Dashboard</button>
             <button class="btn btn-small" onclick="triggerManualExport()">Export JSON</button>
+            <span id="sheet-npc-indicator" style="display: none; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-red); font-size: 0.95rem; font-weight: bold; margin-left: 15px; vertical-align: middle;">NPC</span>
           </div>
           <span id="save-status" class="autosave-status">Draft Loaded</span>
         </div>
@@ -3195,16 +3216,18 @@
       }
     }
 
-    function saveLocalIndex(charId, name, clan, road) {
+    function saveLocalIndex(charId, name, clan, road, isNpc = false, npcPassword = '') {
       const list = getLocalIndex();
       const index = list.findIndex(item => item.id === charId);
       if (index !== -1) {
         list[index].name = name;
         list[index].clan = clan;
         list[index].road = road;
+        list[index].isNpc = isNpc;
+        list[index].npcPassword = npcPassword;
         list[index].lastSaved = Date.now();
       } else {
-        list.push({ id: charId, name, clan, road, lastSaved: Date.now() });
+        list.push({ id: charId, name, clan, road, isNpc, npcPassword, lastSaved: Date.now() });
       }
       localStorage.setItem('v20_da_characters_index', JSON.stringify(list));
     }
@@ -3231,20 +3254,73 @@
             <p style="font-size: 0.75rem; color: #8c7e6e; margin-top: 8px;">Saved: ${new Date(meta.lastSaved).toLocaleDateString()}</p>
           </div>
           <div class="char-card-actions">
-            <button class="btn btn-small" onclick="openEditor('${meta.id}')">Edit</button>
-            <button class="btn btn-secondary btn-small" onclick="cloneCharacter('${meta.id}')">Clone</button>
-            <button class="btn btn-secondary btn-small" onclick="triggerManualExport('${meta.id}')">Export</button>
-            <button class="btn btn-danger btn-small" onclick="deleteCharacter('${meta.id}')">Delete</button>
+            <button class="btn btn-small" onclick="checkNpcAccess('${meta.id}', function() { openEditor('${meta.id}'); })">Edit</button>
+            <button class="btn btn-secondary btn-small" onclick="checkNpcAccess('${meta.id}', function() { cloneCharacter('${meta.id}'); })">Clone</button>
+            <button class="btn btn-secondary btn-small" onclick="checkNpcAccess('${meta.id}', function() { triggerManualExport('${meta.id}'); })">Export</button>
+            <button class="btn btn-danger btn-small" onclick="checkNpcAccess('${meta.id}', function() { deleteCharacter('${meta.id}'); })">Delete</button>
+            <button class="btn btn-small btn-npc ${meta.isNpc ? 'active' : ''}" onclick="toggleNpc('${meta.id}')">NPC</button>
           </div>
         `;
         listContainer.appendChild(card);
       });
     }
 
+    function checkNpcAccess(id, callback) {
+      let charData = null;
+      try {
+        charData = JSON.parse(localStorage.getItem(id));
+      } catch (e) {}
+
+      if (charData && charData.isNpc) {
+        const input = prompt("Enter NPC Password:");
+        if (input === null) return;
+        if (input === (charData.npcPassword || "")) {
+          callback();
+        } else {
+          alert("Incorrect NPC Password.");
+        }
+      } else {
+        callback();
+      }
+    }
+
+    function toggleNpc(id) {
+      let charData = null;
+      try {
+        charData = JSON.parse(localStorage.getItem(id));
+      } catch (e) {}
+
+      if (!charData) return;
+
+      if (!charData.isNpc) {
+        const password = prompt("Enter a password to set this character as an NPC:");
+        if (password === null) return; // Canceled
+        charData.isNpc = true;
+        charData.npcPassword = password;
+        localStorage.setItem(id, JSON.stringify(charData));
+        saveLocalIndex(id, charData.meta ? charData.meta.name : '', charData.meta ? charData.meta.clan : '', charData.mechanics ? charData.mechanics.roadName : '', true, password);
+        renderDashboard();
+      } else {
+        const input = prompt("Enter the NPC Password to unlock:");
+        if (input === null) return; // Canceled
+        if (input === (charData.npcPassword || "")) {
+          charData.isNpc = false;
+          charData.npcPassword = "";
+          localStorage.setItem(id, JSON.stringify(charData));
+          saveLocalIndex(id, charData.meta ? charData.meta.name : '', charData.meta ? charData.meta.clan : '', charData.mechanics ? charData.mechanics.roadName : '', false, "");
+          renderDashboard();
+        } else {
+          alert("Incorrect NPC Password.");
+        }
+      }
+    }
+
     async function createNewCharacter() {
       const charId = 'char_' + Date.now();
       const initialSheet = {
         id: charId,
+        isNpc: false,
+        npcPassword: '',
         meta: { name: 'New Character', clan: '', sire: '', generation: '12', nature: '', demeanor: '', concept: '', chronicle: '' },
         meta_notes_left: '',
         meta_notes_right: '',
@@ -3297,7 +3373,7 @@
       };
 
       localStorage.setItem(charId, JSON.stringify(initialSheet));
-      saveLocalIndex(charId, initialSheet.meta.name, initialSheet.meta.clan, '');
+      saveLocalIndex(charId, initialSheet.meta.name, initialSheet.meta.clan, '', false, '');
 
       if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
         try {
@@ -3397,7 +3473,7 @@
       clone.meta.name = (clone.meta.name || 'Unnamed') + ' (Copy)';
 
       localStorage.setItem(newId, JSON.stringify(clone));
-      saveLocalIndex(newId, clone.meta.name, clone.meta.clan, clone.mechanics.roadName || '');
+      saveLocalIndex(newId, clone.meta.name, clone.meta.clan, clone.mechanics ? clone.mechanics.roadName || '' : '', clone.isNpc || false, clone.npcPassword || '');
 
       if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
         try {
@@ -4253,6 +4329,9 @@
 
     /* --- CORE SYNC ENGINE --- */
 
+    let activeIsNpc = false;
+    let activeNpcPassword = '';
+
     function queueAutoSave() {
       if (isLoadingSheet) return; 
       setSaveStatus('Saving changes...');
@@ -4271,7 +4350,7 @@
       const data = compileSheetData();
       
       localStorage.setItem(activeCharacterId, JSON.stringify(data));
-      saveLocalIndex(activeCharacterId, data.meta.name, data.meta.clan, data.mechanics.roadName);
+      saveLocalIndex(activeCharacterId, data.meta.name, data.meta.clan, data.mechanics.roadName, data.isNpc, data.npcPassword);
 
       if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
         setSaveStatus('Saved Locally (No Cloud URL)');
@@ -4296,6 +4375,8 @@
 
       const data = {
         id: activeCharacterId,
+        isNpc: activeIsNpc,
+        npcPassword: activeNpcPassword,
         meta: {
           name: document.getElementById('char-name').value,
           clan: document.getElementById('char-clan').value,
@@ -4555,6 +4636,14 @@
 
     function loadSheetIntoDOM(data) {
       isLoadingSheet = true; 
+
+      activeIsNpc = data.isNpc || false;
+      activeNpcPassword = data.npcPassword || '';
+
+      const npcIndicator = document.getElementById('sheet-npc-indicator');
+      if (npcIndicator) {
+        npcIndicator.style.display = activeIsNpc ? 'inline-block' : 'none';
+      }
 
       const meta = data.meta || {};
       document.getElementById('char-name').value = meta.name || '';
@@ -5070,7 +5159,7 @@
           data.id = newId;
 
           localStorage.setItem(newId, JSON.stringify(data));
-          saveLocalIndex(newId, data.meta.name, data.meta.clan, data.mechanics ? data.mechanics.roadName : '');
+          saveLocalIndex(newId, data.meta.name, data.meta.clan, data.mechanics ? data.mechanics.roadName : '', data.isNpc || false, data.npcPassword || '');
 
           if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
             try {
@@ -5121,4 +5210,11 @@
     }
   </script>
 </body>
-</html>  
+</html>
+
+
+
+
+
+
+      
