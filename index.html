@@ -1270,6 +1270,847 @@
     let isLoadingSheet = false; // Flag to prevent auto-saves while sheet DOM is initializing
     const collapsedDisciplines = {}; // Persistent Grimoire minimizes
 
+    // Common Ethics Templates for Path Variations
+    const beastBaseEthics = [
+      "- You have survived death, and now preservation of the self is the truest goal you can seek.",
+      "- The Beast exists to help you survive, not as some manifestation of evil.",
+      "- You have fought for everything you have, and have right to everything you’ve fought for.",
+      "- You cannot be led; you can listen to experiences gained by others, but no one determines the conditions of your existence but you.",
+      "- Civilization is a cushion that softens you and makes you weak. Exist beside it, but never in it."
+    ];
+
+    const heavenBaseEthics = [
+      "- The existence of a higher power and its dominion over all things.",
+      "- Vampiric existence as part of a divine plan.",
+      "- The Embrace is a call to direct service of the divine.",
+      "- Serving divine will over individual will.",
+      "- Following divine law and rejecting evil is the only way to shackle the Beast.",
+      "- Each Faithful must choose their own Path, which determines more specific ethics and morality that they adhere to."
+    ];
+
+    const humanityBaseEthics = [
+      "- Remaining human is a requirement to escape soul-death.",
+      "- Humanity is a universal experience that all Cainites can understand.",
+      "- Violating the boundaries and well-being of another depletes the soul.",
+      "- We were all human, and that gives us value despite accidents of birth or upbringing.",
+      "- Thought and compassion separate us from the Beast."
+    ];
+
+    const regalisBaseEthics = [
+      "- To rule others, you must first become your own master, taming the Beast within.",
+      "- Your word is your honor and your life. Do not break it.",
+      "- There are only two roles in the world: master and servant.",
+      "- Power does not hand itself to you. You must seize it and hold it."
+    ];
+
+    const lilitBaseEthics = [
+      "- Creation is vital, the act of creation is sacred, and like our Mother, you must create often and with daring and cunning.",
+      "- Seduce Angels.",
+      "- Creation is suffering, and the greater the creations, the greater the suffering. That suffering is valuable.",
+      "- Life teaches through suffering. Be a teacher.",
+      "- Creation is always an act of love and devotion. Be a lover.",
+      "- Rather than learn, some will seek to destroy you and take what you have created for their own. Be a torturer.",
+      "- Draw in the needy, those who have suffered enough to understand. Welcome them with passion and wisdom.",
+      "- Cultivate a garden. Plant seeds and feed them with your blood and milk."
+    ];
+
+    const peccatiBaseEthics = [
+      "- You are Damned already; there is nothing forbidden to you.",
+      "- The Beast belongs to you, but you do not belong to it.",
+      "- Act without hesitation. The laws of neither man nor God bind you.",
+      "- Your heart holds your hunger and your freedom. Find the courage to embrace both."
+    ];
+
+    // Comprehensive Roads & Paths Database
+    const roadsDatabase = {
+      "The Road of the Beast": {
+        altName: "Via Bestiae",
+        aura: "Menace",
+        virtues: { v1: "Conviction", v2: "Instinct" },
+        ethics: beastBaseEthics,
+        hierarchyName: "Hierarchy of Sins Against Who You Are",
+        hierarchy: {
+          10: { mw: "Risking your own life", r: "Survival is paramount." },
+          9:  { mw: "Acknowledging a leader", r: "There is no “us”, only “me.”" },
+          8:  { mw: "Killing for pleasure", r: "Never waste." },
+          7:  { mw: "Choosing to live in order over chaos", r: "Civilization softens you." },
+          6:  { mw: "Cruelty for pleasure", r: "Cruelty is wasted energy." },
+          5:  { mw: "Doing something for nothing", r: "Charity doesn’t feed the Beast." },
+          4:  { mw: "Failing to kill when survival is on the line", r: "If it comes down to you or them, it must be you." },
+          3:  { mw: "Not protecting what is yours", r: "Make it yours, keep it yours." },
+          2:  { mw: "Having no things that are yours", r: "Mark your territory, mark your people, mark your herd." },
+          1:  { mw: "Refusing to feed when hungry", r: "There is no balance when the Beast is denied." }
+        }
+      },
+      "Path of the Hunter": {
+        altName: "Via Bestiae",
+        aura: "Menace",
+        virtues: { v1: "Conviction", v2: "Instinct" },
+        ethics: [...beastBaseEthics, "- Anything that is not the hunt, or meant to advance to hunt, is a distraction.", "- Short-sightedness is the hunter’s only real enemy.", "- Going hungry is the mark of a poor hunter.", "- You are a predator, and part of the hunt, but not the only part of it."],
+        hierarchyName: "Hierarchy of Sins Against the Hunt",
+        hierarchy: {
+          10: { mw: "Risking your own life", r: "Survival is paramount." },
+          9:  { mw: "Acknowledging a leader", r: "There is no “us”, only “me.”" },
+          8:  { mw: "Ignoring potential threats to your hunt", r: "Others will try to limit your hunting rights. Do not let them." },
+          7:  { mw: "Acting without a plan", r: "A careless Hunter is a failure before she starts." },
+          6:  { mw: "Cruelty for pleasure", r: "Cruelty is wasted energy." },
+          5:  { mw: "Doing something for nothing", r: "Charity doesn’t feed the Beast." },
+          4:  { mw: "Failing to kill when survival is on the line", r: "If it comes down to you or them, it must be you." },
+          3:  { mw: "Not protecting what is yours", r: "Make it yours, keep it yours." },
+          2:  { mw: "Hunting without ritual preparation", r: "The Hunt is the only sacred thing." },
+          1:  { mw: "Refusing to feed when hungry", r: "There is no balance when the Beast is denied." }
+        }
+      },
+      "Path of Journeys": {
+        altName: "Via Bestiae",
+        aura: "Menace",
+        virtues: { v1: "Conviction", v2: "Self-Control" },
+        ethics: [...beastBaseEthics, "- Stagnation is worse than death.", "- Survival is a thing that must be tested, not simply accepted as important.", "- The moment you are used to a place and its people, it is time to move on."],
+        hierarchyName: "Hierarchy of Sins Against Journeys",
+        hierarchy: {
+          10: { mw: "Risking your own life", r: "Survival is paramount." },
+          9:  { mw: "Acknowledging a leader", r: "There is no “us”, only “me.”" },
+          8:  { mw: "Killing for pleasure", r: "Never waste." },
+          7:  { mw: "Choosing to live in order over chaos", r: "Civilization softens you." },
+          6:  { mw: "Cruelty for pleasure", r: "Cruelty is wasted energy." },
+          5:  { mw: "Doing something for nothing", r: "Charity doesn’t feed the Beast." },
+          4:  { mw: "Failing to kill when survival is on the line", r: "If it comes down to you or them, it must be you." },
+          3:  { mw: "Failing to explore", r: "You cannot know what lies around the corner if you don’t go looking." },
+          2:  { mw: "Acknowledging ties to a land or people", r: "Reject their titles and their attempts to domesticate you." },
+          1:  { mw: "Refusing to feed when hungry", r: "There is no balance when the Beast is denied." }
+        }
+      },
+      "Path of Liberation": {
+        altName: "Via Bestiae",
+        aura: "Menace",
+        virtues: { v1: "Conviction", v2: "Instinct" },
+        ethics: [...beastBaseEthics, "- The Vampire was in its truest state in Nod before the First City.", "- Humanity was meant to live free, not in cities built to kennel them.", "- Liberation is the only thing that matters, and any act that frees a mind is worthwhile."],
+        hierarchyName: "Hierarchy of Sins Against Liberation",
+        hierarchy: {
+          10: { mw: "Risking your own life", r: "Survival is paramount." },
+          9:  { mw: "Acknowledging a leader", r: "There is no “us”, only “me.”" },
+          8:  { mw: "Failing to expose someone to a hard truth", r: "Liberation belongs to everyone." },
+          7:  { mw: "Choosing to live in order over chaos", r: "Civilization softens you." },
+          6:  { mw: "Taking comfort in the city instead of dismantling it", r: "If it makes your life easier, it makes you weaker. Destroy it." },
+          5:  { mw: "Doing something for nothing", r: "Charity doesn’t feed the Beast." },
+          4:  { mw: "Failing to kill when survival is on the line", r: "If it comes down to you or them, it must be you." },
+          3:  { mw: "Not protecting what is yours", r: "Make it yours, keep it yours." },
+          2:  { mw: "Having no things that are yours", r: "Mark your territory, mark your people, mark your herd." },
+          1:  { mw: "Empowering tyranny", r: "You create liberation, if they want it or not." }
+        }
+      },
+      "The Road of Heaven": {
+        altName: "Via Caeli",
+        aura: "Holiness",
+        virtues: { v1: "Conscience", v2: "Self-Control" },
+        ethics: heavenBaseEthics,
+        hierarchyName: "Hierarchy of Sins Against Heaven",
+        hierarchy: { 10:{mw:"",r:""}, 9:{mw:"",r:""}, 8:{mw:"",r:""}, 7:{mw:"",r:""}, 6:{mw:"",r:""}, 5:{mw:"",r:""}, 4:{mw:"",r:""}, 3:{mw:"",r:""}, 2:{mw:"",r:""}, 1:{mw:"",r:""} }
+      },
+      "The Path of Christ (Christianity)": {
+        altName: "Via Caeli",
+        aura: "Holiness",
+        virtues: { v1: "Conscience", v2: "Self-Control" },
+        ethics: heavenBaseEthics,
+        hierarchyName: "Hierarchy of Sins Against Christ",
+        hierarchy: {
+          10: { mw: "Failing to denounce corruption and sin", r: "All that evil needs to triumph is the inaction of the righteous." },
+          9:  { mw: "Acting out of pride, avarice, lust, or other sinful impulse", r: "The road to the Beast is paved in sin." },
+          8:  { mw: "Bearing false witness", r: "A lying tongue is hateful in the eyes of the Lord." },
+          7:  { mw: "Causing harm to a pious person", r: "God protects the innocent." },
+          6:  { mw: "Feeding from an innocent without permission", r: "Corruption of the innocent is a grave sin." },
+          5:  { mw: "Blasphemy or heresy in word or act", r: "Blasphemy is a sin against God." },
+          4:  { mw: "Murder of innocents", r: "Thou shalt not kill, sayeth the Lord." },
+          3:  { mw: "Worshiping false idols", r: "Thou shalt not have any other god before me." },
+          2:  { mw: "Aiding demons or supernatural evil", r: "It is the duty of the righteous to smite the wicked." },
+          1:  { mw: "Failing to spread the Gospel of Christ", r: "It is the duty of all Christians to spread the good news of our Lord." }
+        }
+      },
+      "Derech Chaim – The Path of Life (Judaism)": {
+        altName: "Via Caeli",
+        aura: "Holiness",
+        virtues: { v1: "Conscience", v2: "Self-Control" },
+        ethics: heavenBaseEthics,
+        hierarchyName: "Hierarchy of Sins Against Life",
+        hierarchy: {
+          10: { mw: "Failing to maintain a state of ritual purity", r: "And ye shall be holy men unto me." },
+          9:  { mw: "Unnecessary contact with non-Jews", r: "The people must be protected." },
+          8:  { mw: "Failing to find a rabbinical authority to make rulings for you, and obey those rulings", r: "In whatever place there is a profanation of God’s name, they do not show respect to their rabbi." },
+          7:  { mw: "Failing to obey the laws and customs of the local Jewish community", r: "The spiritual needs of the individual can only be met through community." },
+          6:  { mw: "Failing to maintain a connection to a local Jewish community", r: "Jews cannot exist in isolation." },
+          5:  { mw: "Drinking impermissible blood", r: "For the life of the flesh is in the blood." },
+          4:  { mw: "Worshipping idols", r: "Hear, O Israel, God is One." },
+          3:  { mw: "Committing sexual violence", r: "It is worse to wrong a fellow person than it is to wrong God." },
+          2:  { mw: "Murder", r: "Whoever sheds the blood of man, by man shall his blood be shed." },
+          1:  { mw: "Endangering the Jewish community", r: "You shall not stand by the blood of your fellow." }
+        }
+      },
+      "The Path of the Prophet (Islam)": {
+        altName: "Via Caeli",
+        aura: "Holiness",
+        virtues: { v1: "Conscience", v2: "Self-Control" },
+        ethics: heavenBaseEthics,
+        hierarchyName: "Hierarchy of Sins Against the Prophet",
+        hierarchy: {
+          10: { mw: "Failing to honor your elders", r: "Say not to them a word of contempt but address them in terms of honor." },
+          9:  { mw: "Failing to care for the defenseless", r: "All power is a gift from God." },
+          8:  { mw: "Being dishonest or unfair in your dealings with others", r: "Give full measure for measure and weigh with a balance that is straight." },
+          7:  { mw: "Breaking a promise", r: "Every covenant will be inquired into on the Day of Reckoning." },
+          6:  { mw: "Boastfulness or arrogance", r: "Successful are those who humble themselves in prayers." },
+          5:  { mw: "Feeding from a non-Muslim", r: "He hath forbidden that which has been immolated to any other god." },
+          4:  { mw: "Killing unjustly", r: "Nor take life — which Allah has made sacred — for unjust cause." },
+          3:  { mw: "Acknowledging any god but Allah (and Muhammad is His Prophet)", r: "Take not with Allah another object of worship." },
+          2:  { mw: "Breaking the unity of Islam", r: "You Muslims are the best nation brought out for Mankind." },
+          1:  { mw: "Failing to submit to the will of Allah as revealed through his Prophet and revelation", r: "God alone possesses all power and glory." }
+        }
+      },
+      "The Path of the Eightfold Wheel": {
+        altName: "Via Caeli",
+        aura: "Holiness",
+        virtues: { v1: "Conscience", v2: "Self-Control" },
+        ethics: [...heavenBaseEthics, "- Honoring the gods and spirits of nature through devotion, serving balance in all things."],
+        hierarchyName: "Hierarchy of Sins Against the Eightfold Wheel",
+        hierarchy: {
+          10: { mw: "Failing to spend time alone in the silence of nature", r: "It is through nature that the gods are revealed to us." },
+          9:  { mw: "Betraying a secret", r: "The Druids teach us that we must be blind where secrets are concerned." },
+          8:  { mw: "Failing to care for the sick and the weak", r: "One cannot be strong without concern for others." },
+          7:  { mw: "Letting pride come before justice", r: "One must be strong toward the strong and weak toward the strengthless." },
+          6:  { mw: "Failing to honor the spirits of nature", r: "The spirits aid and guide us." },
+          5:  { mw: "Failing to honor the gods", r: "The gods created the world that sustains us." },
+          4:  { mw: "Breaking a promise", r: "A promise is a sacred bond." },
+          3:  { mw: "Acting to upset the balance of nature", r: "For the righteous must seek balance in all things." },
+          2:  { mw: "Failure to conduct yourself with honor", r: "The gods honor those who live with honor." },
+          1:  { mw: "Failure to seek self-knowledge", r: "Never permit self-deception to obscure knowledge of the self." }
+        }
+      },
+      "The Path of Watchful Gods": {
+        altName: "Via Caeli",
+        aura: "Holiness",
+        virtues: { v1: "Conscience", v2: "Self-Control" },
+        ethics: [...heavenBaseEthics, "- Devoting oneself to serving the gods through making regular sacrifices, honoring and protecting what the gods deem sacred, and adhering to strict codes of honor."],
+        hierarchyName: "Hierarchy of Sins Against the Watchful Gods",
+        hierarchy: {
+          10: { mw: "Failing to make regular sacrifices", r: "Regular sacrifices give the gods strength." },
+          9:  { mw: "Lying", r: "Do not dishonor yourself in the eyes of the gods with false words." },
+          8:  { mw: "Offending the gods or spirits with violence", r: "Do not disrespect the spirits with violence, for they are quick to take offense and their memory is long." },
+          7:  { mw: "Failing to act honorably", r: "The gods reward honor and punish dishonor." },
+          6:  { mw: "Stealing from offerings or sacrifices", r: "Give the gods the first fruits of your labor and do not grudge them their portion." },
+          5:  { mw: "Not honoring priests", r: "Priests are the servants of order and balance favored by the gods." },
+          4:  { mw: "Killing a sacred animal", r: "Honor that which the gods have decreed sacred." },
+          3:  { mw: "Defiling sacred places", r: "Defiling a temple is like cursing the gods themselves." },
+          2:  { mw: "Damaging the image of the gods", r: "One should strive always to honor the gods in thought and deed." },
+          1:  { mw: "Reviling a god or the gods", r: "The gods are the source of all life and goodness." }
+        }
+      },
+      "Path of the Archangel": {
+        altName: "Via Caeli",
+        aura: "Holiness (Melancholia)",
+        virtues: { v1: "Conscience", v2: "Self-Control" },
+        ethics: [...heavenBaseEthics, "- Acting as muse and shepherd to all, and as martyr when need be; acting the part of angels to the mortal herd."],
+        hierarchyName: "Hierarchy of Sins Against the Archangel",
+        hierarchy: {
+          10: { mw: "Indulging in any temptation", r: "True katharsis purges all passions." },
+          9:  { mw: "Going one night without performing any creative work", r: "In art, we illuminate truth." },
+          8:  { mw: "Turning away from those who need inspiration", r: "An angel’s work is in guiding the lost." },
+          7:  { mw: "Refusing to make a minor sacrifice", r: "Shedding earthly things brings us closer to divinity." },
+          6:  { mw: "Leaving fellow Toreador to languish unbaptized", r: "We are all Michael’s chosen." },
+          5:  { mw: "Going one week without performing any creative work", r: "Art is how the soul worships." },
+          4:  { mw: "Indulging in temptations of the flesh", r: "In katharsis we renounce carnal passions." },
+          3:  { mw: "Abandoning any in your charge", r: "We must earn the worship of the flock." },
+          2:  { mw: "Giving in to your Beast, such as frenzy", r: "Katharsis purges our basest urges first and foremost." },
+          1:  { mw: "Refusing to make a major sacrifice", r: "We follow Michael’s example in all things." }
+        }
+      },
+      "Path of the Pure": {
+        altName: "Via Caeli",
+        aura: "Holiness",
+        virtues: { v1: "Conscience", v2: "Self-Control" },
+        ethics: [...heavenBaseEthics, "- The world was made by the Demiurge who hides the true nature of the world in a cloak of matter, pain, and lust.", "- God represents absolute truth and perfection, beyond matter and desire.", "- To conquer matter, a vampire must deny worldly pleasures: fine clothing, food and drink, sex, the lust for power, and pride in one’s accomplishments.", "- Unity with the true God as Sophia, the wisdom principle personified, equivalent to beholding the Platonic Forms."],
+        hierarchyName: "Hierarchy of Sins Against Katharoi",
+        hierarchy: {
+          10: { mw: "Desiring a material object or person.", r: "Wanting the things of this world blinds us to true wisdom." },
+          9:  { mw: "Feeding beyond satiation (that is, filling more than half of one’s Blood Pool).", r: "Feeding beyond need is gluttony." },
+          8:  { mw: "Lying by omission or passive deception (such as by employing stealth).", r: "Deception is an act of the heart." },
+          7:  { mw: "Giving one’s blood to another.", r: "It is a sin to ensnare another in the illusions of this world." },
+          6:  { mw: "Telling a lie; tricking a person.", r: "Blinding another to the truth is the work of the Demiurge." },
+          5:  { mw: "Accepting a position of authority or honor, except as a teacher of the Path.", r: "Pride is the Demiurge’s motive, for he pretends to be God." },
+          4:  { mw: "Engaging in sexual congress or drinking another Cainite’s blood.", r: "Lust is of the world, and impure." },
+          3:  { mw: "Feeding for pleasure.", r: "Gluttony weighs us down; we ingest the world’s foulness." },
+          2:  { mw: "Stealing or killing for pleasure.", r: "You give reign to our material lusts, like Caine." },
+          1:  { mw: "Torturing a person or ravaging a community for pleasure or personal power.", r: "You condemn others to the prison of this world." }
+        }
+      },
+      "The Road of Humanity": {
+        altName: "Via Humanitas",
+        aura: "Humanity",
+        virtues: { v1: "Conscience", v2: "Self-Control" },
+        ethics: humanityBaseEthics,
+        hierarchyName: "Hierarchy of Sins Against the Soul",
+        hierarchy: {
+          10: { mw: "Selfish thoughts", r: "If it can be thought, it can be done." },
+          9:  { mw: "Minor selfish acts", r: "Putting oneself first lets the Beast in." },
+          8:  { mw: "Injury to another", r: "Accidental or not, there is still blood on your hands." },
+          7:  { mw: "Theft", r: "Only an animal takes without thought of consequence." },
+          6:  { mw: "Accidental violation of another", r: "Humanity is a shared condition, his suffering is your own." },
+          5:  { mw: "Wanton destruction", r: "Are you a person or an animal?" },
+          4:  { mw: "Impassioned violation of another", r: "Passion behind violence is the whispering of the Beast." },
+          3:  { mw: "Planned violation of another", r: "To be so cold is to reject the warmth of humanity." },
+          2:  { mw: "Casual violation of another", r: "Even wild animals know better." },
+          1:  { mw: "The most monstrous, vile acts", r: "Are you a person or a monster?" }
+        }
+      },
+      "Path of Breath": {
+        altName: "Via Humanitas",
+        aura: "Humanity",
+        virtues: { v1: "Conscience", v2: "Self-Control" },
+        ethics: [...humanityBaseEthics, "- Not shouldering your cousin’s burden is as bad as burdening them in the first place.", "- Accepting that your nature is evil makes it true.", "- Isolation leaves you alone with the Beast, so that it may overpower you easier.", "- The company of Cainites is less preferable to the company of kine."],
+        hierarchyName: "Hierarchy of Sins Against Breath",
+        hierarchy: {
+          10: { mw: "Allowing yourself to think or act as a vampire", r: "" },
+          9:  { mw: "Minor selfish acts", r: "Putting oneself first lets the Beast in." },
+          8:  { mw: "Injury to another", r: "Accidental or not, there is still blood on your hands." },
+          7:  { mw: "Knowingly letting a human suffer", r: "" },
+          6:  { mw: "Accidental violation of another", r: "Humanity is a shared condition, his suffering is your own." },
+          5:  { mw: "Wanton destruction", r: "Are you a person or an animal?" },
+          4:  { mw: "Impassioned violation of another", r: "Passion behind violence is the whispering of the Beast." },
+          3:  { mw: "Planned violation of another", r: "To be so cold is to reject the warmth of humanity." },
+          2:  { mw: "Casual violation of another", r: "Even wild animals know better." },
+          1:  { mw: "Spending a night without human contact", r: "" }
+        }
+      },
+      "Path of Community": {
+        altName: "Via Humanitas",
+        aura: "Humanity",
+        virtues: { v1: "Conscience", v2: "Self-Control" },
+        ethics: [...humanityBaseEthics, "- The needs of the many are equal to the needs of the Cainite.", "- Growth is vital to a community’s health and well-being.", "- A people who know who or what benefits them may rebel against it, so secrecy is best."],
+        hierarchyName: "Hierarchy of Sins Against Community",
+        hierarchy: {
+          10: { mw: "Selfish thoughts", r: "If it can be thought, it can be done." },
+          9:  { mw: "Minor selfish acts", r: "Putting oneself first lets the Beast in." },
+          8:  { mw: "Injury to another", r: "Accidental or not, there is still blood on your hands." },
+          7:  { mw: "Accidental destruction of public property", r: "" },
+          6:  { mw: "Accidental violation of another", r: "Humanity is a shared condition, his suffering is your own." },
+          5:  { mw: "Wanton destruction", r: "Are you a person or an animal?" },
+          4:  { mw: "Theft", r: "" },
+          3:  { mw: "Planned violation of another", r: "To be so cold is to reject the warmth of humanity." },
+          2:  { mw: "Casual violation of another", r: "Even wild animals know better." },
+          1:  { mw: "Genocide or any action that ends a community’s ability to grow and thrive", r: "" }
+        }
+      },
+      "Path of Illumination": {
+        altName: "Via Humanitas",
+        aura: "Humanity",
+        virtues: { v1: "Conscience", v2: "Self-Control" },
+        ethics: [...humanityBaseEthics, "- They fear you because finding the truth means the end of their authority.", "- Rest once you have escaped the weakness of vampirism.", "- You have holiness inside of you, and it can balance the Beast."],
+        hierarchyName: "Hierarchy of Sins Against Illumination",
+        hierarchy: {
+          10: { mw: "Staying any place that is not furthering you along your journey", r: "" },
+          9:  { mw: "Minor selfish acts", r: "Putting oneself first lets the Beast in." },
+          8:  { mw: "Injury to another", r: "Accidental or not, there is still blood on your hands." },
+          7:  { mw: "Any act that will prevent a Cainite from following the journey you have begun", r: "" },
+          6:  { mw: "Accidental violation of another", r: "Humanity is a shared condition, his suffering is your own." },
+          5:  { mw: "Wanton destruction", r: "Are you a person or an animal?" },
+          4:  { mw: "Impassioned violation of another", r: "Passion behind violence is the whispering of the Beast." },
+          3:  { mw: "Planned violation of another", r: "To be so cold is to reject the warmth of humanity." },
+          2:  { mw: "Casual violation of another", r: "Even wild animals know better." },
+          1:  { mw: "Letting true darkness in, to squelch the light. Accepting Evil", r: "" }
+        }
+      },
+      "The Road of Kings": {
+        altName: "Via Regalis",
+        aura: "Command",
+        virtues: { v1: "Conviction", v2: "Self-Control" },
+        ethics: regalisBaseEthics,
+        hierarchyName: "Hierarchy of Sins Against Kingship",
+        hierarchy: {
+          10: { mw: "Forgoing your duty", r: "Those who do not maintain responsibilities often lose them." },
+          9:  { mw: "Treating a peer with disrespect", r: "Respect must be given to earn it from others." },
+          8:  { mw: "Placing personal desires over duty", r: "A leader must do what is best for the many, not the one." },
+          7:  { mw: "Treating an inferior as an equal", r: "Everyone should know their place, including you." },
+          6:  { mw: "Killing without purpose", r: "Displays of power should inspire fear or respect." },
+          5:  { mw: "Showing weakness in front of inferiors", r: "A leader must be strong at all times." },
+          4:  { mw: "Failing to answer a challenge to your honor", r: "Honor and reputation are everything." },
+          3:  { mw: "Treating your superior with disrespect", r: "Superiors must be given the respect they are due." },
+          2:  { mw: "Breaking your word or oath", r: "Your word is your honor. If you have no honor, you have no worth." },
+          1:  { mw: "Giving in to your Beast, such as frenzy", r: "If you cannot control yourself, how can you control others?" }
+        }
+      },
+      "Path of Chivalry": {
+        altName: "Via Regalis",
+        aura: "Command",
+        virtues: { v1: "Conviction", v2: "Self-Control" },
+        ethics: [...regalisBaseEthics, "- Your honor and duty are the most important aspects of your life.", "- You are mandated to aid and protect your inferiors.", "- You stand for justice, and you should not let unjust acts go unpunished."],
+        hierarchyName: "Hierarchy of Sins Against Chivalry",
+        hierarchy: {
+          10: { mw: "Neglecting your duty for any reason", r: "Duty must come first." },
+          9:  { mw: "Dishonorable acts (deceit, murder, etc.)", r: "Your honor is the most important thing." },
+          8:  { mw: "Treating another with disrespect", r: "Respect must be given to earn it from others." },
+          7:  { mw: "Behaving in an unjust manner", r: "It is your duty to uphold justice." },
+          6:  { mw: "Failing to come to the aid of another", r: "It is your duty to protect the weak." },
+          5:  { mw: "Treating your superior with disrespect", r: "Superiors must be given the respect they are due." },
+          4:  { mw: "Placing personal desires over duty", r: "Selfish thoughts have no place in a Paladin’s heart." },
+          3:  { mw: "Failing to answer a challenge to your honor", r: "Honor and reputation are everything." },
+          2:  { mw: "Breaking your word", r: "Your word is your honor. If you have no honor, you have no worth." },
+          1:  { mw: "Breaking a sworn oath", r: "Oaths of fealty are what make civilized society." }
+        }
+      },
+      "Path of Devaraja": {
+        altName: "Via Regalis",
+        aura: "Command",
+        virtues: { v1: "Conviction", v2: "Self-Control" },
+        ethics: [...regalisBaseEthics, "- You must act as a god would, smiting your enemies and granting succor to your followers.", "- You must give homage to the divine to gain its blessing.", "- Never turn away a follower. Worshippers come from all walks of life."],
+        hierarchyName: "Hierarchy of Sins Against Devaraja",
+        hierarchy: {
+          10: { mw: "Failing to recognize the divine", r: "Your power comes from the divine will." },
+          9:  { mw: "Forgoing your duty", r: "Those who do not maintain responsibilities often lose them." },
+          8:  { mw: "Treating another with disrespect", r: "Respect must be given to earn it from others." },
+          7:  { mw: "Treating an inferior as an equal", r: "You are a god; you must not forget this." },
+          6:  { mw: "Placing personal desires over duty", r: "A leader must do what is best for the many, not the one." },
+          5:  { mw: "Failing to seize power when the chance arises", r: "You must prove to the divine that you deserve its blessing." },
+          4:  { mw: "Failing to answer a challenge to your honor", r: "True gods smite their detractors." },
+          3:  { mw: "Killing without purpose", r: "It is your divine duty to protect your worshippers, not kill them." },
+          2:  { mw: "Breaking your word or oath", r: "Your word is your honor. If you have no honor, you have no worth." },
+          1:  { mw: "Giving into your Beast, such as frenzy", r: "If you cannot control yourself, how can you accept the divine?" }
+        }
+      },
+      "Path of Daena": {
+        altName: "Via Regalis",
+        aura: "Command",
+        virtues: { v1: "Conviction", v2: "Self-Control" },
+        ethics: [...regalisBaseEthics, "- The law is supreme. Uphold it at all costs.", "- Your duty is your honor and your life. Never forsake it.", "- Always act with kindness, as good deeds will be repaid tenfold."],
+        hierarchyName: "Hierarchy of Sins Against Daena",
+        hierarchy: {
+          10: { mw: "Neglecting your duty for any reason", r: "Duty must come first." },
+          9:  { mw: "Breaking the law", r: "You must uphold the law at all costs." },
+          8:  { mw: "Treating another with disrespect", r: "Respect must be given to earn it from others." },
+          7:  { mw: "Behaving in an unjust manner", r: "It is your duty to uphold justice." },
+          6:  { mw: "Killing without purpose", r: "Displays of power should inspire fear or respect." },
+          5:  { mw: "Failing to come to the aid of another", r: "To gain power, you must first gather goodwill." },
+          4:  { mw: "Treating your superior with disrespect", r: "Superiors must be given the respect they are due." },
+          3:  { mw: "Failing to uphold the law", r: "It is your duty to uphold the law not matter the price." },
+          2:  { mw: "Breaking your word or oath", r: "Your word is your honor. If you have no honor, you have no worth." },
+          1:  { mw: "Giving into your Beast, such as frenzy", r: "If you cannot control yourself, how can you control others?" }
+        }
+      },
+      "The Road of Lilith": {
+        altName: "Derech Lilit",
+        aura: "Carved and bleeding",
+        virtues: { v1: "Conviction", v2: "Instinct" },
+        ethics: lilitBaseEthics,
+        hierarchyName: "Hierarchy of Sins Against Who You Are",
+        hierarchy: {
+          10: { mw: "Feeding immediately when hungry", r: "There is a lesson in every denial, and there is control in self-denial." },
+          9:  { mw: "Joining a system created by those with no wisdom", r: "Live outside their lies." },
+          8:  { mw: "Ignoring one of Lilith’s faces", r: "Wherever you go, the Dark Mother has left messages for you. Read their myths and show them where Lilith lives." },
+          7:  { mw: "Rejecting the suffering of others or dismissing it", r: "Teach whenever the opportunity presents itself, even if you think the lessons learned would be beneath you." },
+          6:  { mw: "Cruelty for its own sake", r: "As a teacher, you must craft your lessons. Petty abuses are beneath you. The pain you inflict must be divine." },
+          5:  { mw: "Stealing great learning and claiming it as your own", r: "If you did not discover the wisdom yourself, you have no rights claiming it or authority based on it." },
+          4:  { mw: "Destroying a thinking being", r: "They can neither learn from you nor teach you if they have been destroyed." },
+          3:  { mw: "Not seeking out the teachings of Lilith", r: "Turn over the leaf, split the wood, and find her secrets wherever they hide." },
+          2:  { mw: "Getting between someone and a valuable lesson", r: "Better to pull the stars from the heavens than to rob someone of moments of true gnosis." },
+          1:  { mw: "Shunning pain", r: "The harder it is, the more rewarding the growth." }
+        }
+      },
+      "Path of Thorns": {
+        altName: "Derech Lilit",
+        aura: "Carved and bleeding",
+        virtues: { v1: "Conviction", v2: "Instinct" },
+        ethics: [...lilitBaseEthics, "- Wisdom alone does not suffice. Intelligence is also required.", "- Creation should be built on careful study. Raw creation is never as good as carefully crafted beauty or horror.", "- Do not seek students. They should come to you, destroyed and begging."],
+        hierarchyName: "Hierarchy of Sins Against Thorns",
+        hierarchy: {
+          10: { mw: "Feeding immediately when hungry", r: "There is a lesson in every denial, and there is control in self-denial." },
+          9:  { mw: "Joining any community of fools", r: "" },
+          8:  { mw: "Ignoring one of Lilith’s faces", r: "Wherever you go, the Dark Mother has left messages for you. Read their myths and show them where Lilith lives." },
+          7:  { mw: "Rejecting the suffering of others or dismissing it", r: "Teach whenever the opportunity presents itself, even if you think the lessons learned would be beneath you." },
+          6:  { mw: "Cruelty for its own sake", r: "As a teacher, you must craft your lessons. Petty abuses are beneath you. The pain you inflict must be divine." },
+          5:  { mw: "Accepting a student (formal or informal) the first time they come to you", r: "" },
+          4:  { mw: "Destroying a thinking being", r: "They can neither learn from you nor teach you if they have been destroyed." },
+          3:  { mw: "Not seeking out the teachings of Lilith", r: "Turn over the leaf, split the wood, and find her secrets wherever they hide." },
+          2:  { mw: "Putting the learning of another before your own", r: "" },
+          1:  { mw: "Shunning pain", r: "The harder it is, the more rewarding the growth." }
+        }
+      },
+      "Path of Veils": {
+        altName: "Derech Lilit",
+        aura: "Carved and bleeding",
+        virtues: { v1: "Conviction", v2: "Instinct" },
+        ethics: [...lilitBaseEthics, "- The Children of Caine will be punished for what they did in the Garden.", "- Show no mercy for those too ignorant to know the true story of Caine and our Dark Mother.", "- Destroy those who disseminate the lie, but make all efforts to never be caught in the act. Burn their books of lies.", "- You may forgive those who draped veils across the faces of Lilith’s murdered children, as she forgives them."],
+        hierarchyName: "Hierarchy of Sins Against Veils",
+        hierarchy: {
+          10: { mw: "Feeding immediately when hungry", r: "There is a lesson in every denial, and there is control in self-denial." },
+          9:  { mw: "Accepting and abiding any law of Caine or God", r: "" },
+          8:  { mw: "Failing to destroy the works of Noddist-liars", r: "" },
+          7:  { mw: "Rejecting the suffering of others or dismissing it", r: "Teach whenever the opportunity presents itself, even if you think the lessons learned would be beneath you." },
+          6:  { mw: "Cruelty for its own sake", r: "As a teacher, you must craft your lessons. Petty abuses are beneath you. The pain you inflict must be divine." },
+          5:  { mw: "Stealing great learning and claiming it as your own", r: "If you did not discover the wisdom yourself, you have no rights claiming it or authority based on it." },
+          4:  { mw: "Snuffing the spark of a candle that desires to burn brighter", r: "" },
+          3:  { mw: "Not seeking out the teachings of Lilith", r: "Turn over the leaf, split the wood, and find her secrets wherever they hide." },
+          2:  { mw: "Getting between someone and a valuable lesson", r: "Better to pull the stars from the heavens than to rob someone of moments of true gnosis." },
+          1:  { mw: "Shunning pain", r: "The harder it is, the more rewarding the growth." }
+        }
+      },
+      "Path of Making": {
+        altName: "Derech Lilit",
+        aura: "Carved and bleeding",
+        virtues: { v1: "Conviction", v2: "Instinct" },
+        ethics: [...lilitBaseEthics, "- Find and foster the greatest grandchildren of Lilith.", "- Teach them about the beauty of suffering she endured so that they might exist. Show them.", "- Make as she did. There is no difference between horrible and divine. Power and uniqueness as expressions of creative force is all that matters.", "- Destroying monsters and demons is no different from murdering infants and fawns, if not worse. Infants will only grow to be people. Monsters can become gods."],
+        hierarchyName: "Hierarchy of Sins Against Making",
+        hierarchy: {
+          10: { mw: "Rejecting the advances of demons with seed in hand", r: "" },
+          9:  { mw: "Joining a system created by those with no wisdom", r: "Live outside their lies." },
+          8:  { mw: "Ignoring one of Lilith’s faces", r: "Wherever you go, the Dark Mother has left messages for you. Read their myths and show them where Lilith lives." },
+          7:  { mw: "Abandoning a thing because it is ugly or frightening", r: "" },
+          6:  { mw: "Cruelty for its own sake", r: "As a teacher, you must craft your lessons. Petty abuses are beneath you. The pain you inflict must be divine." },
+          5:  { mw: "Not taking a secret of making and creating from savages who don’t know the divine purpose behind it", r: "" },
+          4:  { mw: "Destroying a thinking being", r: "They can neither learn from you nor teach you if they have been destroyed." },
+          3:  { mw: "Not seeking out the teachings of Lilith", r: "Turn over the leaf, split the wood, and find her secrets wherever they hide." },
+          2:  { mw: "Getting between someone and a valuable lesson", r: "Better to pull the stars from the heavens than to rob someone of moments of true gnosis." },
+          1:  { mw: "Rejecting the advances of angels with seed in hand", r: "" }
+        }
+      },
+      "The Road of Metamorphosis": {
+        altName: "Via Mutationis",
+        aura: "Inhumanity",
+        virtues: { v1: "Conviction", v2: "Instinct" },
+        ethics: [
+          "- Discovering knowledge for oneself is the truest, purest form of understanding and the key to Metamorphosis.",
+          "- Seek to understand life and death, for it is the cycle that bars transcendence.",
+          "- Indulge the Beast and deny it; like all things, it must be understood.",
+          "- Experiment endlessly, especially upon your own body, to reveal every secret at hand.",
+          "- Do not divorce yourself from the world, for it is what you seek to understand, but do not allow yourself to be dragged down by its entanglements."
+        ],
+        hierarchyName: "Hierarchy of Sins Against Transmogrification",
+        hierarchy: {
+          10: { mw: "Failing to ride out a frenzy", r: "While you can glean knowledge from the Beast, you must not allow your baser impulses to control you." },
+          9:  { mw: "Offering unsolicited knowledge to another", r: "Most are not on your path, but do not presume to take away their choice." },
+          8:  { mw: "Allowing pleasure or emotion to distract you", r: "Hedonism deters greater ends." },
+          7:  { mw: "Asking another for knowledge", r: "No one can teach you apotheosis. You must discover its secrets yourself." },
+          6:  { mw: "Denying yourself sustenance", r: "Hunger is the most basic distraction." },
+          5:  { mw: "Succumbing to conventional morality when knowledge could be gained", r: "Without transgressing, you will never find what is hidden from sight." },
+          4:  { mw: "Placing others above your quest for knowledge", r: "Those who wish to chain themselves to this world will hold you back as well." },
+          3:  { mw: "Failure to experiment due to compassion, discomfort, or personal risk", r: "We may flounder in the dark, and it may be unpleasant, but it is our only way forward." },
+          2:  { mw: "Loving another", r: "Love puts itself above all things, even Metamorphosis. Do not allow this." },
+          1:  { mw: "Neglecting to alter one’s own body", r: "If the forms we have were suited for ascension, we would already have ascended." }
+        }
+      },
+      "The Road of Sin": {
+        altName: "Via Peccati",
+        aura: "Temptation",
+        virtues: { v1: "Conviction", v2: "Instinct" },
+        ethics: peccatiBaseEthics,
+        hierarchyName: "Hierarchy of Sins Against Yourself",
+        hierarchy: {
+          10: { mw: "Acknowledging any authority over your own", r: "You are beyond submission." },
+          9:  { mw: "Failing to indulge a new desire", r: "No pleasure should be denied you." },
+          8:  { mw: "Failing to ride the wave of frenzy", r: "The Beast tires with exercise, strengthens with denial." },
+          7:  { mw: "Forfeiting long-term pleasures for short-term ones", r: "Do not exchange floods of desire for a draught." },
+          6:  { mw: "Putting the needs of others ahead of your own pleasure", r: "Your need outweighs everything else." },
+          5:  { mw: "Swearing an oath", r: "Be bound by none, least of all yourself." },
+          4:  { mw: "Refusing to act against those who attempt to bind you", r: "The truest chains are self-imposed, but false ones can bind just as well." },
+          3:  { mw: "Refusing to feed or kill when necessary", r: "No life is worth more than your own." },
+          2:  { mw: "Encouraging the tenets or virtues of another Road", r: "All other Roads lead to gilded cages and liberated Beasts." },
+          1:  { mw: "Refusing to act in your own best interests", r: "Only fools sacrifice themselves." }
+        }
+      },
+      "Path of Pleasure": {
+        altName: "Via Peccati",
+        aura: "Temptation",
+        virtues: { v1: "Conviction", v2: "Instinct" },
+        ethics: [...peccatiBaseEthics, "- Tame the Beast with the pleasure it desires, for it does not think, but feel.", "- Shame and inhibition are blasphemies against the orgasmic sacrament.", "- Avoid things which bring you no pleasure, for the Beast grows restless without being fed."],
+        hierarchyName: "Hierarchy of Sins Against Pleasure",
+        hierarchy: {
+          10: { mw: "Being shamed by your actions", r: "Shame is disapproval in the eyes of others; your actions can only please yourself." },
+          9:  { mw: "Failing to indulge your desires", r: "Satiation keeps the Beast at bay." },
+          8:  { mw: "Failing to ride the wave of frenzy", r: "The red rages are but another pleasure to experience." },
+          7:  { mw: "Any display of modesty", r: "Modesty is morality imposed from without. Never submit to it." },
+          6:  { mw: "Putting the needs of others ahead of your own interests", r: "Your desires come before their need." },
+          5:  { mw: "Swearing an oath", r: "A wild heart must never be chained." },
+          4:  { mw: "Associating with those who bring you no pleasure", r: "The Beast rages when denied; never give license to its fury." },
+          3:  { mw: "Refusing to feed or kill when necessary", r: "These are your greatest and purest joys." },
+          2:  { mw: "Encouraging virtue or agents of virtue", r: "Why exert effort to aid those who would chain you?" },
+          1:  { mw: "Refusing to act in your own best interests", r: "Your desires are all that truly matters." }
+        }
+      },
+      "Path of the Devil": {
+        altName: "Via Peccati",
+        aura: "Temptation",
+        virtues: { v1: "Conviction", v2: "Self-Control" },
+        ethics: [...peccatiBaseEthics, "- You are the master of yourself; authority comes from consent of the ruled, not from tyranny.", "- Free will is your ultimate weapon and your greatest treasure; never let it be taken from you.", "- Chains challenge the rights of the free by their mere existence; your existence is the answer to this challenge."],
+        hierarchyName: "Hierarchy of Sins Against Rebellion",
+        hierarchy: {
+          10: { mw: "Acknowledging the laws of God or Man", r: "Never give credence to those who would enslave others." },
+          9:  { mw: "Failing to indulge a new desire", r: "Passion is the fire of the soul." },
+          8:  { mw: "Failing to ride the wave of frenzy", r: "The Beast may only be understood after struggle." },
+          7:  { mw: "Refusing to aid a lost soul in need", r: "The weak cannot understand their nature, and must be taught by the strong." },
+          6:  { mw: "Refusing a pleasure that injures none", r: "Seeking to pleasure yourself is the fondest pursuit." },
+          5:  { mw: "Swearing an oath", r: "Forced servitude cannot be helped, and is to be pitied; self-enforced servitude is hideous, and is to be resisted." },
+          4:  { mw: "Refusing to act against those who choose to bind you", r: "Punish those who attempt to control you." },
+          3:  { mw: "Refusing to feed or kill when necessary", r: "Never feel shame for doing what must be done." },
+          2:  { mw: "Pursuing material gain at the expense of higher concerns", r: "Enrich your soul before you fill your coffers." },
+          1:  { mw: "Encouraging false virtue or agents of false virtue", r: "Constrictions of laws enslave the mind and strangle the soul." }
+        }
+      },
+      "Path of Screams": {
+        altName: "Via Peccati",
+        aura: "Temptation",
+        virtues: { v1: "Conviction", v2: "Instinct" },
+        ethics: [...peccatiBaseEthics, "- You are Damned; the greatest pleasure is found in service of Hell.", "- Virtue is a great and grand lie, but the truth pleases both you and your masters.", "- Your Beast is as a great vibration, carried up from Hell; listen to its will and desires and find the voice of those you follow."],
+        hierarchyName: "Hierarchy of Sins Against Damnation",
+        hierarchy: {
+          10: { mw: "Acknowledging any laws but that of Hell", r: "Divinity and mundanity have no meaning for the Damned." },
+          9:  { mw: "Failing to indulge your desires", r: "Pleasure strengthens you, which strengthens your masters." },
+          8:  { mw: "Failing to ride the wave of frenzy", r: "The Beast is the clarion call of your soul." },
+          7:  { mw: "Refusing to feed or kill when necessary", r: "Beautiful is the blood that darkens the soil." },
+          6:  { mw: "Avoiding injury to others for any reason", r: "Blood spilled is your gift to the world, your greatest pleasure." },
+          5:  { mw: "Any display of mercy or pity", r: "Mercy is for the weak, and Damnation makes you strong." },
+          4:  { mw: "Failing to act on behalf of Hell", r: "You serve Hell, even when it does not serve you." },
+          3:  { mw: "Any altruistic behavior", r: "You owe others nothing." },
+          2:  { mw: "Acting against the minions of Hell", r: "We are all as drones in the hive of the Pit." },
+          1:  { mw: "Encouraging virtue or agents of virtue", r: "Nothing pure may withstand you, even the purity of Sin." }
+        }
+      },
+      "The Road of Bones": {
+        altName: "Via Ossium",
+        aura: "Silence",
+        virtues: { v1: "Conviction", v2: "Self-Control" },
+        ethics: [
+          "- Study the mysteries of life, death, and undeath.",
+          "- Explore the nature of the soul, but do not be enslaved by its passions.",
+          "- Protect knowledge from those would destroy or distort it."
+        ],
+        hierarchyName: "Hierarchy of Sins Against Knowledge",
+        hierarchy: {
+          10: { mw: "Refusing to share knowledge with a worthy recipient", r: "Scholarship is improved with informed review." },
+          9:  { mw: "Wanton destruction and cruelty", r: "Beasts and idiots will discover nothing but the stake." },
+          8:  { mw: "Refusing to kill when useful or necessary", r: "Let no mortal squeamishness impede your quest." },
+          7:  { mw: "Being swayed by emotion", r: "Study emotion as an expression of the soul, but do not let it guide your hand." },
+          6:  { mw: "Succumbing to frenzy", r: "A raging Beast is a poor observer." },
+          5:  { mw: "Pursuing power, prestige, or mortal attachments instead of knowledge", r: "These things are means to an end and nothing more." },
+          4:  { mw: "Allowing compassion or pity to influence you", r: "Affecting compassion may be useful to manipulate your enemies, but don’t let it enter your heart." },
+          3:  { mw: "Needlessly preventing a death", r: "All flesh is dust." },
+          2:  { mw: "Showing fear of death", r: "Be not afraid of the truth." },
+          1:  { mw: "Destroying irreplaceable sources of knowledge", r: "Destroying an artifact destroys an entire world." }
+        }
+      },
+      "The Road of Yasa": {
+        altName: "Via Yasaq",
+        aura: "Trust",
+        virtues: { v1: "Conviction", v2: "Self-Control" },
+        ethics: [
+          "- Honor your family as you would honor yourself.",
+          "- The family you choose is the strongest and most important family.",
+          "- Demand respect from others.",
+          "- Show respect to those who deserve it.",
+          "- Do not stain your honor with petty behavior or pride."
+        ],
+        hierarchyName: "Hierarchy of Sins Against the Yasa",
+        hierarchy: {
+          10: { mw: "Ignoring an insult", r: "You have earned the respect of others." },
+          9:  { mw: "Insulting another undeservedly", r: "You must show respect to those who have earned it." },
+          8:  { mw: "Lying to one who has proved themselves honest", r: "Honesty demands honesty." },
+          7:  { mw: "Abusing your herd", r: "The herd is not just for one." },
+          6:  { mw: "Showing mercy to one who has not submitted", r: "The weak must accept you as their master." },
+          5:  { mw: "Losing a battle due to pride", r: "Defeat your enemy now. Assuage your ego later." },
+          4:  { mw: "Harming family, anda, herd, or allies while in frenzy", r: "A warrior’s essential quality is discipline." },
+          3:  { mw: "Disobeying the order of your noyan", r: "Obedience is the foundation of honor." },
+          2:  { mw: "Betraying your family", r: "You will never know a stronger bond than that of blood." },
+          1:  { mw: "Betraying your Bloodbrothers", r: "The family of choice is the strongest." }
+        }
+      },
+      "The Road of Blood": {
+        altName: "",
+        aura: "Resolve",
+        virtues: { v1: "Conviction", v2: "Self-Control" },
+        ethics: [
+          "- The blood of Caine is a gift that must be earned.",
+          "- Purity, honor, and discipline are the hallmarks of a warrior.",
+          "- Do not act with haste — every action requires careful consideration.",
+          "- Allowing the Beast to take control is a sign of weakness and unfitness to retain Caine’s blood."
+        ],
+        hierarchyName: "Sins Against the Blood",
+        hierarchy: {
+          10: { mw: "Acting impulsively in any situation", r: "Discipline is strength." },
+          9:  { mw: "Allowing actions to be dictated by emotion", r: "Passion is the first stirring of the Beast." },
+          8:  { mw: "Succumbing to frenzy", r: "Our will must be unshakable." },
+          7:  { mw: "Failing to diablerize an unworthy vampire", r: "Return the blood of the unworthy to Haqim." },
+          6:  { mw: "Acting cowardly or dishonorably", r: "Our actions reflect on our father, Haqim." },
+          5:  { mw: "Allowing the unworthy to go unpunished", r: "We are the judges of the unliving." },
+          4:  { mw: "Showing weakness before the unworthy", r: "We represent Haqim in all things." },
+          3:  { mw: "Failing to honor an oath", r: "Our honor is what sets us apart." },
+          2:  { mw: "Submitting to the will of an unworthy prince or elder", r: "Nothing in this world may sway us from our sacred purpose." },
+          1:  { mw: "Becoming oath-bound to another Cainite", r: "We serve Haqim and no other." }
+        }
+      },
+      "The Road of the Abyss": {
+        altName: "",
+        aura: "Darkness",
+        virtues: { v1: "Conviction", v2: "Self-Control" },
+        ethics: [
+          "- Serve the Dark Master/Abyss/Oblivion",
+          "- Extend Darkness",
+          "- Reject Light"
+        ],
+        hierarchyName: "The Road of the Abyss",
+        hierarchy: {
+          10: { mw: "Showing fear of the dark", r: "Darkness has much to teach us about the Abyss." },
+          9:  { mw: "Failing to observe a manifestation of darkness", r: "Only through observation can one increase knowledge." },
+          8:  { mw: "Expressing reverence for creation", r: "Creation is a blight, a taint of the purity of the Abyss." },
+          7:  { mw: "Refusing to feed when hungry", r: "Hunger is a manifestation of the void." },
+          6:  { mw: "Refusing to kill when it is the most expedient path", r: "Everything returns to the Abyss in time." },
+          5:  { mw: "Giving in to frenzy", r: "In order to master the darkness, you must first master yourself." },
+          4:  { mw: "Refusing to share knowledge with another Abyss mystic", r: "Full understanding of the Abyss cannot be attained without the insight of others." },
+          3:  { mw: "Letting morality hinder study of the Abyss", r: "Morals are a light-born weakness. We are creatures of darkness." },
+          2:  { mw: "Needlessly avoiding the darkness", r: "We are creatures of darkness. To reject it is to reject yourself." },
+          1:  { mw: "Showing aversion to the Abyss", r: "You cannot master that which you fear." }
+        }
+      },
+      "The Road of Set": {
+        altName: "",
+        aura: "Proselytize",
+        virtues: { v1: "Conviction", v2: "Self-Control" },
+        ethics: [
+          "- Worship Set",
+          "- Restore the greatness of Set",
+          "- Spread the Word of Set",
+          "- Undermine Opposing Faiths"
+        ],
+        hierarchyName: "Hierarchy of Sins Against Set",
+        hierarchy: {
+          10: { mw: "Pursuing personal indulgence over the interests of the Path", r: "Dissolution is the pastime of the weak." },
+          9:  { mw: "Refusing to aid another follower of the Path", r: "We must work together if we are to eliminate our enemies." },
+          8:  { mw: "Failing to acquire leverage against enemies of the Road", r: "The unrighteous shall be destroyed and the weak converted." },
+          7:  { mw: "Refusing to spread the worship of Set", r: "Those who bear the blood of Set bear a sacred duty to spread his word." },
+          6:  { mw: "Failing to observe Setite rituals", r: "Only through our devotion do we earn Set’s favor." },
+          5:  { mw: "Failing to sow chaos among the enemies of the Road", r: "Let the ungodly be cast down." },
+          4:  { mw: "Failing to do whatever is needed to convert the pious of other faiths", r: "Where they lead, others will follow." },
+          3:  { mw: "Obstructing another Setite’s efforts", r: "We all work toward a common purpose." },
+          2:  { mw: "Refusing to aid in Set’s resurrection", r: "It is our sacred duty to restore our lord’s place in the world." },
+          1:  { mw: "Worshipping any god but Set", r: "Set is our progenitor and protector. There is no true god but Set." }
+        }
+      },
+      "Path of Apep": {
+        altName: "",
+        aura: "Instant gratification",
+        virtues: { v1: "Conviction", v2: "Instinct" },
+        ethics: [
+          "- Embrace chaos",
+          "- Pursue instant, sinful gratification",
+          "- Who won? Set or Apep? Does it really matter?",
+          "- Worship something. Preferably something serpentine."
+        ],
+        hierarchyName: "Hierarchy of Sins Against Apep",
+        hierarchy: {
+          10: { mw: "Failing to indulge in pleasurable acts", r: "Chaos is the gift of Apep, our source of strength." },
+          9:  { mw: "Delaying carnal gratification", r: "Denial of one’s desires is a denial of one’s true self." },
+          8:  { mw: "Refusing an opportunity to corrupt a mortal", r: "Order prevents us from being who we truly are." },
+          7:  { mw: "Refusing an opportunity to corrupt a vampire", r: "We are the children of Apep. His gift must not be rejected." },
+          6:  { mw: "Refusing an opportunity to corrupt a holy figure", r: "Weakness must be cast aside." },
+          5:  { mw: "Failing to undermine the prevailing mortal environment", r: "Stagnation promotes weakness." },
+          4:  { mw: "Failing to undermine Cainite structures of power", r: "Times of strife help us discover our true strength." },
+          3:  { mw: "Placing another’s wishes above your own", r: "Civilization is a lie." },
+          2:  { mw: "Punishing an individual for indecent behavior", r: "Freedom is strength." },
+          1:  { mw: "Actively enforcing the rule of law", r: "Order and chaos are natural opposites." }
+        }
+      },
+      "The Road of Paradox": {
+        altName: "",
+        aura: "Confidence",
+        virtues: { v1: "Conviction", v2: "Self-Control" },
+        ethics: [
+          "- Follow the svadharma set before you. Do not let anyone take you from the one true path.",
+          "- Do not Embrace unless absolutely necessary, and then only from the jati.",
+          "- Assist others to determine and follow their svadharma.",
+          "- Destroy those who refuse to follow their svadharma; return them to samsara."
+        ],
+        hierarchyName: "Sins Against Paradox",
+        hierarchy: {
+          10: { mw: "Failing to accept death", r: "Your svadharma is only temporary, you must eventually return to the samsara." },
+          9:  { mw: "Embracing outside the jati", r: "Only Embrace those that will follow the Road of Paradox." },
+          8:  { mw: "Destroying another Asura", r: "Your fellows on this Road have a svadharma, do not stop them." },
+          7:  { mw: "Killing a mortal for sustenance", r: "Death prevents a person from fulfilling their svadharma in this part of the cycle." },
+          6:  { mw: "Failing to kill vampires on another Road", r: "Only by accepting the true path to moksha can a vampire atone. Otherwise, they are useless." },
+          5:  { mw: "Allowing personal affairs to interfere in your svadharma", r: "You must follow your sacred duty at all times." },
+          4:  { mw: "Failure to aid another’s svadharma", r: "This is your only purpose before returning to the cycle." },
+          3:  { mw: "Killing a mortal for any reason other than survival", r: "Preventing others from achieving their svadharma is anathema." },
+          2:  { mw: "Becoming blood bound", r: "You cannot destroy your regnant, which could prevent you from following your svadharma." },
+          1:  { mw: "Embracing needlessly out of personal desire", r: "You must allow others to continue their cycle, not remove them from it." }
+        }
+      },
+      "The Code of Samiel": {
+        altName: "",
+        aura: "Martyrdom",
+        virtues: { v1: "Conscience", v2: "Self-Control" },
+        ethics: [
+          "- It is the duty of the Warrior to bleed so that others might not.",
+          "- Evil is a font of corruption. Healers can salve the wound, but it must first be cleansed by fire.",
+          "- Aid must be offered to those in pain, and protection to those scourged by evil."
+        ],
+        hierarchyName: "Hierarchy of Sins Against Righteousness",
+        hierarchy: {
+          10: { mw: "Failing to punish corruption and sin", r: "Evil prospers in the unchallenged heart." },
+          9:  { mw: "Acting out of avarice or lust", r: "Honor must be stronger than steel." },
+          8:  { mw: "Bearing false witness", r: "Your sword is that of truth." },
+          7:  { mw: "Feeding from the innocent without permission", r: "As the Healers are bound, so shall we be." },
+          6:  { mw: "Failing to defend or aid a person in need", r: "A dead heart finds life in service to others." },
+          5:  { mw: "Failing to defend or aid a Healer in need", r: "The red right hand defends the left." },
+          4:  { mw: "Letting a worthy challenge go unanswered", r: "Be as the lion, not as the lamb." },
+          3:  { mw: "Failing to challenge a vampire with a low Road", r: "Their souls endanger Cainite and kine." },
+          2:  { mw: "Neglecting an opportunity to exact vengeance", r: "Let retribution be your pride and purview." },
+          1:  { mw: "Aiding demons, Baali, Setites, or other evils", r: "Offer the wicked no succor but salt and fire." }
+        }
+      },
+      "The Road of Angra Mainyu": {
+        altName: "",
+        aura: "Corruption",
+        virtues: { v1: "Conviction", v2: "Self-Control" },
+        ethics: [
+          "- Explore evil and corruption.",
+          "- Persuade others to do evil.",
+          "- There can be no good without evil.",
+          "- Explore evil to choose to be good."
+        ],
+        hierarchyName: "Hierarchy of Sins Against Angra Mainyo",
+        hierarchy: {
+          10: { mw: "Committing any act of kindness", r: "The vampire is a servant of Angra Mainyu, the bringer of evil." },
+          9:  { mw: "Delaying carnal gratification", r: "Denial of one’s desires is a denial of one’s true self." },
+          8:  { mw: "Refusing an opportunity to corrupt a mortal", r: "Order prevents us from being who we truly are." },
+          7:  { mw: "Refusing an opportunity to corrupt a vampire", r: "We are the children of Angra Mainyo. His gift must not be rejected." },
+          6:  { mw: "Refusing an opportunity to corrupt a holy figure", r: "Weakness must be cast aside." },
+          5:  { mw: "Failing to undermine the prevailing mortal environment", r: "Stagnation promotes weakness." },
+          4:  { mw: "Failing to undermine Cainite structures of power", r: "Times of strife help us discover our true strength." },
+          3:  { mw: "Placing another’s wishes above your own", r: "Civilization is a lie." },
+          2:  { mw: "Feeding on evil men", r: "The vampire must not harm other servants of Angra Mainyu." },
+          1:  { mw: "Fearing Frenzy", r: "Rage and Hunger are gifts from Angra Mainyu, and the vampire must embrace them." }
+        }
+      },
+      "The Road of Ahura Mazda": {
+        altName: "",
+        aura: "Goodness",
+        virtues: { v1: "Conviction", v2: "Self-Control" },
+        ethics: [
+          "- Remaining human is a requirement to escape soul-death.",
+          "- Humanity is a universal experience that all Cainites can understand.",
+          "- Violating the boundaries and well-being of another depletes the soul.",
+          "- We were all human, and that gives us value despite accidents of birth or upbringing.",
+          "- Thought and compassion separate us from the Beast.",
+          "- Do good deeds and think good thoughts; explore evil to choose to be good and return to Ahura Mazda's grace."
+        ],
+        hierarchyName: "Hierarchy of Sins Against Ahura Mazda",
+        hierarchy: {
+          10: { mw: "Fearing Final Death", r: "The vampire has worked her way back to Ahura Mazda. Heaven awaits when she dies." },
+          9:  { mw: "Minor selfish acts", r: "Putting oneself first lets the Beast in." },
+          8:  { mw: "Speaking evil words, speaking ill of others", r: "Words carry to the ear of Ahura Mazda." },
+          7:  { mw: "Theft", r: "Only an animal takes without thought of consequence." },
+          6:  { mw: "Accidental violation of another", r: "Humanity is a shared condition, his suffering is your own." },
+          5:  { mw: "Wanton destruction", r: "Are you a person or an animal?" },
+          4:  { mw: "Impassioned violation of another", r: "Passion behind violence is the whispering of the Beast." },
+          3:  { mw: "Planned violation of another", r: "To be so cold is to reject the warmth of humanity." },
+          2:  { mw: "Casual violation of another", r: "Even wild animals know better." },
+          1:  { mw: "Feeding on good men", r: "The vampire has chosen Ahura Mazda, and must protect the good and righteous." }
+        }
+      }
+    };
+
     // Aligned V20DA Core Archetype Database
     const archetypesDatabase = {
       "Architect": {
@@ -2558,6 +3399,65 @@
           selectEl.value = "";
         }
       }
+
+      const selectedVal = selectEl.value;
+
+      // 1. Clear fields
+      const auraEl = document.getElementById('aura-bearing');
+      if (auraEl) auraEl.value = '';
+
+      const altNameEl = document.getElementById('road-alt-name');
+      if (altNameEl) altNameEl.value = '';
+
+      const altNameExtraEl = document.getElementById('road-alt-name-extra');
+      if (altNameExtraEl) altNameExtraEl.value = '';
+
+      const ethicsEl = document.getElementById('road-ethics');
+      if (ethicsEl) ethicsEl.value = '';
+
+      for (let i = 10; i >= 1; i--) {
+        const numEl = document.getElementById(`road-rating-num-${i}`);
+        if (numEl) numEl.value = String(i);
+
+        const wrongEl = document.getElementById(`road-wrongdoing-${i}`);
+        if (wrongEl) wrongEl.value = '';
+
+        const ratEl = document.getElementById(`road-rationale-${i}`);
+        if (ratEl) ratEl.value = '';
+      }
+
+      // 2. Populate fields if selecting a valid profile in roadsDatabase
+      if (selectedVal && roadsDatabase[selectedVal]) {
+        const data = roadsDatabase[selectedVal];
+
+        if (altNameEl) altNameEl.value = data.altName || '';
+        if (ethicsEl) ethicsEl.value = data.ethics ? data.ethics.join('\n') : '';
+        if (auraEl) auraEl.value = data.aura || '';
+
+        if (data.virtues) {
+          const v1Select = document.getElementById('virtue-1-type');
+          if (v1Select && data.virtues.v1) v1Select.value = data.virtues.v1;
+
+          const v2Select = document.getElementById('virtue-2-type');
+          if (v2Select && data.virtues.v2) v2Select.value = data.virtues.v2;
+        }
+
+        if (altNameExtraEl) altNameExtraEl.value = data.hierarchyName || '';
+
+        if (data.hierarchy) {
+          for (let i = 10; i >= 1; i--) {
+            const entry = data.hierarchy[i];
+            if (entry) {
+              const wrongEl = document.getElementById(`road-wrongdoing-${i}`);
+              if (wrongEl) wrongEl.value = entry.mw || '';
+
+              const ratEl = document.getElementById(`road-rationale-${i}`);
+              if (ratEl) ratEl.value = entry.r || '';
+            }
+          }
+        }
+      }
+
       queueAutoSave();
     }
 
