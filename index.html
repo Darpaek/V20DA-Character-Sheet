@@ -249,8 +249,18 @@
       gap: 20px;
     }
 
+    .road-enlightenment-grid {
+      display: grid;
+      grid-template-columns: 1fr 3.2rem 1fr 1fr;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
     @media (max-width: 768px) {
       .three-col-grid, .two-col-grid {
+        grid-template-columns: 1fr;
+      }
+      .road-enlightenment-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -886,7 +896,7 @@
 
           <div class="status-section">
             <div class="column">
-              <h2>Path & Mechanics</h2>
+              <h2>Mechanics</h2>
               <div style="border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
                 <div class="info-group">
                   <label>Road / Path Name</label>
@@ -940,6 +950,81 @@
               <div class="text-area-group">
                 <label>Weakness</label>
                 <textarea id="clan-weakness" placeholder="Clan Weakness description..." oninput="queueAutoSave()"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Road of Enlightenment Section -->
+          <h2>Road of Enlightenment</h2>
+          <div class="road-enlightenment-grid">
+            <!-- Row 1: Column 1 Alternative Name -->
+            <div class="text-area-group" style="margin-top: 0;">
+              <label>Alternative Name</label>
+              <textarea id="road-alt-name" rows="1" style="resize: vertical; min-height: 2.2rem; padding: 4px 8px;" oninput="queueAutoSave()"></textarea>
+            </div>
+
+            <!-- Row 1: Columns 2-4 Spanning Text Box -->
+            <div class="text-area-group" style="margin-top: 0; grid-column: 2 / 5;">
+              <label style="visibility: hidden;">&nbsp;</label>
+              <textarea id="road-alt-name-extra" rows="1" style="resize: vertical; min-height: 2.2rem; padding: 4px 8px;" oninput="queueAutoSave()"></textarea>
+            </div>
+
+            <!-- Row 2: Column 1 Ethics -->
+            <div class="column">
+              <div class="text-area-group" style="margin-top: 0;">
+                <label>Ethics</label>
+                <textarea id="road-ethics" rows="20" style="resize: vertical; min-height: 24.5rem; padding: 6px;" oninput="queueAutoSave()"></textarea>
+              </div>
+            </div>
+
+            <!-- Row 2: Column 2 (Rating 10-1) -->
+            <div class="column" style="display: flex; flex-direction: column;">
+              <div class="text-area-group" style="margin-top: 0;">
+                <label style="visibility: hidden;">&nbsp;</label>
+                <textarea id="road-rating-num-10" rows="2" style="text-align: center; resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px;" oninput="queueAutoSave()">10</textarea>
+                <textarea id="road-rating-num-9" rows="2" style="text-align: center; resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px;" oninput="queueAutoSave()">9</textarea>
+                <textarea id="road-rating-num-8" rows="2" style="text-align: center; resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px;" oninput="queueAutoSave()">8</textarea>
+                <textarea id="road-rating-num-7" rows="2" style="text-align: center; resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px;" oninput="queueAutoSave()">7</textarea>
+                <textarea id="road-rating-num-6" rows="2" style="text-align: center; resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px;" oninput="queueAutoSave()">6</textarea>
+                <textarea id="road-rating-num-5" rows="2" style="text-align: center; resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px;" oninput="queueAutoSave()">5</textarea>
+                <textarea id="road-rating-num-4" rows="2" style="text-align: center; resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px;" oninput="queueAutoSave()">4</textarea>
+                <textarea id="road-rating-num-3" rows="2" style="text-align: center; resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px;" oninput="queueAutoSave()">3</textarea>
+                <textarea id="road-rating-num-2" rows="2" style="text-align: center; resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px;" oninput="queueAutoSave()">2</textarea>
+                <textarea id="road-rating-num-1" rows="2" style="text-align: center; resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px;" oninput="queueAutoSave()">1</textarea>
+              </div>
+            </div>
+
+            <!-- Row 2: Column 3 Minimum Wrongdoing -->
+            <div class="column" style="display: flex; flex-direction: column;">
+              <div class="text-area-group" style="margin-top: 0;">
+                <label>Minimum Wrongdoing</label>
+                <textarea id="road-wrongdoing-10" rows="2" style="resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px 6px;" oninput="queueAutoSave()"></textarea>
+                <textarea id="road-wrongdoing-9" rows="2" style="resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px 6px;" oninput="queueAutoSave()"></textarea>
+                <textarea id="road-wrongdoing-8" rows="2" style="resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px 6px;" oninput="queueAutoSave()"></textarea>
+                <textarea id="road-wrongdoing-7" rows="2" style="resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px 6px;" oninput="queueAutoSave()"></textarea>
+                <textarea id="road-wrongdoing-6" rows="2" style="resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px 6px;" oninput="queueAutoSave()"></textarea>
+                <textarea id="road-wrongdoing-5" rows="2" style="resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px 6px;" oninput="queueAutoSave()"></textarea>
+                <textarea id="road-wrongdoing-4" rows="2" style="resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px 6px;" oninput="queueAutoSave()"></textarea>
+                <textarea id="road-wrongdoing-3" rows="2" style="resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px 6px;" oninput="queueAutoSave()"></textarea>
+                <textarea id="road-wrongdoing-2" rows="2" style="resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px 6px;" oninput="queueAutoSave()"></textarea>
+                <textarea id="road-wrongdoing-1" rows="2" style="resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px 6px;" oninput="queueAutoSave()"></textarea>
+              </div>
+            </div>
+
+            <!-- Row 2: Column 4 Rationale -->
+            <div class="column" style="display: flex; flex-direction: column;">
+              <div class="text-area-group" style="margin-top: 0;">
+                <label>Rationale</label>
+                <textarea id="road-rationale-10" rows="2" style="resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px 6px;" oninput="queueAutoSave()"></textarea>
+                <textarea id="road-rationale-9" rows="2" style="resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px 6px;" oninput="queueAutoSave()"></textarea>
+                <textarea id="road-rationale-8" rows="2" style="resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px 6px;" oninput="queueAutoSave()"></textarea>
+                <textarea id="road-rationale-7" rows="2" style="resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px 6px;" oninput="queueAutoSave()"></textarea>
+                <textarea id="road-rationale-6" rows="2" style="resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px 6px;" oninput="queueAutoSave()"></textarea>
+                <textarea id="road-rationale-5" rows="2" style="resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px 6px;" oninput="queueAutoSave()"></textarea>
+                <textarea id="road-rationale-4" rows="2" style="resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px 6px;" oninput="queueAutoSave()"></textarea>
+                <textarea id="road-rationale-3" rows="2" style="resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px 6px;" oninput="queueAutoSave()"></textarea>
+                <textarea id="road-rationale-2" rows="2" style="resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px 6px;" oninput="queueAutoSave()"></textarea>
+                <textarea id="road-rationale-1" rows="2" style="resize: vertical; min-height: 3rem; margin-bottom: 6px; padding: 4px 6px;" oninput="queueAutoSave()"></textarea>
               </div>
             </div>
           </div>
@@ -1919,6 +2004,12 @@
         disciplines: [],
         backgrounds: [],
         mechanics: { roadName: '', roadValue: 0, auraValue: '', willpowerPerm: 0, willpowerTemp: Array(10).fill(false), bloodPoolTemp: Array(50).fill(false) },
+        road_enlightenment: {
+          altName: '',
+          altNameExtra: '',
+          ethics: '',
+          hierarchy: [10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map(num => ({ level: num, num: String(num), wrongdoing: '', rationale: '' }))
+        },
         health: {
           bruised_b: false, bruised_l: false, bruised_a: false,
           hurt_b: false, hurt_l: false, hurt_a: false,
@@ -2719,6 +2810,9 @@
       if (activeBtn) activeBtn.classList.add('active');
     }
 
+   Here is the remaining code starting from /* --- CORE SYNC ENGINE --- */ to
+complete the updated index.html file:
+
     /* --- CORE SYNC ENGINE --- */
 
     function queueAutoSave() {
@@ -2798,6 +2892,17 @@
           willpowerPerm: parseInt(document.querySelector('[data-id="willpower-perm"]').getAttribute('data-value')),
           willpowerTemp: [],
           bloodPoolTemp: []
+        },
+        road_enlightenment: {
+          altName: document.getElementById('road-alt-name') ? document.getElementById('road-alt-name').value : '',
+          altNameExtra: document.getElementById('road-alt-name-extra') ? document.getElementById('road-alt-name-extra').value : '',
+          ethics: document.getElementById('road-ethics') ? document.getElementById('road-ethics').value : '',
+          hierarchy: [10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map(num => ({
+            level: num,
+            num: document.getElementById(`road-rating-num-${num}`) ? document.getElementById(`road-rating-num-${num}`).value : String(num),
+            wrongdoing: document.getElementById(`road-wrongdoing-${num}`) ? document.getElementById(`road-wrongdoing-${num}`).value : '',
+            rationale: document.getElementById(`road-rationale-${num}`) ? document.getElementById(`road-rationale-${num}`).value : ''
+          }))
         },
         health: {
           bruised_b: document.getElementById('health-bruised-b').checked,
@@ -3287,6 +3392,41 @@
           const cb = document.getElementById(`bp-temp-${i + 1}`);
           if (cb) cb.checked = val;
         });
+      }
+
+      // Road of Enlightenment Loading
+      const roadEnlight = data.road_enlightenment || {};
+      if (document.getElementById('road-alt-name')) {
+        document.getElementById('road-alt-name').value = roadEnlight.altName || '';
+      }
+      if (document.getElementById('road-alt-name-extra')) {
+        document.getElementById('road-alt-name-extra').value = roadEnlight.altNameExtra || '';
+      }
+      if (document.getElementById('road-ethics')) {
+        document.getElementById('road-ethics').value = roadEnlight.ethics || '';
+      }
+
+      for (let i = 10; i >= 1; i--) {
+        const numEl = document.getElementById(`road-rating-num-${i}`);
+        const wrongEl = document.getElementById(`road-wrongdoing-${i}`);
+        const ratEl = document.getElementById(`road-rationale-${i}`);
+
+        if (roadEnlight.hierarchy && Array.isArray(roadEnlight.hierarchy)) {
+          const entry = roadEnlight.hierarchy.find(h => Number(h.level || h.num) === i) || roadEnlight.hierarchy[10 - i];
+          if (entry) {
+            if (numEl) numEl.value = entry.num !== undefined ? entry.num : String(i);
+            if (wrongEl) wrongEl.value = entry.wrongdoing || '';
+            if (ratEl) ratEl.value = entry.rationale || '';
+          } else {
+            if (numEl) numEl.value = String(i);
+            if (wrongEl) wrongEl.value = '';
+            if (ratEl) ratEl.value = '';
+          }
+        } else {
+          if (numEl) numEl.value = String(i);
+          if (wrongEl) wrongEl.value = '';
+          if (ratEl) ratEl.value = '';
+        }
       }
 
       // Health Loading
