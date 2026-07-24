@@ -506,6 +506,7 @@
 
     /* Dropdown customization for perfect readability */
     .discipline-select-container select option,
+    .background-select-container select option,
     .generation-select-container select option,
     .clan-select-container select option,
     .nature-select-container select option,
@@ -891,7 +892,7 @@
               <div class="trait" data-id="virtue_2" data-min="1" data-max="5" data-default="1"><label>Rating</label><div class="dots-container"></div></div>
 
               <h4 style="margin: 15px 0 5px 0; font-size: 0.9rem; text-transform: uppercase;">Courage</h4>
-              <div class="trait" data-id="virtue_3" data-min="1" data-max="5" data-default="1"><label>Courage</label><div class="dots-container"></div></div>
+              <div class="trait" data-id="virtue_3" data-min="1" data-max="5" data-default="1"><label>Rating</label><div class="dots-container"></div></div>
             </div>
           </div>
 
@@ -906,40 +907,40 @@
                       <option value="">Select Road / Path...</option>
                       <option value="custom">Custom...</option>
                       <option value="The Road of the Beast">The Road of the Beast</option>
-                      <option value="Path of the Hunter">Path of the Hunter</option>
-                      <option value="Path of Journeys">Path of Journeys</option>
-                      <option value="Path of Liberation">Path of Liberation</option>
+                      <option value="The Path of the Hunter">The Path of the Hunter</option>
+                      <option value="The Path of Journeys">The Path of Journeys</option>
+                      <option value="The Path of Liberation">The Path of Liberation</option>
                       <option value="The Road of Heaven">The Road of Heaven</option>
                       <option value="The Path of Christ (Christianity)">The Path of Christ (Christianity)</option>
-                      <option value="Derech Chaim – The Path of Life (Judaism)">Derech Chaim – The Path of Life (Judaism)</option>
+                      <option value="The Derech Chaim – The Path of Life (Judaism)">The Derech Chaim – The Path of Life (Judaism)</option>
                       <option value="The Path of the Prophet (Islam)">The Path of the Prophet (Islam)</option>
                       <option value="The Path of the Eightfold Wheel">The Path of the Eightfold Wheel</option>
                       <option value="The Path of Watchful Gods">The Path of Watchful Gods</option>
-                      <option value="Path of the Archangel">Path of the Archangel</option>
-                      <option value="Path of the Pure">Path of the Pure</option>
+                      <option value="The Path of the Archangel">The Path of the Archangel</option>
+                      <option value="The Path of the Pure">The Path of the Pure</option>
                       <option value="The Road of Humanity">The Road of Humanity</option>
-                      <option value="Path of Breath">Path of Breath</option>
-                      <option value="Path of Community">Path of Community</option>
-                      <option value="Path of Illumination">Path of Illumination</option>
+                      <option value="The Path of Breath">The Path of Breath</option>
+                      <option value="The Path of Community">The Path of Community</option>
+                      <option value="The Path of Illumination">The Path of Illumination</option>
                       <option value="The Road of Kings">The Road of Kings</option>
-                      <option value="Path of Chivalry">Path of Chivalry</option>
-                      <option value="Path of Devaraja">Path of Devaraja</option>
-                      <option value="Path of Daena">Path of Daena</option>
+                      <option value="The Path of Chivalry">The Path of Chivalry</option>
+                      <option value="The Path of Devaraja">The Path of Devaraja</option>
+                      <option value="The Path of Daena">The Path of Daena</option>
                       <option value="The Road of Lilith">The Road of Lilith</option>
-                      <option value="Path of Thorns">Path of Thorns</option>
-                      <option value="Path of Veils">Path of Veils</option>
-                      <option value="Path of Making">Path of Making</option>
+                      <option value="The Path of Thorns">The Path of Thorns</option>
+                      <option value="The Path of Veils">The Path of Veils</option>
+                      <option value="The Path of Making">The Path of Making</option>
                       <option value="The Road of Metamorphosis">The Road of Metamorphosis</option>
                       <option value="The Road of Sin">The Road of Sin</option>
-                      <option value="Path of Pleasure">Path of Pleasure</option>
-                      <option value="Path of the Devil">Path of the Devil</option>
-                      <option value="Path of Screams">Path of Screams</option>
+                      <option value="The Path of Pleasure">The Path of Pleasure</option>
+                      <option value="The Path of the Devil">The Path of the Devil</option>
+                      <option value="The Path of Screams">The Path of Screams</option>
                       <option value="The Road of Bones">The Road of Bones</option>
                       <option value="The Road of Yasa">The Road of Yasa</option>
                       <option value="The Road of Blood">The Road of Blood</option>
                       <option value="The Road of the Abyss">The Road of the Abyss</option>
                       <option value="The Road of Set">The Road of Set</option>
-                      <option value="Path of Apep">Path of Apep</option>
+                      <option value="The Path of Apep">The Path of Apep</option>
                       <option value="The Road of Paradox">The Road of Paradox</option>
                       <option value="The Code of Samiel">The Code of Samiel</option>
                       <option value="The Road of Angra Mainyu">The Road of Angra Mainyu</option>
@@ -1201,6 +1202,11 @@
 
           <!-- Bottom divider on page 4 with exact whitespace specifications -->
           <div style="border-bottom: 1px solid var(--border-color); margin-top: 35px; margin-bottom: 35px; width: 100%;"></div>
+
+          <h2>Background Ledger</h2>
+          <div id="dynamic-page4-backgrounds" class="two-col-grid" style="margin-top: 15px; color: var(--text-dark);">
+            <!-- Populated via JS -->
+          </div>
         </div>
 
         <!-- PAGE 5: HISTORY -->
@@ -1269,6 +1275,231 @@
     let dynamicRowId = 0;
     let isLoadingSheet = false; // Flag to prevent auto-saves while sheet DOM is initializing
     const collapsedDisciplines = {}; // Persistent Grimoire minimizes
+    const collapsedBackgrounds = {};  // Persistent Page 4 Background minimizes
+
+    // Official Sourcebook Backgrounds Database
+    const backgroundsDatabase = {
+      "Allies": {
+        description: "Allies are mortals who support you willingly, without coercion. They are not always available to offer assistance; they have their own concerns as well, but they could provide indirect access to their own Backgrounds such as Contacts, Influence, or Resources. However, nothing is free. If you draw on favors from your friends, they may ask for a favor in return. Allies dots may be pooled among a coterie of characters.",
+        dots: [
+          "• One ally of moderate influence and power",
+          "•• Two allies, both of moderate power",
+          "••• Three allies, one of whom is quite influential",
+          "•••• Four allies, one of whom is very influential",
+          "••••• Five allies, one of whom is extremely influential"
+        ]
+      },
+      "Alternate Identity": {
+        description: "You maintain a complete alternate identity including proper documentation. In this day and age, that meant business records, church records, and perhaps legal documents. Every region had its own bureaucracies.",
+        dots: [
+          "• You are new at this identity game. Sometimes you slip and forget your other persona.",
+          "•• You are firmly grounded in your alternate identity. You are convincing enough to play the part of a doctor, priest, noble, diplomat, or other privileged position.",
+          "••• You have a fair reputation as your alternate persona and get name recognition in the area where you have infiltrated.",
+          "•••• Your alternate identity has respect and trust within your area of infiltration.",
+          "••••• You command respect in your area of infiltration, and you may even have accumulated a bit of influence. You have the trust (or at least the recognition) of many powerful individuals within your area."
+        ]
+      },
+      "Arcane Library": {
+        description: "(Source: Hunters Hunted II) Vampires often devote their entire unlives to research, and build up tremendous libraries over the course of their careers; those who live near locations with long established and well-developed libraries do even better. Vampires who have to research a particular Blood Magic fact in libraries have the difficulty number of research rolls reduced by this Background. Players may opt to pool Background points for a shared library.",
+        dots: [
+          "• Blood magic cast in the library difficulty is reduced by 1.",
+          "•• Blood magic cast in the library difficulty is reduced by 2.",
+          "••• Blood magic cast in the library difficulty is reduced by 3.",
+          "•••• Blood magic cast in the library difficulty is reduced by 4.",
+          "••••• Blood magic cast in the library difficulty is reduced by 5."
+        ]
+      },
+      "Artifact": {
+        description: "(Source: Hunters Hunted II) Artifacts are items strong in supernatural potency. This Background allows you to begin play with such an artifact in your possession. Either it was a family heirloom, or a mentor bequeathed it to you, or you stole it. The Storyteller should create something suitable for you based on the dots in this Background. Talk about what you want with the Storyteller. Truly legendary artifacts (such as Roland’s sword Durandal, or the chalice of Kai Khusrau) are objects of great quests and cannot be purchased with this Trait. Some examples of potential artifacts are presented on p. 157 of Hunters Hunted II. Players may opt to pool Background points for a shared artifact.",
+        dots: [
+          "• A minor artifact.",
+          "•• A useful artifact.",
+          "••• An artifact of significant power.",
+          "•••• A much-sought artifact.",
+          "••••• An artifact of incredible power."
+        ]
+      },
+      "Blasphemous Shrine": {
+        description: "(Source: Rites of Blood) As discussed above, Lector Priests must have desecrated the corpse of someone buried according to traditional ancient Egyptian practice. These corpses are kept as offerings to Set and are the means by which these sorcerers channel his power into the world. As such, they are usually placed in shrines dedicated to Set and adorned with his iconography. Within this Blasphemous Shrine, the Lector Priest can perform powerful Akhu rituals, amplified by the proximity to the source of their power. The more dots in the background, the greater the connection the desecrated corpse has to Set. Mechanically, this background grants a number of bonus dice to the casting of Akhu rituals equal to the number points in Blasphemous Shrine. However, this only applies to rituals cast in the shrine itself. As an optional rule, a Storyteller may insist that a Lector Priest has to have at least one dot of Blasphemous Shrine to represent the desecrated corpse offering to Set, without which they cannot cast Akhu.",
+        dots: [
+          "• +1 Die to Akhu rituals cast in the shrine.",
+          "•• +2 Dice to Akhu rituals cast in the shrine.",
+          "••• +3 Dice to Akhu rituals cast in the shrine.",
+          "•••• +4 Dice to Akhu rituals cast in the shrine.",
+          "••••• +5 Dice to Akhu rituals cast in the shrine."
+        ]
+      },
+      "Contacts": {
+        description: "Contacts are people you can manipulate or coerce into offering information. Minor contacts are spread throughout the city. Roll your Contacts rating (difficulty 7) and reach one minor contact for each success. However, you still have to convince them to give you the information. Major contacts can give you accurate information in their fields of expertise and each should be described in detail before the game begins.",
+        dots: [
+          "• One major contact",
+          "•• Two major contacts",
+          "••• Three major contacts",
+          "•••• Four major contacts",
+          "••••• Five major contacts"
+        ]
+      },
+      "Cult": {
+        description: "(Source: Ashen Cults.) You have control of a cult. You may have founded it yourself or usurped it from another. A cult offers different advantages, depending on its makeup, its structure, and what resources it can call upon. This Background give you cult points that allow you to design your own cult, with the Storyteller's approval. Storytellers not using the optional point system for cult creation can simply base the cult's overall usefulness and loyalty on the character's rating in the Background, using the point system as a guideline. Cult traits can be found on page 73 of Ashen Cults.",
+        dots: [
+          "• You have 1 cult point to spend.",
+          "•• You have 2 cult points to spend.",
+          "••• You have 3 cult points to spend.",
+          "•••• You have 4 cult points to spend.",
+          "••••• You have 5 cult points to spend."
+        ]
+      },
+      "Domain": {
+        description: "Domain is physical territory your character controls for the purpose of feeding. The local Prince or other Cainite authority acknowledges and supports your claim. You may designate one or more dots to increase the security of the Domain rather than its size. Each dot assigned to security increases the difficulty to intrude into the domain by one, and decreases the difficulty for you to identify and track intruders by one. Each level of Domain reduces the difficulty of hunting checks by one for those allowed to hunt and adds to your starting blood pool. Domain can be used with pooled Background points.",
+        dots: [
+          "• A single small building, such as a single-family home or a social establishment — enough for a basic haven.",
+          "•• A church, manor, or other large structure — a location with ready (but controllable) access to the outside world.",
+          "••• A city neighborhood — a location or area that offers areas for concealment as well as controlled access.",
+          "•••• A catacomb, a network of tunnels, the enclave of homes on a hill overlooking the city — a place with inherently protective features, such as bridge-only access or vigilant private guards.",
+          "••••• An entire neighborhood, an ethnic ghetto, or a whole village."
+        ]
+      },
+      "Fame": {
+        description: "You enjoy widespread recognition in mortal society as an entertainer, scholar, warrior, or even criminal. This gives you privileges when moving in mortal society, but can also attract unwanted attention now that you’re no longer alive. It’s a mixed blessing with prestige on one hand and being recognized at inconvenient times on the other. However, enemies can’t make you disappear without causing a stir. Your Fame facilitates hunting in populated areas – reduce the difficulty of hunting rolls by one for each dot in Fame. Your storyteller may permit you to reduce difficulties of certain Social rolls as well.",
+        dots: [
+          "• You’re known to a select subculture — local artists, scholars, or the nobility.",
+          "•• Random people start to recognize your face; you’re a minor celebrity such as a small-time criminal or a local musician.",
+          "••• You have greater renown; perhaps you’re a successful diplomat or an entertainer who regularly performs for the nobility.",
+          "•••• A full-blown celebrity; your name is often recognized by the average person on the road.",
+          "••••• You’re a household word. People name their children after you."
+        ]
+      },
+      "Generation": {
+        description: "This Background represents your Generation: the purity of your blood, and your proximity to the First Vampire. A high Generation rating may represent a powerful sire or a decidedly dangerous taste for diablerie. If you don’t take any dots in this Trait, you begin play as a Twelfth Generation vampire.",
+        dots: [
+          "• Eleventh Generation: 12 blood pool, can spend 1 blood point per turn",
+          "•• Tenth Generation: 13 blood pool, can spend 1 blood point per turn",
+          "••• Ninth Generation: 14 blood pool, can spend 2 blood points per turn",
+          "•••• Eighth Generation: 15 blood pool, can spend 3 blood points per turn",
+          "••••• Seventh Generation: 20 blood pool, can spend 4 blood points per turn and possess Traits at 6 dots"
+        ]
+      },
+      "Herd": {
+        description: "You have built a group of mortals from whom you can feed without fear. In addition to providing nourishment, your Herd may be useful for minor tasks. However, unlike Allies or Retainers, they are typically not very controllable or skilled. Your Herd rating adds dice to your rolls for hunting. Players may purchase pooled Herd with Background points.",
+        dots: [
+          "• Three vessels",
+          "•• Seven vessels",
+          "••• 15 vessels",
+          "•••• 30 vessels",
+          "••••• 60 vessels"
+        ]
+      },
+      "Influence": {
+        description: "You have pull in the mortal community through wealth, familial lineage, prestige, politics, blackmail, or supernatural sway. Influence represents the sum of your opinion or policy-swaying power in your community, particularly among law enforcement and bureaucracy. Influence can be used with pooled Background points.",
+        dots: [
+          "• Moderately influential; a factor in local politics",
+          "•• Well-connected; a force in nearby politics",
+          "••• Position of influence; a factor in regional politics",
+          "•••• Broad personal power; a force in large-scale politics",
+          "••••• Vastly influential; a factor in politics of the known world"
+        ]
+      },
+      "Knowledge Library": {
+        description: "(Source: Library of the Damned) Books are rare and expensive in the medieval period, and the personal possession of books is representative of wealth and culture. A character who possesses this Background owns a small personal library, from which they can obtain knowledge and guidance. For each dot in this Background, choose two Knowledges; whilst working with your library, you may reduce the difficulty of rolls involving these Knowledges by 2. Note that a character must, of course, have time and opportunity to consult their library to gain this benefit.",
+        dots: [
+          "• You have a small collection of literature, and own six books, focusing on a two subjects.",
+          "•• You have collected books over a number of years, and have obtained 15 books, which provide you with information on four subjects.",
+          "••• Acquaintances are impressed by your fine collection of 30 books, which provide you with an insight into six distinct subjects.",
+          "•••• Your dedication to study is supported by an impressive collection of 75 books, with detail on eight particular subjects.",
+          "••••• You possess a truly outstanding personal library, containing at least 150 works, covering all aspects of human knowledge. Other Cainites will come to you, wishing to consult your collection of books."
+        ]
+      },
+      "Martial Training": {
+        description: "(Source: Tome of Secrets) A squire might train 15 or more years for knighthood. Despite popular depictions of knights wildly swinging their swords around, this training is as sophisticated and agile as that associated with fighting methods in other parts of the world. Other soldiers might learn these techniques, but must usually pick them up over the course of a chronicle. To begin with them, one must train from an early age, like a squire or Mongol rider. Martial Training is a set of Backgrounds: one each for Archery, Brawl, Melee, and Ride. Each dot teaches a special maneuver that may be used in combat, similar to the maneuvers in the combat chapter of V20 Dark Ages, but they’re slightly more potent or provide special effects. Note that this chapter only includes a few sample special maneuvers specific to knights; the Storyteller should invent others. Archery special maneuvers exist, but are not normally used by knights. Characters may not possess more dots in a Martial Training Background than they possess in its matched Ability. For example, a character with Brawl 2 may only possess Martial Training (Brawl) 2. Each dot provides a maneuver in the linked Ability. Martial maneuvers can be found on p. 85 of the Tome of Secrets.",
+        dots: [
+          "• One special maneuver",
+          "•• Two special maneuvers",
+          "••• Three special maneuvers",
+          "•••• Four special maneuvers",
+          "••••• Five special maneuvers"
+        ]
+      },
+      "Memento de Morte": {
+        description: "(Source: Lore of the Clans) Death leaves its mark on the world around it. Cold spots, places where the light seems too pale, the colors washed out and faded. Sometimes, something seeps into the items surrounding a death in such a way that it taints them forever. The fainting couch in a Victorian serial killer’s parlor, or the portrait that hung on the wall of his abattoir, for example. The blackened wood floorboards at uncle Vittorio’s estate, reclaimed from a plague ship lit aflame to cleanse its still-living passengers. Books wrapped in the flesh of the monk who inscribed them, carved from his still living body, and bound by him in his last moments of life. But the most common mementos of death are murder weapons. The scalpels of serial killers and the sabers of war criminals. Bludgeons and .38 Bulldogs, nooses and punchbowls. The more death that has drenched the item, the more power it absorbs. This Background gives you one or more of these mementos of death, allowing you to benefit from the ambient energies when using Necromancy. You must have the relic (or relics) with you to receive the bonus. Many necromancers have a special sanctum set aside for their ritual work for this reason.",
+        dots: [
+          "• You have one minor relic. +1 bonus die to Necromancy rolls.",
+          "•• You have a relic of middling power or two minor ones. +2 bonus dice to Necromancy rolls.",
+          "••• You have a few reasonably powerful relics. +3 bonus dice to Necromancy rolls.",
+          "•••• You have a very powerful relic, or a couple of less powerful items. +4 bonus dice to Necromancy rolls.",
+          "••••• You have an incredibly powerful relic, or a couple of powerful items. +5 bonus dice to Necromancy rolls."
+        ]
+      },
+      "Mentor": {
+        description: "You have a Cainite or group of Cainites who look out for you, offering guidance and aid once in a while. A mentor typically remains aloof, giving useful information or advice but rarely direct aid. If he arrives to pull you from a dangerous situation, you’re likely to lose a dot or more in this Background, or be abandoned as an unworthy protégé.",
+        dots: [
+          "• Mentor is an ancilla of little influence.",
+          "•• Mentor is respected: an elder or highly-decorated veteran.",
+          "••• Mentor is heavily influential, such as a Prince’s advisor.",
+          "•••• Mentor has a great deal of power over the city, such as a Seneschal or Sheriff.",
+          "••••• Mentor is extraordinarily powerful, perhaps even a Prince."
+        ]
+      },
+      "Oubliette": {
+        description: "(Source: Tome of Secrets) Vampires who possess at least three dots in Obtenebration and one Abyss Mysticism ritual can construct an Oubliette within a subterranean structure. The darkness within the Oubliette drains Intelligence from mortals immersed within it, at a rate of one dot per night. This Intelligence is not recoverable. Nightmarish visions constantly beset vampires within the Oubliette, often leading to the swift arrival of Derangements. The player of any vampire immersed in an Oubliette must roll against the character’s current Willpower each night; the character may not recover any temporary Willpower points while within the dark. Failure reduces the current Willpower by two points, inducing a Derangement in the vampire once the rating reaches zero. Willpower then resets, and the procedure begins again until the vampire’s extracted or discovers an exit. Vampires who enter the Oubliette willingly, and those on the Road of the Abyss or Road of Sin, lose one Willpower point per night. The darkness within the Oubliette is unnatural and therefore impossible to see through unless the vampire possesses the Darksight Merit. Entities summoned with Obtenebration or Abyss Mysticism within the Oubliette remain permanently, and cannot be dismissed unless they, or their summoners, are destroyed. Any Cainite who braves and survives 20 consecutive nights within the Oubliette and doesn’t succumb to torpor has the cost of learning Abyss Mysticism rituals reduced by one experience point for the remainder of the year. The greater the Oubliette Background rating, the greater the volume of the underground structure that is filled with foul darkness. Points in Oubliette are bought at character creation, or earned through roleplay.",
+        dots: [
+          "• Coffin or cupboard-sized chamber",
+          "•• Single-room chamber",
+          "••• Dungeon containing up to five rooms",
+          "•••• Multi-level structure, containing up to 15 rooms",
+          "••••• Labyrinthine complex, containing multiple structures"
+        ]
+      },
+      "Resources": {
+        description: "Resources are assets your character controls. These may be gold, investments, property, commercial inventories, or even taxes and tithes. A character with no dots in Resources may have enough clothing and supplies to get by, or she may be destitute and squatting. You receive a basic allowance each month based on your rating, so detail exactly where this money comes from. Players may purchase Resources for their characters with pooled Background points.",
+        dots: [
+          "• Sufficient. You can maintain a typical residence in the style of the working class with stability, even if spending sprees come seldom.",
+          "•• Moderate. You can display yourself as a member in good standing of the merchant class, with the occasional gift and indulgence seemly for a person of even higher station. You can maintain a servant or hire specific help as necessary. A fraction of your resources are available in coin or gold, readily portable property (like jewelry), and other valuables that let you maintain a standard of living at the one-dot level wherever you happen to be, for up to six months.",
+          "••• Comfortable. You are a prominent and established member of your community, with land and an owned dwelling. You likely have more tied up in equity and property than you do in ready coin. You can maintain a one-dot quality of existence wherever you are without difficulty, for as long as you choose.",
+          "•••• Wealthy. You rarely touch gold, as most of your assets exist in tangible forms that are themselves more valuable and stable than coin. You hold more wealth than many of your local peers. When earning your Resources doesn’t enjoy your usual degree of attention, you can maintain a three-dot existence for up to a year, and a two-dot existence indefinitely.",
+          "••••• Extremely Wealthy. You are the model to which others strive to achieve, at least in the popular mind. You have vast and widely distributed assets, perhaps tied to the fates of nations, each with huge staffs and connections to every level of society through a region. You travel with a minimum of three-dot comforts, more with a little effort."
+        ]
+      },
+      "Retainers": {
+        description: "Retainers are servants, assistants, or loyal and steadfast companions. Many vampires’ servants are ghouls, ghouled animals, or people whom you’ve repeatedly Dominated or completely enthralled. Retainers may be useful, but they’re never flawless or blindly loyal – if you treat them poorly without exercising strict control, they may well turn on you. With Storyteller permission, a player may create a single more competent Retainer by combining points in this Background. Players can spend pooled Background points on Retainers.",
+        dots: [
+          "• One retainer",
+          "•• Two retainers",
+          "••• Three retainers",
+          "•••• Four retainers",
+          "••••• Five retainers"
+        ]
+      },
+      "Servants": {
+        description: "(Source: Dark Ages Companion) Your character controls a retinue of useful servants. (Your domain might possess servants without this Background, but they do nothing more than keep the place from utterly collapsing, and frequently display disloyalty.) The exact number doesn’t matter; they come and go as estate business demands. Children replace their parents. On the other hand, when your character needs them to perform a specific task or travel, only a limited number can obey, lest the estate fall into disrepair or suffer various calamities. In matters relating to the domain, servants reduce the difficulty of Seneschal and Leadership rolls equal to their dots. Servants need not be limited to a single manor, and might represent ordinary townsfolk, cottagers, and others pledged to the character’s service. Servants are loyal, but not slavishly so, and might disobey their masters if they feel threatened or offended. A Cainite may use servants as vessels for her thirst, but the player must purchase an equal number of dots in the Herd Background to ensure their discretion. Purchasing both Backgrounds together also means servants replace themselves should your character’s attentions cause their deaths, but the most extreme cruelties will never go unanswered. Servants who are not a Herd resist predation, spread rumors, and must be managed accordingly.",
+        dots: [
+          "• You have a few servants to deal with light, routine tasks. They can’t handle emergencies. Some of them attend you part time, working elsewhere to support families. You can call three of them together for a trip or dedicated task.",
+          "•• Your servants can keep a small manor or settlement running smoothly, and even provide comforts for a small number of guests. You can wrangle seven of them to work on some unusual task or travel with you.",
+          "••• Your servants manage all aspects of a large manor, and at least one stands on hand to receive your commands. You might gather as many as 15 to travel or work on an unusual project.",
+          "•••• Your servants could keep a large castle running smoothly. Multiple attendants stand by to anticipate your needs and obey your commands. You can be assured that taking a retinue of 30 on the road wouldn’t bring estate business grinding to a halt.",
+          "••••• A veritable legion stands by to ensure your estate functions. They stand in every room, and to get some privacy you’ll have to send them away. You can take a retinue of 60 servants with you."
+        ]
+      },
+      "Spirit Slaves": {
+        description: "(Source: Lore of the Clans) This trait represents a hold you have over a ghost, or several ghosts. Usually this hold is in the form of catene, or fetters — either something that the ghost valued highly in life, or possibly a random object or place to which the spirito has been attached via a necromantic ritual. Regardless, you have a hold over the spirit and can bully it by threatening its fetter. Alternatively, you might have information about the spirit’s goals and can control it by aiding or impeding it. All Spirit Slaves are assumed to have statistics similar to a recently deceased ghost. However, higher levels of this Background might reflect more powerful spirits at the Storyteller’s discretion.",
+        dots: [
+          "• You have a hold on one weak spirito.",
+          "•• You have influence over two minor ghosts, or one of greater power.",
+          "••• You’re the boss of three lesser ghosts, or fewer who can do more.",
+          "•••• Four ghosts are under your sway, or fewer who are stronger.",
+          "••••• You have mastered five weak ghosts, or fewer who are more talented."
+        ]
+      },
+      "Status": {
+        description: "You’ve standing within the local Cainite community. You may derive this standing from your sire’s status and bloodline, the reputation of your coterie, or your own individual deeds. High Status may make you a target for those against your faction. When interacting with local Cainites, you may roll your Status in conjunction with a Social Trait to reflect the positive effects of your prestige. As the lowest of the low, Caitiff characters may not purchase Status during character creation.",
+        dots: [
+          "• Known: a recognized neonate",
+          "•• Respected: an ancilla",
+          "••• Influential: an elder",
+          "•••• Powerful: a widely respected elder",
+          "••••• Luminary: a Prince or other Cainite leader"
+        ]
+      }
+    };
 
     // Common Ethics Templates for Path Variations
     const beastBaseEthics = [
@@ -1342,7 +1573,7 @@
           1:  { mw: "Refusing to feed when hungry", r: "There is no balance when the Beast is denied." }
         }
       },
-      "Path of the Hunter": {
+      "The Path of the Hunter": {
         altName: "Via Bestiae",
         aura: "Menace",
         virtues: { v1: "Conviction", v2: "Instinct" },
@@ -1361,7 +1592,7 @@
           1:  { mw: "Refusing to feed when hungry", r: "There is no balance when the Beast is denied." }
         }
       },
-      "Path of Journeys": {
+      "The Path of Journeys": {
         altName: "Via Bestiae",
         aura: "Menace",
         virtues: { v1: "Conviction", v2: "Self-Control" },
@@ -1380,7 +1611,7 @@
           1:  { mw: "Refusing to feed when hungry", r: "There is no balance when the Beast is denied." }
         }
       },
-      "Path of Liberation": {
+      "The Path of Liberation": {
         altName: "Via Bestiae",
         aura: "Menace",
         virtues: { v1: "Conviction", v2: "Instinct" },
@@ -1426,7 +1657,7 @@
           1:  { mw: "Failing to spread the Gospel of Christ", r: "It is the duty of all Christians to spread the good news of our Lord." }
         }
       },
-      "Derech Chaim – The Path of Life (Judaism)": {
+      "The Derech Chaim – The Path of Life (Judaism)": {
         altName: "Via Caeli",
         aura: "Holiness",
         virtues: { v1: "Conscience", v2: "Self-Control" },
@@ -1502,7 +1733,7 @@
           1:  { mw: "Reviling a god or the gods", r: "The gods are the source of all life and goodness." }
         }
       },
-      "Path of the Archangel": {
+      "The Path of the Archangel": {
         altName: "Via Caeli",
         aura: "Holiness (Melancholia)",
         virtues: { v1: "Conscience", v2: "Self-Control" },
@@ -1521,7 +1752,7 @@
           1:  { mw: "Refusing to make a major sacrifice", r: "We follow Michael’s example in all things." }
         }
       },
-      "Path of the Pure": {
+      "The Path of the Pure": {
         altName: "Via Caeli",
         aura: "Holiness",
         virtues: { v1: "Conscience", v2: "Self-Control" },
@@ -1559,7 +1790,7 @@
           1:  { mw: "The most monstrous, vile acts", r: "Are you a person or a monster?" }
         }
       },
-      "Path of Breath": {
+      "The Path of Breath": {
         altName: "Via Humanitas",
         aura: "Humanity",
         virtues: { v1: "Conscience", v2: "Self-Control" },
@@ -1578,7 +1809,7 @@
           1:  { mw: "Spending a night without human contact", r: "" }
         }
       },
-      "Path of Community": {
+      "The Path of Community": {
         altName: "Via Humanitas",
         aura: "Humanity",
         virtues: { v1: "Conscience", v2: "Self-Control" },
@@ -1597,7 +1828,7 @@
           1:  { mw: "Genocide or any action that ends a community’s ability to grow and thrive", r: "" }
         }
       },
-      "Path of Illumination": {
+      "The Path of Illumination": {
         altName: "Via Humanitas",
         aura: "Humanity",
         virtues: { v1: "Conscience", v2: "Self-Control" },
@@ -1635,7 +1866,7 @@
           1:  { mw: "Giving in to your Beast, such as frenzy", r: "If you cannot control yourself, how can you control others?" }
         }
       },
-      "Path of Chivalry": {
+      "The Path of Chivalry": {
         altName: "Via Regalis",
         aura: "Command",
         virtues: { v1: "Conviction", v2: "Self-Control" },
@@ -1654,7 +1885,7 @@
           1:  { mw: "Breaking a sworn oath", r: "Oaths of fealty are what make civilized society." }
         }
       },
-      "Path of Devaraja": {
+      "The Path of Devaraja": {
         altName: "Via Regalis",
         aura: "Command",
         virtues: { v1: "Conviction", v2: "Self-Control" },
@@ -1673,7 +1904,7 @@
           1:  { mw: "Giving into your Beast, such as frenzy", r: "If you cannot control yourself, how can you accept the divine?" }
         }
       },
-      "Path of Daena": {
+      "The Path of Daena": {
         altName: "Via Regalis",
         aura: "Command",
         virtues: { v1: "Conviction", v2: "Self-Control" },
@@ -1711,7 +1942,7 @@
           1:  { mw: "Shunning pain", r: "The harder it is, the more rewarding the growth." }
         }
       },
-      "Path of Thorns": {
+      "The Path of Thorns": {
         altName: "Derech Lilit",
         aura: "Carved and bleeding",
         virtues: { v1: "Conviction", v2: "Instinct" },
@@ -1730,7 +1961,7 @@
           1:  { mw: "Shunning pain", r: "The harder it is, the more rewarding the growth." }
         }
       },
-      "Path of Veils": {
+      "The Path of Veils": {
         altName: "Derech Lilit",
         aura: "Carved and bleeding",
         virtues: { v1: "Conviction", v2: "Instinct" },
@@ -1749,7 +1980,7 @@
           1:  { mw: "Shunning pain", r: "The harder it is, the more rewarding the growth." }
         }
       },
-      "Path of Making": {
+      "The Path of Making": {
         altName: "Derech Lilit",
         aura: "Carved and bleeding",
         virtues: { v1: "Conviction", v2: "Instinct" },
@@ -1812,7 +2043,7 @@
           1:  { mw: "Refusing to act in your own best interests", r: "Only fools sacrifice themselves." }
         }
       },
-      "Path of Pleasure": {
+      "The Path of Pleasure": {
         altName: "Via Peccati",
         aura: "Temptation",
         virtues: { v1: "Conviction", v2: "Instinct" },
@@ -1831,7 +2062,7 @@
           1:  { mw: "Refusing to act in your own best interests", r: "Your desires are all that truly matters." }
         }
       },
-      "Path of the Devil": {
+      "The Path of the Devil": {
         altName: "Via Peccati",
         aura: "Temptation",
         virtues: { v1: "Conviction", v2: "Self-Control" },
@@ -1850,7 +2081,7 @@
           1:  { mw: "Encouraging false virtue or agents of false virtue", r: "Constrictions of laws enslave the mind and strangle the soul." }
         }
       },
-      "Path of Screams": {
+      "The Path of Screams": {
         altName: "Via Peccati",
         aura: "Temptation",
         virtues: { v1: "Conviction", v2: "Instinct" },
@@ -1988,7 +2219,7 @@
           1:  { mw: "Worshipping any god but Set", r: "Set is our progenitor and protector. There is no true god but Set." }
         }
       },
-      "Path of Apep": {
+      "The Path of Apep": {
         altName: "",
         aura: "Instant gratification",
         virtues: { v1: "Conviction", v2: "Instinct" },
@@ -2789,6 +3020,106 @@
       });
     }
 
+    // Dynamically populates and renders active Page 1 Backgrounds on Page 4
+    function renderPage4Backgrounds() {
+      const container = document.getElementById('dynamic-page4-backgrounds');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const activeBackgrounds = [];
+      const seen = new Set();
+
+      document.querySelectorAll('#backgrounds-list .dynamic-row').forEach(row => {
+        const nameSelect = row.querySelector('.dynamic-name');
+        if (!nameSelect) return;
+        const name = nameSelect.value;
+        if (name && backgroundsDatabase[name] && !seen.has(name)) {
+          seen.add(name);
+          activeBackgrounds.push(name);
+        }
+      });
+
+      if (activeBackgrounds.length === 0) {
+        container.innerHTML = `<p style="grid-column: 1 / -1; font-style: italic; color: #6e5e50;">No active Backgrounds selected on Page 1.</p>`;
+        return;
+      }
+
+      // Sort alphabetically by Background Name
+      activeBackgrounds.sort((a, b) => a.localeCompare(b));
+
+      activeBackgrounds.forEach(bgName => {
+        const entry = backgroundsDatabase[bgName];
+        if (!entry) return;
+
+        const isCollapsed = !!collapsedBackgrounds[bgName];
+
+        const cardWrapper = document.createElement('div');
+        cardWrapper.className = "column";
+        cardWrapper.style.marginBottom = "20px";
+        cardWrapper.style.padding = "12px 15px";
+        cardWrapper.style.background = "rgba(0,0,0,0.02)";
+        cardWrapper.style.borderLeft = "3px solid var(--accent-red)";
+        cardWrapper.style.borderRadius = "0 4px 4px 0";
+        cardWrapper.style.boxSizing = "border-box";
+        cardWrapper.id = `background-card-${bgName.replace(/\s+/g, '-')}`;
+
+        // Header container with click-to-minimize chevron/triangle
+        const headerEl = document.createElement('div');
+        headerEl.style.display = "flex";
+        headerEl.style.justifyContent = "space-between";
+        headerEl.style.alignItems = "center";
+        headerEl.style.cursor = "pointer";
+        headerEl.style.borderBottom = isCollapsed ? "none" : "1px solid rgba(140, 126, 110, 0.3)";
+        headerEl.style.paddingBottom = "4px";
+        headerEl.style.marginBottom = isCollapsed ? "0" : "12px";
+
+        const titleEl = document.createElement('h3');
+        titleEl.style.margin = "0";
+        titleEl.style.color = "var(--accent-red)";
+        titleEl.style.fontSize = "1.1rem";
+        titleEl.style.textTransform = "uppercase";
+        titleEl.textContent = bgName;
+
+        const chevronEl = document.createElement('span');
+        chevronEl.style.fontSize = "1.1rem";
+        chevronEl.style.transition = "transform 0.2s";
+        chevronEl.style.color = "var(--accent-red)";
+        chevronEl.style.fontWeight = "bold";
+        chevronEl.innerHTML = isCollapsed ? "&#9660;" : "&#9650;"; // Toggle arrow
+
+        headerEl.appendChild(titleEl);
+        headerEl.appendChild(chevronEl);
+        cardWrapper.appendChild(headerEl);
+
+        const contentEl = document.createElement('div');
+        contentEl.style.display = isCollapsed ? "none" : "block";
+
+        headerEl.addEventListener('click', () => {
+          collapsedBackgrounds[bgName] = !collapsedBackgrounds[bgName];
+          renderPage4Backgrounds();
+        });
+
+        let html = `
+          <div style="font-size: 0.9rem; line-height: 1.45;">
+            <p style="margin: 3px 0 10px 0;"><strong>Description:</strong> ${entry.description}</p>
+            <div style="font-size: 0.88rem; line-height: 1.4;">
+        `;
+
+        entry.dots.forEach(dotLine => {
+          html += `<p style="margin: 3px 0;">${dotLine}</p>`;
+        });
+
+        html += `
+            </div>
+          </div>
+        `;
+
+        contentEl.innerHTML = html;
+        cardWrapper.appendChild(contentEl);
+        container.appendChild(cardWrapper);
+      });
+    }
+
     // Toggle Rituals section collapse/expand
     function toggleRitualsSection(headerEl) {
       const list = document.getElementById('rituals-list');
@@ -2808,6 +3139,24 @@
     function navigateToDiscipline(name) {
       switchTab('tab-page-2');
       const targetId = `grimoire-entry-${name.replace(/\s+/g, '-')}`;
+      setTimeout(() => {
+        const el = document.getElementById(targetId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Highlight flash to guide the player's eye
+          el.style.transition = 'background-color 0.5s';
+          el.style.backgroundColor = 'rgba(124, 11, 11, 0.15)';
+          setTimeout(() => {
+            el.style.backgroundColor = 'rgba(0,0,0,0.02)';
+          }, 1000);
+        }
+      }, 100);
+    }
+
+    // Interactive smooth scroll navigation to Page 4 Background entry
+    function navigateToBackground(name) {
+      switchTab('tab-page-4');
+      const targetId = `background-card-${name.replace(/\s+/g, '-')}`;
       setTimeout(() => {
         const el = document.getElementById(targetId);
         if (el) {
@@ -3127,6 +3476,7 @@
       container.setAttribute('data-value', currentVal);
       renderDots(container);
       renderGrimoireDisciplines(); // Instantly synchronize Grimoire description updates
+      renderPage4Backgrounds();    // Instantly synchronize Page 4 Background updates
       
       // Dynamic updates
       if (container.getAttribute('data-id') === 'willpower-perm') {
@@ -3571,6 +3921,36 @@
             </div>
           </div>
         `;
+      } else if (type === 'background') {
+        const standardBackgrounds = [
+          "Allies", "Alternate Identity", "Arcane Library", "Artifact", 
+          "Blasphemous Shrine", "Contacts", "Cult", "Domain", "Fame", 
+          "Generation", "Herd", "Influence", "Knowledge Library", 
+          "Martial Training", "Memento de Morte", "Mentor", "Oubliette", 
+          "Resources", "Retainers", "Servants", "Spirit Slaves", "Status"
+        ];
+
+        let optionsHTML = `<option value="" disabled ${!initialName ? 'selected' : ''}>Select Background...</option>`;
+        optionsHTML += `<option value="custom">Custom...</option>`;
+        
+        if (initialName && !standardBackgrounds.includes(initialName)) {
+          optionsHTML += `<option value="${initialName}" selected>${initialName}</option>`;
+        }
+        
+        standardBackgrounds.forEach(bg => {
+          optionsHTML += `<option value="${bg}" ${initialName === bg ? 'selected' : ''}>${bg}</option>`;
+        });
+        
+        nameFieldHTML = `
+          <div class="background-select-container" style="position: relative; display: inline-flex; align-items: center; flex-grow: 1; width: 100%;">
+            <select class="dynamic-name" onchange="handleBackgroundChange(this)" style="width: 100%; background: transparent; border: none; border-bottom: 1px dashed var(--border-color); font-family: inherit; font-size: 0.9rem; padding-right: 20px; appearance: none; -webkit-appearance: none; -moz-appearance: none; appearance: none; color: transparent; cursor: pointer;">
+              ${optionsHTML}
+            </select>
+            <span class="bg-caret" style="position: absolute; right: 5px; pointer-events: none; color: var(--accent-red); font-size: 0.7rem; font-family: sans-serif;">▼</span>
+            <div class="bg-link-overlay" style="position: absolute; left: 0; top: 0; bottom: 0; right: 20px; display: flex; align-items: center; pointer-events: none;">
+            </div>
+          </div>
+        `;
       } else {
         nameFieldHTML = `<input type="text" class="dynamic-name" placeholder="Name..." value="${initialName}" oninput="queueAutoSave()">`;
       }
@@ -3580,7 +3960,7 @@
         <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${initialVal}">
           <div class="dots-container"></div>
         </div>
-        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();" style="align-self: center; font-size: 1.2rem;">&times;</button>
+        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); renderPage4Backgrounds(); queueAutoSave();" style="align-self: center; font-size: 1.2rem;">&times;</button>
       `;
 
       list.appendChild(row);
@@ -3589,9 +3969,13 @@
       if (type === 'discipline') {
         const select = row.querySelector('.dynamic-name');
         if (select) updateDisciplineOverlay(select);
+      } else if (type === 'background') {
+        const select = row.querySelector('.dynamic-name');
+        if (select) updateBackgroundOverlay(select);
       }
 
       renderGrimoireDisciplines();
+      renderPage4Backgrounds();
       queueAutoSave();
     }
 
@@ -3649,6 +4033,60 @@
       }
       updateDisciplineOverlay(selectEl);
       renderGrimoireDisciplines();
+      queueAutoSave();
+    }
+
+    /* --- Custom Background Popup & Link Overlays --- */
+
+    function updateBackgroundOverlay(selectEl) {
+      const container = selectEl.closest('.background-select-container');
+      if (!container) return;
+      const overlay = container.querySelector('.bg-link-overlay');
+      if (!overlay) return;
+
+      const val = selectEl.value;
+      const standardBackgrounds = [
+        "Allies", "Alternate Identity", "Arcane Library", "Artifact", 
+        "Blasphemous Shrine", "Contacts", "Cult", "Domain", "Fame", 
+        "Generation", "Herd", "Influence", "Knowledge Library", 
+        "Martial Training", "Memento de Morte", "Mentor", "Oubliette", 
+        "Resources", "Retainers", "Servants", "Spirit Slaves", "Status"
+      ];
+
+      if (!val) {
+        overlay.innerHTML = `<span style="color: #8c7e6e; pointer-events: none; font-family: inherit; font-size: 0.9rem; font-style: italic;">Select Background...</span>`;
+      } else if (standardBackgrounds.includes(val)) {
+        overlay.innerHTML = `<a href="#" onclick="navigateToBackground('${val}'); return false;" style="color: var(--accent-red); text-decoration: underline; pointer-events: auto; font-weight: bold; font-family: inherit; font-size: 0.9rem; z-index: 2;">${val}</a>`;
+      } else {
+        overlay.innerHTML = `<span style="color: var(--text-dark); pointer-events: none; font-family: inherit; font-size: 0.9rem;">${val}</span>`;
+      }
+    }
+
+    function handleBackgroundChange(selectEl) {
+      if (selectEl.value === 'custom') {
+        const customName = prompt("Enter the name of the custom Background:");
+        if (customName && customName.trim() !== '') {
+          let exists = false;
+          for (let opt of selectEl.options) {
+            if (opt.value === customName) {
+              exists = true;
+              selectEl.value = customName;
+              break;
+            }
+          }
+          if (!exists) {
+            const newOpt = document.createElement('option');
+            newOpt.value = customName;
+            newOpt.text = customName;
+            selectEl.add(newOpt);
+            selectEl.value = customName;
+          }
+        } else {
+          selectEl.value = "";
+        }
+      }
+      updateBackgroundOverlay(selectEl);
+      renderPage4Backgrounds();
       queueAutoSave();
     }
 
@@ -4372,6 +4810,16 @@
           }
         }
         if (!exists && metaRoad !== '') {
+          let prefixed = metaRoad.startsWith("The ") ? metaRoad : "The " + metaRoad;
+          for (let opt of rNameSelect.options) {
+            if (opt.value === prefixed) {
+              exists = true;
+              rNameSelect.value = prefixed;
+              break;
+            }
+          }
+        }
+        if (!exists && metaRoad !== '') {
           const newOpt = document.createElement('option');
           newOpt.value = metaRoad;
           newOpt.text = metaRoad;
@@ -4590,6 +5038,7 @@
 
       isLoadingSheet = false; 
       renderGrimoireDisciplines(); 
+      renderPage4Backgrounds();
     }
 
     /* --- PRIVILEGED FILE IO --- */
@@ -4672,4 +5121,4 @@
     }
   </script>
 </body>
-</html>
+</html>  
