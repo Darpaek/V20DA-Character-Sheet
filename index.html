@@ -537,7 +537,7 @@
   <div class="app-container">
     <header>
       <h1>Vampire: The Dark Ages</h1>
-      <p>Sourcebook-Aligned V20 Dark Ages Interactive Web Application</p>
+      <p>V20 Dark Ages Interactive Character Sheet Web Application</p>
     </header>
 
     <!-- DASHBOARD VIEW -->
@@ -545,7 +545,7 @@
       <div class="dashboard-header">
         <h2>Chronicle Ledger</h2>
         <div>
-          <button class="btn" onclick="createNewCharacter()">+ Create Scribe</button>
+          <button class="btn" onclick="createNewCharacter()">+ Create Character</button>
           <button class="btn btn-secondary" onclick="document.getElementById('file-import').click()">Import JSON</button>
           <input type="file" id="file-import" accept=".json" onchange="importCharacter(event)">
         </div>
@@ -960,20 +960,20 @@
             <!-- Row 1: Column 1 Alternative Name -->
             <div class="text-area-group" style="margin-top: 0;">
               <label>Alternative Name</label>
-              <textarea id="road-alt-name" rows="1" style="resize: vertical; min-height: 2.2rem; padding: 4px 8px;" oninput="queueAutoSave()"></textarea>
+              <textarea id="road-alt-name" rows="1" style="resize: none; height: 1.8rem; min-height: 1.8rem; line-height: 1.2; padding: 3px 8px; box-sizing: border-box;" oninput="queueAutoSave()"></textarea>
             </div>
 
             <!-- Row 1: Columns 2-4 Spanning Text Box -->
             <div class="text-area-group" style="margin-top: 0; grid-column: 2 / 5;">
               <label style="visibility: hidden;">&nbsp;</label>
-              <textarea id="road-alt-name-extra" rows="1" style="resize: vertical; min-height: 2.2rem; padding: 4px 8px;" oninput="queueAutoSave()"></textarea>
+              <textarea id="road-alt-name-extra" rows="1" style="resize: none; height: 1.8rem; min-height: 1.8rem; line-height: 1.2; padding: 3px 8px; box-sizing: border-box;" oninput="queueAutoSave()"></textarea>
             </div>
 
             <!-- Row 2: Column 1 Ethics -->
             <div class="column">
               <div class="text-area-group" style="margin-top: 0;">
                 <label>Ethics</label>
-                <textarea id="road-ethics" rows="20" style="resize: vertical; min-height: 24.5rem; padding: 6px;" oninput="queueAutoSave()"></textarea>
+                <textarea id="road-ethics" rows="30" style="resize: vertical; min-height: 36rem; padding: 6px;" oninput="queueAutoSave()"></textarea>
               </div>
             </div>
 
@@ -1041,14 +1041,21 @@
 
           <div class="two-col-grid">
             <div class="column">
-              <h3>Paths of Sorcery (6 Dots)</h3>
-              <div id="paths-list" class="dynamic-list"></div>
-              <button class="btn btn-secondary btn-small" onclick="addPathRow('paths-list')">+ Add Path</button>
+              <div style="background: rgba(0,0,0,0.02); border-left: 3px solid var(--accent-red); padding: 10px 12px; margin-bottom: 10px; width: 100%; box-sizing: border-box;">
+                <h3 style="margin-top: 0; margin-bottom: 10px; color: var(--accent-red); text-transform: uppercase;">Paths of Sorcery</h3>
+                <div id="paths-list" class="dynamic-list"></div>
+              </div>
+              <button class="btn btn-secondary btn-small" style="width: 100%; box-sizing: border-box;" onclick="addPathRow('paths-list')">+ Add Path</button>
             </div>
             <div class="column">
-              <h3>Rituals (Level 1-5)</h3>
-              <div id="rituals-list" class="dynamic-list"></div>
-              <button class="btn btn-secondary btn-small" onclick="addRitualRow('rituals-list')">+ Add Ritual</button>
+              <div style="background: rgba(0,0,0,0.02); border-left: 3px solid var(--accent-red); padding: 10px 12px; margin-bottom: 10px; width: 100%; box-sizing: border-box;">
+                <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; border-bottom: 1px solid rgba(140, 126, 110, 0.3); padding-bottom: 4px; margin-bottom: 10px;" onclick="toggleRitualsSection(this)">
+                  <h3 style="margin: 0; color: var(--accent-red); text-transform: uppercase;">Rituals</h3>
+                  <span class="rituals-toggle-triangle" style="color: var(--accent-red); font-weight: bold; font-size: 1.1rem;">&#9650;</span>
+                </div>
+                <div id="rituals-list" class="dynamic-list"></div>
+              </div>
+              <button class="btn btn-secondary btn-small" style="width: 100%; box-sizing: border-box;" onclick="addRitualRow('rituals-list')">+ Add Ritual</button>
             </div>
           </div>
           <div class="text-area-group" style="margin-top: 25px;">
@@ -1059,23 +1066,6 @@
 
         <!-- PAGE 3: TRAITS & COMBAT -->
         <div id="tab-page-3" class="tab-content">
-          <div class="two-col-grid">
-            <div class="column">
-              <h3>Merits</h3>
-              <div id="merits-list" class="dynamic-list"></div>
-              <button class="btn btn-secondary btn-small" onclick="addCustomRow('merits-list', 'merit')">+ Add Merit</button>
-            </div>
-            <div class="column">
-              <h3>Flaws</h3>
-              <div id="flaws-list" class="dynamic-list"></div>
-              <button class="btn btn-secondary btn-small" onclick="addCustomRow('flaws-list', 'flaw')">+ Add Flaw</button>
-            </div>
-          </div>
-
-          <h2>Other Traits (6 Dots)</h2>
-          <div id="other-traits-list" class="dynamic-list"></div>
-          <button class="btn btn-secondary btn-small" onclick="addOtherTraitRow('other-traits-list')">+ Add Other Trait</button>
-
           <h2>Combat Parameters</h2>
           <table class="combat-table" id="combat-attacks-table">
             <thead>
@@ -1115,6 +1105,23 @@
               <div class="text-area-group"><label>Spent On</label><textarea id="exp-spent-on" oninput="queueAutoSave()"></textarea></div>
             </div>
           </div>
+
+          <div class="two-col-grid" style="margin-top: 25px;">
+            <div class="column">
+              <h3>Merits</h3>
+              <div id="merits-list" class="dynamic-list"></div>
+              <button class="btn btn-secondary btn-small" onclick="addCustomRow('merits-list', 'merit')">+ Add Merit</button>
+            </div>
+            <div class="column">
+              <h3>Flaws</h3>
+              <div id="flaws-list" class="dynamic-list"></div>
+              <button class="btn btn-secondary btn-small" onclick="addCustomRow('flaws-list', 'flaw')">+ Add Flaw</button>
+            </div>
+          </div>
+
+          <h2>Other Traits (6 Dots)</h2>
+          <div id="other-traits-list" class="dynamic-list"></div>
+          <button class="btn btn-secondary btn-small" onclick="addOtherTraitRow('other-traits-list')">+ Add Other Trait</button>
         </div>
 
         <!-- PAGE 4: POSSESSIONS -->
@@ -1217,7 +1224,7 @@
     let isLoadingSheet = false; // Flag to prevent auto-saves while sheet DOM is initializing
     const collapsedDisciplines = {}; // Persistent Grimoire minimizes
 
-    // Aligned V20 Core Archetype Database
+    // Aligned V20DA Core Archetype Database
     const archetypesDatabase = {
       "Architect": {
         description: "The Architect holds to a purpose greater than herself and is fulfilled when creating something of lasting value for others. She works to provide necessities to those around her.",
@@ -1389,7 +1396,7 @@
       }
     };
 
-    // Strict V20 Core Rulebook Discipline Database
+    // Strict V20DA Core Rulebook Discipline Database
     const disciplineDatabase = {
       "Abombwe": [
         { level: 1, name: "Predator's Communion", desc: "Senses nearby predators (vampires, shapeshifters, predatory animals).", sys: "Spend 1 blood point. <strong>Roll Perception + Survival</strong> (difficulty 6)." },
@@ -1649,7 +1656,7 @@
       ]
     };
 
-    // V20 Sourcebook-Aligned Clan Database
+    // V20DA Sourcebook-Aligned Clan Database
     const clanDatabase = {
       "Assamite (Sorceror Caste)": {
         disciplines: ["Clan Sorcery", "Auspex", "Celerity"],
@@ -1895,6 +1902,21 @@
       });
     }
 
+    // Toggle Rituals section collapse/expand
+    function toggleRitualsSection(headerEl) {
+      const list = document.getElementById('rituals-list');
+      const triangle = headerEl.querySelector('.rituals-toggle-triangle');
+      if (!list || !triangle) return;
+
+      if (list.style.display === 'none') {
+        list.style.display = 'block';
+        triangle.innerHTML = '&#9650;';
+      } else {
+        list.style.display = 'none';
+        triangle.innerHTML = '&#9660;';
+      }
+    }
+
     // Interactive smooth scroll navigation to Page 2 Grimoire entry
     function navigateToDiscipline(name) {
       switchTab('tab-page-2');
@@ -1958,7 +1980,7 @@
       listContainer.innerHTML = '';
 
       if (list.length === 0) {
-        listContainer.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #8c7e6e; font-style: italic;">No records found. Prepare a new scribe.</p>`;
+        listContainer.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #8c7e6e; font-style: italic;">No records found. Prepare a new character.</p>`;
         return;
       }
 
@@ -1967,7 +1989,7 @@
         card.className = 'char-card';
         card.innerHTML = `
           <div class="char-card-meta">
-            <h3>${meta.name || 'Unnamed Scribe'}</h3>
+            <h3>${meta.name || 'Unnamed Character'}</h3>
             <p><strong>Clan:</strong> ${meta.clan || 'Unknown'}</p>
             <p><strong>Road:</strong> ${meta.road || 'Unselected'}</p>
             <p style="font-size: 0.75rem; color: #8c7e6e; margin-top: 8px;">Saved: ${new Date(meta.lastSaved).toLocaleDateString()}</p>
@@ -2712,22 +2734,29 @@
       queueAutoSave();
     }
 
-    function addRitualRow(targetListId, name = '', level = 1) {
+    function addRitualRow(targetListId, name = '', level = 1, desc = '') {
       const list = document.getElementById(targetListId);
       if (!list) return;
       const rowId = `ritual-${dynamicRowId++}`;
       
-      const row = document.createElement('div');
-      row.className = 'dynamic-row';
-      row.id = rowId;
+      const container = document.createElement('div');
+      container.className = 'ritual-entry-container';
+      container.id = rowId;
+      container.style.marginBottom = "12px";
+      container.style.display = "flex";
+      container.style.flexDirection = "column";
+      container.style.width = "100%";
 
-      row.innerHTML = `
-        <input type="text" class="dynamic-name" style="width: 70%" placeholder="Ritual Name..." value="${name}" oninput="queueAutoSave()">
-        <input type="number" class="dynamic-val" style="width: 20%" min="1" max="5" value="${level}" oninput="queueAutoSave()">
-        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
+      container.innerHTML = `
+        <div class="dynamic-row" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
+          <input type="text" class="dynamic-name" style="flex-grow: 1; min-width: 50px; background: transparent; border: none; border-bottom: 1px dashed var(--border-color); font-family: inherit; font-size: 0.9rem;" placeholder="Ritual Name..." value="${name}" oninput="queueAutoSave()">
+          <input type="number" class="dynamic-val" style="width: 45px; text-align: center; background: transparent; border: none; border-bottom: 1px dashed var(--border-color); font-family: inherit; font-size: 0.9rem;" min="1" max="5" value="${level}" oninput="queueAutoSave()">
+          <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();" style="font-size: 1.2rem; cursor: pointer; color: var(--accent-red); background: none; border: none; padding: 0 5px;">&times;</button>
+        </div>
+        <textarea class="dynamic-desc" rows="3" style="width: 100%; box-sizing: border-box; font-family: inherit; font-size: 0.85rem; padding: 6px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-color); resize: vertical; margin-bottom: 4px;" placeholder="Ritual details/description..." oninput="queueAutoSave()">${desc}</textarea>
       `;
 
-      list.appendChild(row);
+      list.appendChild(container);
       queueAutoSave();
     }
 
@@ -3056,10 +3085,11 @@
         });
       });
 
-      document.querySelectorAll('#rituals-list .dynamic-row').forEach(row => {
+      document.querySelectorAll('#rituals-list .ritual-entry-container').forEach(container => {
         data.rituals.push({
-          name: row.querySelector('.dynamic-name').value,
-          level: row.querySelector('.dynamic-val').value
+          name: container.querySelector('.dynamic-name').value,
+          level: container.querySelector('.dynamic-val').value,
+          desc: container.querySelector('.dynamic-desc').value
         });
       });
 
@@ -3332,7 +3362,7 @@
       // Page 2 Grimoire Lists
       const ritList = document.getElementById('rituals-list');
       if (ritList) ritList.innerHTML = '';
-      if (data.rituals) data.rituals.forEach(r => addRitualRow('rituals-list', r.name, r.level));
+      if (data.rituals) data.rituals.forEach(r => addRitualRow('rituals-list', r.name, r.level, r.desc || ''));
 
       const pathList = document.getElementById('paths-list');
       if (pathList) pathList.innerHTML = '';
@@ -3390,7 +3420,7 @@
           if (cb) cb.checked = val;
         });
       }
-      
+
       // Road of Enlightenment Loading
       const roadEnlight = data.road_enlightenment || {};
       if (document.getElementById('road-alt-name')) {
@@ -3649,3 +3679,4 @@
   </script>
 </body>
 </html>
+      
