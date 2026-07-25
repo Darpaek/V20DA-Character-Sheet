@@ -208,7 +208,7 @@
       color: #6e5e50;
     }
 
-    /* Page Tabs (Hides default desktop scrollbar arrows) */
+    /* Page Tabs */
     .tabs-nav {
       display: flex;
       border-bottom: 2px solid var(--border-color);
@@ -552,6 +552,85 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* Dashboard Footer Layout */
+    .dashboard-footer {
+      margin-top: 40px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      font-size: 0.8rem;
+      color: #8c7e6e;
+      text-align: center;
+    }
+
+    .dashboard-footer img {
+      height: 60px;
+      width: auto;
+      vertical-align: middle;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .dashboard-footer img:hover {
+      transform: scale(1.05);
+    }
+
+    /* Full-Screen Legal Views */
+    .legal-view {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #000000;
+      color: #ffffff;
+      z-index: 99999;
+      overflow-y: auto;
+      box-sizing: border-box;
+      padding: 60px 30px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .legal-view.active {
+      display: flex;
+    }
+
+    .legal-content {
+      max-width: 800px;
+      text-align: center;
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      white-space: pre-line;
+      color: #eeeeee;
+    }
+
+    .legal-back-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background-color: transparent;
+      border: 1px solid #555555;
+      color: #aaaaaa;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-family: inherit;
+    }
+
+    .legal-back-btn:hover {
+      border-color: #ffffff;
+      color: #ffffff;
+    }
   </style>
 </head>
 <body>
@@ -573,6 +652,13 @@
         </div>
       </div>
       <div id="character-list" class="dashboard-grid"></div>
+
+      <!-- DASHBOARD FOOTER -->
+      <div class="dashboard-footer">
+        <a href="#" onclick="showLegalView('dp-legal-view'); return false;" title="Dark Pack">
+          <img src="data:image/webp;base64,UklGRqYDAABXRUJQVlA4WAoAAAAgAAAAaAIAaAIAASldASpnAmoAPm00lkikIqKhI3A44IANiWlu4D/Aev1z/f/qf7j4f34A83/2L/Uesf/mX836A3pC6ADpA+YD2A+1z1L/5x/s/k39s/+3yAf8z/y/YD/yv//9gf+d4S/4p/k/mN9aP1L/y/v99gf936wP9p/3P3u923/6/9P/i/lh+wX/6/9H1tf3v2Av2e9QD/6/2S/4/u8ftn/6Pc2/cf/+4p3/p/3f7re6f//+3v+S/+P3/P8P//+S7+xf/x7p383/pP//9mP7g///2+fuh//f3I/m2///o3/d/8D3i/3v90f7n8p/7q///vL/vn///9H4Kf2v9wv8B/9v91/gP/4f2y/yH/z9zX9yP259wf3E////r9E//O+w/++/4PsP/zX/q///4f/69/8f2K/+P26fvh//fvt/sL////v5E/4P//+bH+7/8/+r9+v9l///4Xv4R/sf/J/t/9Z62v+X4f/wf/V/wv9/7AX8E/ln97/v/20/0v5P/23+29lH+J/6f8x7BP1L+hX3b/3P9x7AvU1/S/9T+1/y/+838T4Bvw3++/8X/B/fX49/0v3S/2HyM+3/7n/Sfgd8gX8m/nf+M/un5e/1v/h/yX329sP8f/tf3B9s/2Ff49/i///4G/4//df+j1pfsz8C/mX+L//fud/xH/////+Y/4r4mvhv3p/w//X/lvC/9G/xP/S3fS5/Hq7+wK7/Hq7+wK7/Hq7+wK7/Hq7+wK7/Hq7+wK7/Hq7+wK7/Hq7+wK7/Hq7+wK7/Hq7+wK7/Hq7+wK7/Hq7+wK7/Hq7+wK7/Hq7+wK7/Hq7+wITh1d/YFd/j1d/YFd/j1d/YFd/Ym3i8i5q1p4/mC/o3YyA3P+EaBf0bsZAbn/CNAv6N2MgNz/hGgX9G7GQG5/wjQL+jd/vj8kSbhLd3u4zO3w8qE5xP5S3mC/o3YyA3P+EaBf0bsZAbn/CNAv6N2MfZwITh1d/YFd/j1d/YFd/j1d/YFV0sRerA824RsnQls4sA/2m8pA94sD3iwD/abykD3iwD/abykD3iwP9XAnOJ/KW8wX9G7GQG5/wjQL+jS2bJ/2p5yD5eS/1e8A1I8qE5xP5S3mC/o3YyA3P+EaA3/1K0mYpXnOJ/KW8wX9G7GQG5/wjQF6J22sA/2m8pA94sD/abykD3iwD/abykD2qR5UJzifylvMF/Ru3g3S75j+e8A1I8qE5xP5S3mC/o3YyA1R3R139gV3+PV39gV3+PV39gOqMgtj3gGpHlQnOJ/KW8wX9G543LqgA2P+EaBf0bsZAbn/CNAa1tV9xS7sA1I8qE5xP5S3mC/o3Yx06I8sA/2m8pA94sD/abuk8k3YI2fE6f8I0C/o3YyA3P+EZp5f1b13+PV39gV3+PV39gV39gOaXyqMgtj3gGpHlQgA/5/U/mIip2v330p6jE/o4L8y44aO+P9x3013IAnQcEchqYvUeA4J3xIikY+f9A/87413IAnQcEchqYvUeA4J3xIikY+f9A/873r4sA+fM6/o3YxLThxO6242+Yv8y63x3x2v3/z/fD3O/8d9Nd3L3R13a/MvdH3x/vD3O/8d9Nd3L3R13a/MvdH3x/vD26pX7j332i8pA8l58u4M4X7kEbh2f0x8xP5f63x/q3d24e3p731N33NqvdH3q9/fU3fc2q90fer399Td9zar0k7O3/d/4S6s/5Q4o94sD1QfB/Dq3x+a124c13a3t6fH/d24O73u2v1N333+7twd3vdtfqbvvv93bg7ve7a/U3fS/C0IOf0eE/U3EaBfza4/93fG+p/q/v21vx1f3x+d8d8fX474/d3fHfH1+O+P3d3x3x9fjvj93d8b8jAenS4j30A/2m8pL9sP++u+6f/H/XfH++8f76e33u/9/tS73a/H3+73a/H3+73a/H3+73a/H39424vJpL0e44E5xP5m4bS+u+vH//fbfbfvD/9f38f/u/+/f/bfbfvD/9f38f/u/+/f/bfbfvA9j4/1b13+PV3+D3wP5+3/9f/p/0ff424/p/f+/v3X//1++3424/p/f+/v3X//1++3424/p+yY925U/4RnH/o4Xk/f+P7+vX/f/X/fS/1fbfS++v++m+/fb/v34v/8+vev3343qDbf6wzCvhS3mBfI/X/T+//X/v1//v/f3f/3fv1//43f//jdfS+/S+3f4/v69f75f7f/93x4eP5e/5i/x6u38T/4/1//3f//X/+3//u/f//v/f/+3/fS3vf/2/3//f8fe//1+/v3//ffS++/S1e9/f8M483/1/8sI9/8/a/vSvvv3S9/S23v/ffq//+/s3x2p/S+3/8/v631e+1//vf/b3d2P3A74/eXqMAn3j/q3uAOn+/v+0/+/++//+1P+//v///v63//3e7s/fXv//u73df/3//+3u7A/X//51/3mI0A865+mP9/Xv/+/v/6e/pS235fe//8/3sO39f/8e+/+7sf/0/9N//8/+/d2f/x/6/3x/rIEnE/m33mI90D5v/84/X////P/9e3/+9/e//e3v7aX3u1/3v09X/v3f/+vvvf++vvf331//e/04+331w/U3/631/p/s0Nvv93m/b/f//+/3S/v9N2/70v/2+u79/+m++/v/21/+/623//qS+v2+5d/v+08vL3f32v6/1/+/e2/2/r//X90//f1v///9/2/X///u//9f/++///3v3+4pX3950mBfL+58p3d//5vv//u/0ve/v/f3v3/+m1/+7f8m/f++/e76f/e3//W/S///S/b1f9/8S/7S/q7f+0//1//e//3e/S++/a++/0f///b0u/2+/e71++3/x//399+x9+v//3+3/4f//y/f+6d/u//6/m1/s2/uL/+9vv4//9/3S///vf1/3v7X//vf2b///vvp////ffX////7//3+9e/79e///+/0v/X/a1/m/++/+//f0p/+v/337+v///fe+/4/3///93+3/2f///v+m//++/vf+/u7A/4v3f/+30s3d34f0x/2//+m9/6//0vv/+/1+/S+vv/+m//6a3//91f//+vv/s///v63//fS3f23/0+p/b/q/6f/30sfe+vv/+mvfe/3ve/ve/ffS0tb0//+mv/79/S+///9e7///X/9v83f3//32e2/f//5vv///3v3v/+11/8/S1////+r///b4f/999/8//0f3+9e+///2d2/S++/f0sbX//8p/e2+vS337+/vv++v7/3v/22/33/vf/vS/99///r////fXvfe0/e7s39Xv//d733+v/S36//8//f/2/S/99+f//734///e/f+/7+v3+37S//3v3X//1+/ff44/+vv23pS++/2+/90m1vb833vf//b4+v/f5///X13////m+m3////f9f3/e/t/+2v3S++/v3vf83fvvvff/bS+09f//ve//S++lP3/f+0/7//S+///bS13/v6fv99vef///5vv/+t9d0v93//+9v++m2+17+/3/++e/pfe33////v08X0f/2///7f139+f/4///e33S0tvf/ff90vS0pf////f+2++/b+//8f117X/83S/v2++/e/+1N322++/t/f////vv//3S/3e++/1/2///+9L/+7+//8f+//p/+ve2v30/e/ff0vfe/0/e//22+lvS2l//++///v//993/77ff//S1vd3/v32/ff++s/X1++/a/9////2vvv3/+/e/e7pvdP////9//9/+/e34f////S1v9Nvv9+/v/+20vfe193+3vS////vS3vf++u3///f7///31/82//99/9//33S2/a2vfe/vv992//+21vfX//b/2+tv/17f//ve/6//vv+///5////3e3+9///v//v9/19///5f2m01////5fX///e3vv+//f9///9v022v0/2/fvv//83f//+nv6a3vfe//7pL0tr3/6///fvv1////7/+v///ffs3f/f79Nvv/b/9199/1////m///S/+1N/9////9///S//v/++m++/3f////f97/f+2/e++/X35vv//9L/+/ve//+ve09+v///m7+0vv++/v9++/p////2vvp/++vvff+m++/S+3//+//bS1///bS/v0//+/vS9/v+/ff/v9/f9//+tv5ffvf6f3933//S19////f/s/bvv/fe19+1399/11////e3//3///993f3/3ff9P///bS3/7/1/m1vev///S++/S9/+v5vfe99S+//+vvfe09f2++0/b3S0v/+lvvev/v/+u22lrb4f////+//fv+//S++/f0tbS9+/e3aXp9///++/ffbfS0pS9vvf9ff5v5f7///5ff/p/+u/+v+//6X/3f/8f3f/3ve/d/fe9+/f/+tv/m7X////a++/m+vv//ffS0vtL+//tfffe0///5fS99L///9P/9f//e39r2//99t/9f390v/+0vd//f///5f//9f/vf++sffr/vff83X5fe123////8Xf/S1+/S/X3///3ff1++v///S+3m7+//S//vfS1////S/f1//ffve++/b0///7p3+0tf20p/v/+Xb7S/S/aX/f5uv/t///p+//rS+/0vf///y+v7+//l2////7/y+f///73/6++lffp7eXf////++/9vvff/7S9pff+//222+X82///S/e2++/03///v23+//ffv+//v+1f8p3S32l/83f/33//a9//b/v+2/93/+//++m19Pfff/3fS2++/sXm++/m/S++/1///pS/v///+X74///rfe3///f+/f/ffe/b2ve+329/Wvv3+//1ve13f3/+u/fvvv/1////bfe0vf/m69////72vvXvv36Wv0/+X79v99L7////19////v0f///y+293//976f//fS9Pf/m839vf8vS1vvvS3v1///vf3aX++/vf+3/a1Nvvvf//S2vr5fS/2+v9/9rfv2vvvf31//X/3133//++m39vev2vv1++/b//5vv5vS+sfe9L7+398f+//fff0f//3///X33/21fev5fl++/S1v91////S0p3bfS9/W//9e/l9v3/S0p3fev2vr3fe/83S/vfe//3vS9L5/ff//b/ve1f/3///83S0tr/9vv/m///5ffs++/f193fevv/sXfff+93e2/2/83f3f/++vr2/8v/+m29/S334///e/sffS3m6a0tfm/239vv3f////5vf3//21vf/d39/S++Xvff/+X76///Xv729//3//Xvvv0tr6X+m/6aWtfvf2+2/29/e+///5v3+/++vv++lvb//9v9//t1/+lS33/ff9/S0p5fe0v/+///+/e/+nvS2X3S///3S2///p3f8X/+b///1f+//99/e++/m/+u+//f0vbfevvvf+ve901/+m+vvv9LS1vvfe+m+m9//m3f8X+v2+vf5ffS0t8vv+v///+3+9/f+//21/+nvfe3//ff5vv3X3a///zdf/+0///2vS0vfe83y3///m/vS///vv5ffs3f/f5vvvfe0/82//99++/vffW///m82/vv////fevff/+vl8vSvvvv+tffm7/3++/0220//+15f/S1+/83fe+//1P//m/2l+/2+n//98v//++lv9L/+nv6fv5ut++/vf///fe+//+m33//f3++lv0/9r/7303////973e2/+X/S++/++/83d1+/a2++lv2++/f1ff3X/+0vv///f37b///9pL6a++/98v83d3bfS/+lv2+////e29+//vvfffWvfe1tfS+lv9vfS1vv+3S29m4f/1f8v5fT++/S3/l97X//fffe+0vf3/83X++/7S////9L320vvve300vf1vevf+//0/f5e///6///l8/vS+//ffve//S//p+//9f//a32++l7X0///vf++/ff0f5e1f13+lv5fffff13++/m++/v/l6///+//vv19/fe300v9v///99/e//fS3f23/0f/v/v83ffS23fe+X1+++//9ffv9/0tr2l+3v0trS/fe3vfS8vfe03/f3/S9vf/vbf///ff//4ff2ve37Wl/0ve///T+/vf0vv2lv2++2333fff7p3f3//y6m++/fffS2lvf83m5e03v/fff22/ve3f/S+S+++f///fe1vf0/+bf3//m7S//f/3/+bf/99vf33X//5f//a//S0v/+9ff//+S/++/tLd///e3/7/m++X4/m5e22m990lve2//f/S++/p/Xff/f9P/1fffe1///++/0tr3//5vbfbS1ve/f++/202v2vS0pbfvfS191295fS///p++0p///S/b19vv///Nvf8XX8v1f/2vv+f5vf1v33m6+3X//X003vv3193++0trf/fX////fe2v0+vl+aX17fe+++X6++l3S0/2/++/u2/t7S9vfvv3S2tf3bW+3S+/9+lLS99v0//3y///+2366///S/8vX3X/++/5v5v1vfX/3m3v/3fe3fe2++/Wvf9/bf//e++/S31fX3/2/+l//9ffS1m163++/909/f///m9tfX0m8v+2vvvS9pLS3m15e/vf/zffS/e++/ffS+79r7X+nv/X///0+f///N0tL312+/0+/37f+f+/ffS3fffffS0vfX0vf/3m+/S/p///19/02ve/ff2vev930/l/W3e0v5v+3/++/v0v3+//0v/ff032l///7v4/7////e0vf22/1ve/Xvvve2/+a0///fffff//ffv/9vfS/9/ve+a//1/++S83X//3ff5vfffm/a/+2++/++/n1///vS+/vf3S2trbfm7a///1///9tPfe33S2/a1m8X//+2//v/39/33+/vS+//eX///y/ve/f+fe/v++/5ut++/pff++/zfe+nvf/8fXm+/8//W///5vb1m2+mlre1+/X83W0/7////ff2//v///S/7vvb69rfbf998ffX3///u32vvv35e0t1///1/33vfe3vXv+lv3vffS///m7b6///m+/l+0vfe3vf1/zfe//ffS21m62m/+///1/f/+0ve20tr/f744fe38X++/vf3m+//pbf16fe+n/+0v5fXm+01////3y8/16f+ff++/++m/e0vvb793m7Xm/f5u8pX+//v39L7////113//+/v/v0///e3f+//5ff//6Wl5e3m8/T4fevX++9///++3S3/5uh/S/ff7////aW9f/0200pf299rf19/+vv02mvrbfve///fe367e997a++/3/0//7v3/e/+1/3v21+m15fbWv83ffS2vvb//3m+vf/8/pS++b1/32//X8vfX/9//b2++//f1v6f9rS1t8vf////TfX/S/ff////S2/r+//m/Xv++/Xfe0vf////S23fff/W//b3y//b/321tvev+/t///3/vf///vf/5vvb/v//l9fe3vf//vf17fev0vf8X1//vfe+/332+++Xf/90vf/+v//9X/1//7ff8v3++/0trX8//p/+b/m4022v0/2202tr3ffsXff2f8ff0vffm+0/f0vfe++/X2/fe///a2lre29v+vfS//e3fe1ffS21r6323+t5v1pXf98///vfe2m/Xp++t30vf++/p32/a3311vvvff/5fX+S++/W83f5vS+3fff4fevff/e9v5vfXm//e1f5f/v/2v2l21v9/vf//3//022vf///++m6m//bbf/9/S1/+vfe17S9X++/a++/t/S1v//p/v3//6e/T9L9fe++/Wtf00vb63//332/Xv9LSv//m/ffW/fff+vv8v7ff+l////m3vf+//S/S23ffS/vS/99///W+u7X/+vrf+/X0v09v3/e/t///v3m/f//e//+vl6aW+l/a7S2tr6f5vf/+lv///Wtf5un//9/S/f8/fS+/7fev9P3e+0vf//p///bS//73/S9//S+/+0v+2lrX/S/+l//b/S2++/e++/++/447f5v1//303fff+1vfe8Xp+/+1/ff0tr3/+v83/S+/b3m61/S09r/83W++/bfm++/++/v/f395f1++/b//5vvfe+/3vfXvv1++m2l79ffm5f3fe9feX//bS3bW/X++/Wvvb++///7///a//y/sXfe0/ff+m///ve14f///2vef19+mv2vS2vvWvrfe1////N1fe8fX/Xv8X///0233W/ff92/t9L+X5fbX6f/3/fe///v4+a++/a0vvf/e30//f1v6fe+/pve9//ffS3//b4v303Wv/e/3ve3e///b1++l383+//23/+tr7S3vv2++/l8X3/3f+3/fff/vv083ff//a+v93f9P/1fffffW31/++l99ffvf/a/X0//v4f3X//X31++m2l7S0/pXv/+tr23136a8P/17aX0/3/fff5vvvf//S/ffx////S//f///++9r018vf/82vf3//11v6b++/n//+s31N3////716e///zbf+3f2++/1/r///e230tr/0v5vf7X/+nvS//19+n//993f33S2+f////++2vv8f/+vl///e9t///y/3v+/b0vf///5v318X+//W++/823m6////m6+/3//3S+/m8vS+nv/+u23//5urX9vv93f83fff//a1/7////933ff22+/S//4fffe1+/X/5vr39++/u3//5vvv/W/f/S0vt1//m7e+//aXv++/99//p3+0ve83dfS+S+++2+/X3+nv93v//++m63m//m39139P/30vfS1+++X3tN//22/33ff0f5vvv1993/7S1vv8v/e0vfS36+/82//5urfffSvvv19/5e+/0+v/19///30tr+99P9N329//aWv0+//S++/44/y904fS220v3fX3fe1+/5v5ff9N2tf/+2l6ft9120v///22/+l0++/ff+//m43f33///2vf++/6fv293d/l6/vfe+//4//5f/m/fffe0m3vf5f223fe3Xv//ffb68v9N2/r////a973fe82v83ffS+/b/f//+/a3/732v/a++/X2++95v+3/l/0/++m2m990lq/5f+21//0tr23S++v//v++/p7S++/++/+lv/+1/+3131P//d//0vf+m5f0vv//6aX//fXff9/5fe03////ff/aXv/S8vf3S3m+vf1pS0v7/92++vl930f//p333fe3m70//v++/n8vf++/e/W1//m++tr201+//9tL34////fe/s3f0/1++3/+nvff/f30t/X/1+vl+2vv++3090vf201/Xvv8v7f9f7/1vS//22l3+/9df9rfp++/Xvvvf3fffe/f///a+/feve/S+/13f+///0vbfv++/y++/p5feX0vv/feve2++/X4/m5e2++/5ur6X/2m1P3//S/++/rX3++m6a31238XX9v3//11v6b/b7/7bfS0vS99///v/0vv9f/e0339ffW///f4/5u0v1m2/n1/+11f//aX/m62m/W01+/p/fS/+vfS///9f/623///5vfe/+vrXm///e03/S+9L5e+/1//s01vffp3191++m2l79fff0/8vf3f+/feveve/5ff9///f1m+e0/f/3vv3m2v++/S3//f2/r+3/++trff/s34fS/2012m393+/vv6X//6Wvf9/637a++/m92m//Xv+//rX/3vf7aWvX/+lv///N3S0tb00tr1r/83b320vf2/rS/m///p00tr/8v+15e+vvb679//0tr2l+3v1///e+/S+/l++/m+/a7///5v/7e/++nvS+/08fe1m+0/f233f++/W23bfpfeS8vf1vf8X1//vfe+/33v/3fe3vf+tvvvpfe+/fff8vvff/zffs23y9++vf1///zbfv/+br/a8vf93///15ebWn8X2/m/fff5v0veve5e//S823///6f9/b6+//+m3b///S//S+n2//f/S++/n1v+S2vf/3+u2m++/vf+2m1++lv9L/+m++/V++vf/e++/p/v3//6e36/1/f/723fe3m70fe++/G6W95un++/23vffbS3vfbfv++/ff3/vf+/eX9/fe96fXvv///9/0vfX08v919+X5f11vXf/fe///ff4///m5e22m990lvvvf/S/ff////5vfvvfffbfW++/a/9S39vvvf5vvb++/vv/6Xf9f83X//3vf0trf636Xff5fe3ff/++/ve1rX+/v+//S8ve//a///y/m839vf/3vf/vS1/3fe/f9/ff9N/0//+/fff3/3vf//f5vh//a93vf1fe///++9S0trfS991v67ff9P83fe0/ffe//X8383a/fe1f//fe++/f3f+/a2v3ve+lS/e2++/8ff83S3e+ve/5vS+v20vfS21v//u++/2+++m2///2v2+Xfe+9vf1v3S2m///8X/f93S1////ve+m7Xvf0vfeve++/X2v/7X2m+++9fe2+Xvv4/v01++/tf/1/bf3vfS221fev///v+a++/vve0v1/f15e+l8X3/3f/1ffvf093W+n///ve015fe820vvN/vve8Xp5uhX3837fe/93fS2+3/e/b++/ffvf3fe+/6f5u0tr0/ffe037fe+mlrfpffs4f0///0v/S/Xfe/+ff/m7/zef3m/a0f///p73m+//5vfe9N7bS/fe+++3f3v0t/f/S//bvvf3f1//9099m62/y7ffe3ve//fS/T6fev/S93S2/a/+0vf/f1/m7/91//9L/++fX9tLSvffu02vW///vf//ff//9vvp/zffe//m323vf/+trS/fe11vf9LS1r76f3fve//f031201//9///92v9X///fS1vff5vf++/102/b77f9P/12++/e33719//8X3ffe++/+/1/S138XXv6Xv5vv8XX/+v9f17bfpfe+v29///bf8X4f7f4fff999//833++/Xf1vf/S++/sff0vf/+b/f+/ff2tr3+Xfe/8///fe/2/S33fXffm6++/S/++/9Nvvf9f/sffX5ff7m/+22++/9f/e9v5vS++/S0v/3f191++/v2/+2++///bf+S0t/f+/ff6X991m/e+3vv/1rfve/a//f62v3m71//vfe2/a+S/p3fe/+lre/+mlve13vf///22++9r//S220vX3f+3//9v095u/ffX7f/m91vf6aXf1/+///3ve5utN/++X0tbW+1+br6a++/++/9t13f4ff/e++/03a3//f3vf/+2++vv35f+ve2v30/S0vffs/Xvfe03/a3ff9r3/222vW9++/Wvfve5vX///y/a++/vffvXff/v/8v9/a+/0tLS+/W/zfebXy301++u+/b+//X95fbf/3vf5fe3f0t5eS+y79p/Xffs03W0/83//m/3/ff////fe19/9/3+m8X8X8/y++/b1/Xfe36Xf0v0//5f2vX/vXv39t/f/S0trS3/p8XXS8ve/t3S9X/+vf1v+/0vfW0vl///f/tL/+10/0tr1vv3e/f63m95v///X9ff1//102mlf332lffu2/+0y++/9L362vf/+t++/ffpfe/e3a/f38X20tr/f744///fX1vvbffe++/fXffS/vS/99///S2tLS02m/+vXff//e/fe032++/v2222m/ffS//19vS0ve97f/f/0vf/b//S1/S2m/N/bffd///vvfe//zffffX0vfX/+X3+lv/m8vf/+l9S/ve23f3bf1vf3++/f++/p3S11vf2/9X//7/ff8vf3m9992vv/339f8ff3/l4f1v/322++/t/f5vvv1/p0trfev3//8XX8fe/ffX/bf5e5e33vf4ff+/pfe39f/vv/++br6fe++/f6/1/f/aWv38v21ffsXm3fevfe+++0vfe/1rf3+Xvff35ee2023/fe++/231++/a///3/f9P/1ff5f/a7X0trff//5f/m/fffe0m3feX75fe0vfS8//e/vvvf+/032m5fe3ff/ve///Xf76//02/m+0/m4/S/m++/v9Xf99vf/r3++/20vfe193/fe/7f//fe3e/b3//9a2/5vvvv2vf2X5f4///Xfe/2/S33fS0tb3//5vfe1/m+/W/+a/v/+nv3++a3+///vv/8vvff5v2vv22++/l030m3//5un0vf2/rS/+t///e/X/+ff//f+22m/fev223S1m/S335vf/bfe1vff09rS3fe++/W///S0/3S+/f+X/S22m2mlv//S+/83W+vf3//21///3//f5v30/Xf+/++/W/a/5/m/e/ffe/S/9vf/3vf/vS1/3fe/f9/S/f8X33fev3f/e+/5vv00vfS191295fS0tffX//e/fevS3ve++/feXy++/vf/2vffe+vl9LSfX1vf2121vS2m9+fe1///9vf7a/f+/++/ff/e2/3v2v2++/S/vN8X3vf83X++/y9bbf/+n4ffff5v//+35vbfbfS1021//vf83X//3ff5vfffm/a/+2++/++/n3fe2++/t///X8/S/6+2vf+//1f//02++///S++/1ff/S1232v9/u/3f/1ff9vv1v6X2/X++/S0trbfS+/++m9///7Xp++/pbf//p34ff43301vf5vv/a2m35vf/+vl7S99pbe1ff1r3m3+//trbf3/+v5vfS2++/sfe++/5vff+/9rf5u3e0/e+m1ffpbf+/+m//++/8f3f33m/S//e3m+/S/0trvf1/+v83/S+/b3f3ve9vf9X/+0ve7+ve82v8XXv4ffW3bfm6++/3fve1//+m43++/e1ve39aX/S++/a1vf2+++/m/ffe++/1/+tr3ve+a/fe8X+/9vf83+a0///ffm9832++313fe3a+/ff9vf++Xv00v3///S+/Xf//3f7S1ve/ff/2vv0tr///z/33S+vl8vf2/e3bfm8X3ve+X3432/303fffve+++/fS9f5fe8//0/3fffS32+3v0vX////e+++f1ve/6a0tbbfm7S1rf21ff2+++X/S0vb/+mlr3X3/2/v//f0/+u3bfm++/y91/170/e/+vlfe02+fe9fe8X+/+sve/a+++X++/ve+//vf0/S0v/+vv/+vl4f1/+vl/+3f6aX9v21rfX8/d+//n+lv93ff/fe1/S2m/fe/+v33S2/v3f/+v5vf13m/zfe93a/43X+S/+Xp++/s++/S/fevfe++/35vfXvv2222m/ffm5vvp8vf9vv///S++/ffbfS00vvv6fv/m5fa+/e0v11fX5f9/S/8X32vv/m7fe0vfX//vX/m+9Ntfm+XXfffy1ffvS++/a+++vfS92/3m9///933f/S+v/4/ffff0tr2vv++128vf//N//bf9vv/vf/3/a0f/m/ffv2++/vv02/m+vl6S1ve22++/9f/S2vf3fe3///vf/pfe2/u4+/++/m/2l9/fe1ff/+3S3fS0tr22++/ff+//pS2//S//7X//a3Xfe8Xffe8238/X5ffl8/3S1vf5vfXm02++/v3/vS0vfe++/X2/S0/n22++///W+m7m7+/l++/a3f36a3+fe20mveveS0vb/+bfve1v32++/3m60ve+++/fe2+/a/3bf4f3//921ff1vff3ffS/v///b43/N3/+v//b0veffy+/ff0fe/S++/9vf7ff++/f0trS//0tr/u3f03f3v0ve16S1++/W/+t/S3S8ve/t3S9X/+vf3a0v5v31//f39pLS+v/+f///a++/S3vf3/2/v/e++/+/d3/S0tb++7aXfffe9vvff/m3W++/0/3133ffve/N0m/N+n/93ffr7/12m8vf5v//S9veve219//++/feve++/e/z83x6e2/+3S/l5fe38vS++/a/9S0t/0v/+v+b/N6/e5vh//z83bS+brbfS++/m9a3ffy94f8fff20vf3fffe2+ml0v++/b++/S/+brbffd7a2//9tf/N283e+/1vf0v/p5unS13S+/S+1f1/f15eeXfX5e6Xv0vffe/+s//++vv03ffXf/f7aXf3/+v/79/f1S0te3fe1vS91/2vbf1f1220//S220v/S/1vf0vf36222ml3a///b/bf++/N97///+1///++14ff/33///2vf++/++/b33S1vf//zde900t/0++/9fe2vevS0tb1vf+//3v8X3vf8f//++nv///S0v1vS/aWvevef2/+n7b1//f0//vvv1+f/f75e7a///">
+        </a>
+      </div>
     </div>
 
     <!-- SHEET EDITOR VIEW -->
@@ -1278,6 +1364,57 @@
         </div>
 
       </div>
+    </div>
+  </div>
+
+  <!-- STORYTELLERS VAULT LEGAL VIEW -->
+  <div id="sv-legal-view" class="legal-view">
+    <button class="legal-back-btn" onclick="hideLegalViews()">&larr; Back</button>
+    <div class="legal-content">
+World of Darkness, Vampire: The Masquerade, Vampire: The Dark Ages, Victorian Age: Vampire, Werewolf: The Apocalypse, Werewolf: The Wild West, Mage: The Ascension, Mage: The Sorcerers Crusade, Wraith: The Oblivion, Wraith: The Great War, Changeling: The Dreaming, Hunter: The Reckoning, Demon: The Fallen, Mummy: The Resurrection, Orpheus, Exalted, Chronicles of Darkness, Vampire:The Requiem, Werewolf: The Forsaken, Mage: The Awakening, Changeling: The Lost, Hunter: The Vigil, Giest: The Sin Eaters, Demon: The Descent, Mummy: The Curse, Beast: The Primordial, Promethean: The Created, World of Darkness, Storyteller System™, Storytelling System™, and Storytellers Vault™ and their respective logos, icons and symbols are trademarks or registered trademarks of Paradox Interactive AB. All rights reserved.
+
+This work contains material that is copyright of Paradox Interactive AB. Such material is used with permission under the Community Content Agreement for the Storytellers Vault.
+
+©2024 Paradox Interactive AB, Magnus Ladulåsgatan 4 SE-118 66 Stockholm Västgötagatan 5, SE-118 27 Stockholm, Sweden.
+    </div>
+  </div>
+
+  <!-- DARK PACK LEGAL VIEW -->
+  <div id="dp-legal-view" class="legal-view">
+    <button class="legal-back-btn" onclick="hideLegalViews()">&larr; Back</button>
+    <div class="legal-content">
+Finally, include a notice which informs users that Your Material is not official World of Darkness material. (Editor's Note: This web application in not official World of Darkness material.)
+
+You may not remove or alter any copyright or trademark notices of World of Darkness.
+
+Your use of World of Darkness IP is strictly for non-commercial purposes only. For example, you may not offer goods or services for sale in connection with your use of the World of Darkness IP.
+
+You may not sell or charge any fees in connection with Your Material, with these exceptions:
+
+You may accept donations for your time and materials through Patreon or similar services, or through sponsorships.
+
+You may accept subscription fees and revenues allowable through streaming platforms such as Twitch, YouTube, Mixer, etc.
+
+You may sell your Material through the Storytellers Vault, our official program that allows you to create and sell certain types of content through our authorized web portal.
+
+You warrant and represent that Your Material at all times shall comply with all applicable laws, and that it does not infringe any third party’s intellectual property rights or any other right.
+
+Use of materials: what is reasonable?
+Use of works embodying World of Darkness IP is strictly limited to what is deemed reasonable extent. Paradox reserves the right to decide, in its sole and absolute discretion, what constitutes “reasonable extent” in each case. With the exception for artwork, the copying, distributing, or making publicly available of any World of Darkness work (such as book) in full is never deemed reasonable for the purpose of this Agreement.
+
+You may provide links to materials provided by Paradox Interactive for free, such as quickstart guides, character sheets, or other promotional products.
+
+Term and termination
+This Agreement is effective until terminated.
+
+You may terminate this Agreement at any time by removing the Dark Pack logo and ceasing to use the World of Darkness IP on Your Material.
+
+Paradox Interactive may terminate this Agreement at any time for any reason. You must then immediately cease to use all World of Darkness IP on Your Material.
+
+Limitation of liability
+To the maximum extent permitted by applicable law, in no event shall Paradox Interactive, its affiliates or licensees, be liable for any special, incidental, indirect, or consequential damages whatsoever (including, without limitation, damages for loss of business profits, business interruption, loss of business information, or any other pecuniary loss) arising out of your use of or inability to use the World of Darkness IP.​
+
+Nothing in this agreement limits our liability to you in the event of death or personal injury resulting from gross negligence, fraud, or knowing misrepresentation on our part.
     </div>
   </div>
 
@@ -2515,7 +2652,7 @@
       },
       "Survivor": {
         description: "The Survivor always manages to pull through, no matter the odds or opposition. The Survivor’s utter refusal to accept defeat often makes the difference between success and failure.",
-        willpower: "Regain a point of Willpower whenever you survive a threatening situation through sheer tenacity, or when your counsel causes someone else to persist in spite of opposition."
+        willpower: "Regain a point of Willpower whenever you survive a dangerous situation through sheer tenacity, or when your counsel causes someone else to persist in spite of opposition."
       },
       "Thrill-Seeker": {
         description: "The Thrill-Seeker lives for the rush of danger and actively pursues hazardous and possibly deadly situations. He is not actively suicidal or self-destructive; he simply seeks the stimulation of risk.",
@@ -2546,7 +2683,7 @@
         { level: 6, name: "Incarnate Darkness", desc: "The vampire becomes a writhing mass of pure shadow, gaining flight, earth-burrowing, or combat bonuses.", sys: "This power costs three blood points, but requires no roll, as the Laibon’s blood bursts from his skin and transforms him into roiling darkness." }
       ],
       "Abyss Mysticism": [
-        { level: "Sorcery", name: "Abyss Mysticism", desc: "A specialized branch of blood magic practiced by the Lasombra, drawing upon raw, unholy essence from the eternal abyss to manifest shadows, summon dark entities, and bridge the physical world with the void.", sys: "All Blood Sorcery Paths and Rituals are activated by spending 1 blood point and <strong>Roll Intelligence + Occult</strong> (Difficulty 6) unless stated otherwise in the power's description." }
+        { level: "Sorcery", name: "Abyss Mysticism", desc: "A specialized branch of blood magic practiced by the Lasombra, drawing upon raw, unholy essence from the eternal abyss to manifest shadows, summon dark entities, and bridge the physical world with the void.", sys: "All Blood Sorcery Paths are activated by spending 1 blood point and rolling Willpower against the power's level +3, and Rituals are activated by rolling <strong>Intelligence + Occult</strong> against the Ritual's level +3, unless stated otherwise in the power's description." }
       ],
       "Animalism": [
         { level: 1, name: "Whispers to the Wild", desc: "Establishes telepathic communication with an animal.", sys: "No roll is necessary to talk with an animal. However, the vampire must make eye contact to initiate Whispers to the Wild. Once she’s established the power, she does not need to maintain eye contact for the current scene." },
@@ -2597,7 +2734,7 @@
         { level: 6, name: "Shared Nightmare", desc: "Inflicts a Horrid Reality illusion on an entire crowd of targets simultaneously.", sys: "To use this power, the player must spend two Willpower points plus one blood point per target. <strong>Roll Manipulation + Subterfuge</strong> once, with a difficulty rating of the target’s <strong>Perception + Self-Control/Instinct</strong>." }
       ],
       "Clan Sorcery": [
-        { level: "Sorcery", name: "Clan Sorcery", desc: "Evocative, insular magical practices specific to individual clans and bloodlines (such as *Akhu*, *Dur-An-Ki*, or *Sadhana*).", sys: "All Blood Sorcery Paths and Rituals are activated by spending 1 blood point and <strong>Roll Intelligence + Occult</strong> (Difficulty 6) unless stated otherwise in the power's description." }
+        { level: "Sorcery", name: "Clan Sorcery", desc: "Evocative, insular magical practices specific to individual clans and bloodlines (such as *Akhu*, *Dur-An-Ki*, or *Sadhana*).", sys: "All Blood Sorcery Paths are activated by spending 1 blood point and rolling Willpower against the power's level +3, and Rituals are activated by rolling <strong>Intelligence + Occult</strong> against the Ritual's level +3, unless stated otherwise in the power's description." }
       ],
       "Daimonion": [
         { level: 1, name: "Sense the Sin", desc: "Discovers the target's underlying moral flaws and weaknesses.", sys: "<strong>Roll Perception + Empathy</strong> against living or undead beings; the difficulty is equal to the subject's <strong>Self-Control + 4</strong> or <strong>Instinct + 4</strong>." },
@@ -2609,7 +2746,7 @@
         { level: 6, name: "Lure Diabolik", desc: "Speaks the dark truths of the void to strip Road dots from a target, lowering their defenses against the Baali.", sys: "The Baali must speak the dark truths of the void to their victim in the language of Hell. Spend a point of Willpower and <strong>Roll Manipulation + Empathy</strong> at a difficulty equal to the victim's current Willpower." }
       ],
       "Dark Thaumaturgy": [
-        { level: "Sorcery", name: "Dark Thaumaturgy", desc: "A corrupted, highly illicit discipline of blood sorcery fueled by pacts with demons, spirits, and the dark entities of the Outer Dark, offering terrifying destructive power at the cost of the user's soul.", sys: "All Blood Sorcery Paths and Rituals are activated by spending 1 blood point and <strong>Roll Intelligence + Occult</strong> (Difficulty 6) unless stated otherwise in the power's description." }
+        { level: "Sorcery", name: "Dark Thaumaturgy", desc: "A corrupted, highly illicit discipline of blood sorcery fueled by pacts with demons, spirits, and the dark entities of the Outer Dark, offering terrifying destructive power at the cost of the user's soul.", sys: "All Blood Sorcery Paths are activated by spending 1 blood point and rolling Willpower against the power's level +3, and Rituals are activated by rolling <strong>Intelligence + Occult</strong> against the Ritual's level +3, unless stated otherwise in the power's description." }
       ],
       "Dementation": [
         { level: 1, name: "Passion", desc: "Stirs, inflames, or blunts a victim's current emotions.", sys: "<strong>Roll Charisma + Empathy</strong> vs target's <strong>Humanity</strong> or <strong>Path</strong> (as difficulty)." },
@@ -2648,7 +2785,7 @@
         { level: 6, name: "The Knight's Bane", desc: "Hardens skin like wrought iron, shattering incoming weapons.", sys: "Spend 2 blood points. If your soak roll reduces damage to zero, the attacking weapon is destroyed." }
       ],
       "Koldunic Sorcery": [
-        { level: "Sorcery", name: "Koldunic Sorcery", desc: "The ancient Tzimisce art of landscape sorcery, drawing upon direct communion with the elements, rivers, and chthonic spirits of the Carpathian territory.", sys: "All Blood Sorcery Paths and Rituals are activated by spending 1 blood point and <strong>Roll Intelligence + Occult</strong> (Difficulty 6) unless stated otherwise in the power's description." }
+        { level: "Sorcery", name: "Koldunic Sorcery", desc: "The ancient Tzimisce art of landscape sorcery, drawing upon direct communion with the elements, rivers, and chthonic spirits of the Carpathian territory.", sys: "To cast Koldunic Sorcery, the Koldun must offer 1 blood point to the land and roll <strong>Attribute + Occult</strong> against the power's level +4 (or +2 if the power is the Koldun's primary Kraina)." }
       ],
       "Mytherceria": [
         { level: 1, name: "Folderol", desc: "Detects deliberate lies spoken by others.", sys: "No roll or blood cost required; takes 1 turn to activate." },
@@ -2659,7 +2796,7 @@
         { level: 6, name: "Steal the Mind", desc: "Steals and reads a target's thoughts, memories, and skills.", sys: "<strong>Roll Perception + Subterfuge</strong> vs target's current Willpower points (as difficulty)." }
       ],
       "Necromancy": [
-        { level: "Sorcery", name: "Necromancy", desc: "The extensive study and manipulation of the forces of death, the Shroud, and the restless dead, enabling physical entry to the Underworld or the binding of souls.", sys: "All Blood Sorcery Paths and Rituals are activated by spending 1 blood point and <strong>Roll Intelligence + Occult</strong> (Difficulty 6) unless stated otherwise in the power's description." }
+        { level: "Sorcery", name: "Necromancy", desc: "The extensive study and manipulation of the forces of death, the Shroud, and the restless dead, enabling physical entry to the Underworld or the binding of souls.", sys: "All Blood Sorcery Paths are activated by spending 1 blood point and rolling Willpower against the power's level +3, and Rituals are activated by rolling <strong>Intelligence + Occult</strong> against the Ritual's level +3, unless stated otherwise in the power's description." }
       ],
       "Obfuscate": [
         { level: 1, name: "Silence of Death", desc: "Generates a zone of complete, unyielding silence in a 7-meter radius.", sys: "Passive, no roll required. Spending 2 blood points lets the silence linger in a room." },
@@ -2759,7 +2896,7 @@
         { level: 6, name: "Kiss of Lachesis", desc: "Ages or de-ages targets by decades or centuries with a touch.", sys: "Touch target. Spend 2 blood points and <strong>Roll Manipulation + Occult</strong> vs 4 + target's Stamina." }
       ],
       "Thaumaturgy": [
-        { level: "Sorcery", name: "Thaumaturgy", desc: "The highly structured, Hermetic discipline of blood magic developed by the Tremere, utilizing predictable Paths and meticulously researched Rituals.", sys: "All Blood Sorcery Paths and Rituals are activated by spending 1 blood point and <strong>Roll Intelligence + Occult</strong> (Difficulty 6) unless stated otherwise in the power's description." }
+        { level: "Sorcery", name: "Thaumaturgy", desc: "The highly structured, Hermetic discipline of blood magic developed by the Tremere, utilizing predictable Paths and meticulously researched Rituals.", sys: "All Blood Sorcery Paths are activated by spending 1 blood point and rolling Willpower against the power's level +3, and Rituals are activated by rolling <strong>Intelligence + Occult</strong> against the Ritual's level +3, unless stated otherwise in the power's description." }
       ],
       "Valeren - Healer": [
         { level: 1, name: "Sense Vitality", desc: "Instantly reads a target's health markers.", sys: "The player makes a <strong>Roll Perception + Empathy</strong> or <strong>Roll Medicine</strong> (difficulty 7)." },
@@ -4327,6 +4464,16 @@
       if (activeBtn) activeBtn.classList.add('active');
     }
 
+    /* --- LEGAL MODAL SWITCHING --- */
+
+    function showLegalView(id) {
+      document.getElementById(id).classList.add('active');
+    }
+
+    function hideLegalViews() {
+      document.querySelectorAll('.legal-view').forEach(el => el.classList.remove('active'));
+    }
+
     /* --- CORE SYNC ENGINE --- */
 
     let activeIsNpc = false;
@@ -5213,8 +5360,4 @@
 </html>
 
 
-
-
-
-
-      
+        
