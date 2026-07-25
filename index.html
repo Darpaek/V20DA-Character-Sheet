@@ -187,6 +187,26 @@
       text-shadow: 0 0 3px #ffffff;
     }
 
+    /* Path Filter Button Styling */
+    .path-filter-btn {
+      background-color: #3e3530;
+      border: 1px solid var(--border-color);
+      color: #e5dec9;
+      font-size: 0.7rem;
+      padding: 4px 8px;
+    }
+
+    .path-filter-btn:hover {
+      background-color: #524740;
+    }
+
+    .path-filter-btn.active {
+      background-color: var(--accent-red);
+      color: #ffffff;
+      border-color: #a31212;
+      font-weight: bold;
+    }
+
     /* Sheet Container Styling */
     .sheet-container {
       background-color: var(--parchment);
@@ -496,6 +516,25 @@
       border-color: var(--accent-red);
     }
 
+    /* Custom Path Textarea Styles */
+    .custom-path-desc, .custom-path-powers {
+      width: 100%;
+      box-sizing: border-box;
+      font-family: inherit;
+      font-size: 0.85rem;
+      padding: 6px;
+      background: rgba(255, 255, 255, 0.4);
+      border: 1px solid var(--border-color);
+      resize: vertical;
+      margin-bottom: 6px;
+      color: var(--text-dark);
+    }
+
+    .custom-path-desc:focus, .custom-path-powers:focus {
+      outline: none;
+      border-color: var(--accent-red);
+    }
+
     /* Combat Table */
     .combat-table {
       width: 100%;
@@ -534,6 +573,7 @@
     /* Dropdown customization for perfect readability */
     .discipline-select-container select option,
     .background-select-container select option,
+    .path-select-container select option,
     .generation-select-container select option,
     .clan-select-container select option,
     .nature-select-container select option,
@@ -1234,6 +1274,17 @@
             <!-- Populated via JS -->
           </div>
 
+          <!-- Parent Discipline Filter Buttons Left-Aligned to Paths of Sorcery Column -->
+          <div id="parent-discipline-filters" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; align-self: flex-start;">
+            <button class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Thaumaturgy')">Thaumaturgy</button>
+            <button class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Necromancy')">Necromancy</button>
+            <button class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Dark Thaumaturgy')">Dark Thaumaturgy</button>
+            <button class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Koldunic Sorcery')">Koldunic Sorcery</button>
+            <button class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Akhu')">Akhu</button>
+            <button class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Dur-An-Ki')">Dur-An-Ki</button>
+            <button class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Sadhana')">Sadhana</button>
+          </div>
+
           <div class="two-col-grid">
             <div class="column">
               <div style="background: rgba(0,0,0,0.02); border-left: 3px solid var(--accent-red); padding: 10px 12px; margin-bottom: 10px; width: 100%; box-sizing: border-box;">
@@ -1241,7 +1292,13 @@
                 <div id="paths-list" class="dynamic-list"></div>
               </div>
               <button class="btn btn-secondary btn-small" style="width: 100%; box-sizing: border-box;" onclick="addPathRow('paths-list')">+ Add Path</button>
+
+              <!-- Dynamic Path Cards Container (Confined to Column 1) -->
+              <div id="dynamic-grimoire-paths" style="margin-top: 15px; width: 100%; box-sizing: border-box;">
+                <!-- Populated via JS -->
+              </div>
             </div>
+
             <div class="column">
               <div style="background: rgba(0,0,0,0.02); border-left: 3px solid var(--accent-red); padding: 10px 12px; margin-bottom: 10px; width: 100%; box-sizing: border-box;">
                 <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; border-bottom: 1px solid rgba(140, 126, 110, 0.3); padding-bottom: 4px; margin-bottom: 10px;" onclick="toggleRitualsSection(this)">
@@ -1473,8 +1530,619 @@ Nothing in this agreement limits our liability to you in the event of death or p
     let saveTimeout = null;
     let dynamicRowId = 0;
     let isLoadingSheet = false; // Flag to prevent auto-saves while sheet DOM is initializing
+    let activeParentFilter = null; // Filter state for Paths of Sorcery
     const collapsedDisciplines = {}; // Persistent Grimoire minimizes
     const collapsedBackgrounds = {};  // Persistent Page 4 Background minimizes
+    const collapsedPaths = {};        // Persistent Path Card minimizes
+
+    // Complete Database of Blood Sorcery Paths
+    const pathsDatabase = {
+      "Creatio Ignis": {
+        parent: "Thaumaturgy",
+        source: "V20DA Core Rulebook, pp. 297–298",
+        summary: "Lesser Path. Conjures and hurls fire.",
+        baseline: "Scaling Magnitude. Spend 1 Blood, roll Willpower vs. Power Level + 3. To hit in combat, roll Perception + Alertness. Fire inflicts aggravated damage.",
+        dots: {
+          1: { name: "Candle", desc: "", sys: "Difficulty 3 to soak, 1 level aggravated damage/turn." },
+          2: { name: "Palm of Flame", desc: "", sys: "Difficulty 4 to soak, 1 level aggravated damage/turn." },
+          3: { name: "Campfire", desc: "", sys: "Difficulty 5 to soak, 2 levels aggravated damage/turn." },
+          4: { name: "Bonfire", desc: "", sys: "Difficulty 7 to soak, 2 levels aggravated damage/turn." },
+          5: { name: "Inferno", desc: "", sys: "Difficulty 9 to soak, 3 levels aggravated damage/turn." }
+        }
+      },
+      "Die Heriroschaft des Wyrm": {
+        parent: "Dark Thaumaturgy",
+        source: "V20 DA Tome of Secrets, pp. 109–111",
+        summary: "An infernal path created by Hessian Malkavians to erode faith, attach malicious spiritual Banes to souls, drive targets mad, corrupt bodies, and host powerful demonic Maeljin.",
+        baseline: "Uses standard Thaumaturgy activation (Willpower vs Power Level + 3), but carries an unstable Price: botched rolls or successful target counter-rolls (Wits + Occult) cause the dark curses to rebound onto the infernalist. Target resistance roll is Willpower (diff 6 + Dark Thaumaturgy rating).",
+        dots: {
+          1: { name: "Malfean Infection", desc: "Suppresses and erodes a holy individual's True Faith powers without their awareness.", sys: "Paint eye on palm in blood. Successes dictate duration (from 1 night up to permanent) that the target loses all True Faith benefits." },
+          2: { name: "Bane to the Soul", desc: "Binds a malicious spiritual Bane to a target's soul, compelling them to act on their worst impulses.", sys: "Drip blood on target's item. Increases difficulty of all target Virtue rolls by +2 for a duration based on successes (up to permanent)." },
+          3: { name: "Dissonant Miserere", desc: "Fills the victim's mind with an agonizing, endless mental cacophony that drains Willpower and drives them to seek out madness demons.", sys: "Requires target's skin/hair. Increases target Willpower and concentration difficulties (+1 per success) and drains 1 temporary Willpower per night until blessed or bargained away." },
+          4: { name: "Feed the Wyrm", desc: "Corrupts a target's body through blood consumption, inflicting severe physical pain and permanent disfigurement unless they agree to serve the Wyrm.", sys: "Drink target's blood. Inflicts 1 aggravated wound per success and permanently reduces Appearance rating by 2 dots (restorable only through demonic sacrifice)." },
+          5: { name: "House the Maeljin", desc: "Invites an extra-dimensional demigod of sin (Maeljin) to possess the infernalist's body, granting massive stat and Discipline boosts at the risk of complete soul destruction.", sys: "Requires murdering a close companion or diablerizing a vampire. Manifests a Maeljin for a duration based on successes, granting +6 Attribute points, +6 Skill points, and +6 Discipline points." }
+        }
+      },
+      "Genius Loci": {
+        parent: "Koldunic Sorcery",
+        source: "V20DA Core Rulebook, pp. 278–279",
+        summary: "(Cannot be taken as a Primary Kraina). Extends the koldun’s awareness outward through the land, allowing them to perceive everything and cast Koldunic powers remotely.",
+        baseline: "Scaling Range / Utility. Spend 1 Willpower + 1 Blood. Roll Charisma + Occult vs. Power Level + 4. Lasts 1 scene. Pierces Obfuscate.",
+        dots: {
+          1: { name: "50-foot / 15-meter radius awareness", desc: "", sys: "" },
+          2: { name: "100-yard / meter radius awareness", desc: "", sys: "" },
+          3: { name: "Quarter-mile / half-kilometer radius awareness", desc: "", sys: "" },
+          4: { name: "One-mile / 1.5-kilometer radius awareness", desc: "", sys: "" },
+          5: { name: "Five-mile / 8-kilometer radius awareness", desc: "", sys: "" }
+        }
+      },
+      "Iter Pernix": {
+        parent: "Thaumaturgy",
+        source: "V20DA Core Rulebook, p. 297",
+        summary: "Lesser Path. Enhances long-distance overland travel speed and endurance for mounts, travelers, or supply trains.",
+        baseline: "Scaling Capacity. Spend 1 Blood, roll Willpower vs. Power Level + 3. Each success allows targets to move along roads at 30 mph / 45 km/h for 1 hour without fatigue.",
+        dots: {
+          1: { name: "One being (mount or walking human)", desc: "", sys: "" },
+          2: { name: "Up to six mounts or one laden wagon", desc: "", sys: "" },
+          3: { name: "Up to twelve mounts or four supply wagons", desc: "", sys: "" },
+          4: { name: "Up to 24 mounts, eight supply wagons, or one siege engine", desc: "", sys: "" },
+          5: { name: "Up to 48 mounts, sixteen supply wagons, or four siege engines", desc: "", sys: "" }
+        }
+      },
+      "Mastery of the Mortal Shell": {
+        parent: "Thaumaturgy",
+        source: "Rites of the Blood, pp. 138–140",
+        summary: "Developed during the early nights of Clan Tremere to force obedience in Gargoyles and fight Tzimisce fleshcrafters, this path grants physical command over the internal bodily functions, muscles, and organs of fleshy targets.",
+        baseline: "Spend 1 Blood, roll Willpower vs. Power Level + 3. Touch contact required for dots 1–3 (Dexterity + Brawl to touch). Line of sight for dots 4–5. Effects last 1 turn per success. Only one power from this path may affect a target at a time (newer uses override older ones).",
+        dots: {
+          1: { name: "Vertigo", desc: "Induces minor disorientation and dizziness in a touched target.", sys: "Touch contact. Increases the difficulty of all target physical actions by +1 for turns equal to successes." },
+          2: { name: "Contortion", desc: "Causes a target's muscle group or limb to contract involuntarily into twitching spasms.", sys: "Touch contact. Renders one limb or extremity completely useless for turns equal to successes (+1 to +3 diff to physical actions; facial spasms add +2 diff to Social rolls)." },
+          3: { name: "Seizure", desc: "Forces the victim's body into violent, agonizing convulsions.", sys: "Touch contact. Target is wracked with pain (+2 diff to all physical actions) and suffers 1 level of bashing damage per turn for turns equal to successes." },
+          4: { name: "Body Failure", desc: "Causes complete, sudden organ and biological system failure in a target in line of sight.", sys: "Line of sight. Inflicts 1 level of unsoakable lethal damage per turn and applies a +2 difficulty penalty to all actions. Target can resist with a Stamina + Fortitude roll vs. caster's Willpower; each success reduces the duration by 1 turn." },
+          5: { name: "Marionette", desc: "Seizes physical control of a target's body, compelling them to act as a puppet.", sys: "Line of sight. Caster commands the victim's physical movements using the victim's dice pools at +2 difficulty (+2 diff to caster's own actions). Victim resists with Stamina + Fortitude vs. caster's Willpower (successes reduce duration). Victim can spend 1 Willpower to take a mental/social action." }
+        }
+      },
+      "Path of Pestilence": {
+        parent: "Dark Thaumaturgy",
+        source: "Sins of the Blood, pp. 94–96",
+        summary: "Born of nihilism and decay, this path allows the infernalist to inflict wasting diseases, plagues, cancers, and parasite control upon their victims.",
+        baseline: "Standard Dark Thaumaturgy activation (Willpower vs. Power Level + 3, costs 1 Blood). Includes the optional Price: The Rot (gains the Infectious Bite Flaw at level 1, and the Disease Carrier Flaw at level 3+ for 0 points).",
+        dots: {
+          1: { name: "Illness", desc: "Inflicts acute disease symptoms (fever, chills, open sores, vomiting) through a simple touch.", sys: "Touch target, spend 1 Blood, roll Willpower vs. target Stamina + Survival (diff Path Rating + 3). Each success reduces one Physical Attribute or Appearance by 1 (recovers 1 point every 4 hours). Vampires can spend Blood to nullify penalties point-for-point." },
+          2: { name: "Infection", desc: "Causes an existing wound on a target to fester into deep gangrene or rot.", sys: "Target must have suffered a recent wound. Spend 1 Blood, roll Willpower. Inflicts +1 additional level of aggravated damage per existing wound (mortals cannot soak; vampires roll Fortitude)." },
+          3: { name: "Miasma", desc: "Exhales a growing cloud of toxic, diseased gas from the mouth and pores.", sys: "Spend 1 Blood, roll Willpower. Creates a gas cloud expanding 5 feet/turn for turns equal to Stamina. Breathing targets failing a Stamina roll (diff 6) suffer difficulty penalties (+1 per success) and bashing damage; vampires are blinded and suffer difficulty penalties." },
+          4: { name: "Parasitic Possession", desc: "Takes mental control of an infected host, summons vermin/insect swarms, or animates parasite-infested corpses.", sys: "Spend 1 Blood, roll Willpower. Can command an infected host's body (1 physical action per success; target spends Willpower to resist), call insect/vermin swarms, OR animate a dead parasite-riddled body for a duration based on successes (1 turn to sunrise)." },
+          5: { name: "Vector", desc: "Instantly infects a target with a virulent, lethal disease of the caster's choice.", sys: "Spend 1 Blood, roll Willpower. Target rolls Stamina (or Stamina + Fortitude for vampires) diff 8 to resist. Failure causes severe bashing damage and symptoms for a duration ranging from 1 night (1 success) up to permanent (5 successes). Vampires lose Blood Points instead of health levels. Living beings within 10 feet risk contracting the infection." }
+        }
+      },
+      "Path of Spirit Manipulation": {
+        parent: "Thaumaturgy",
+        source: "Rites of the Blood, pp. 142–145",
+        summary: "Formulated by Hermetic Tremere to coerce, perceive, command, bind, and step into the realms of Umbral spirits (Umbrood).",
+        baseline: "Activated as Thaumaturgy (Willpower vs Power Level + 3, costs 1 Blood). Contested rolls against spirits use Manipulation + Occult vs. spirit Willpower.",
+        dots: {
+          1: { name: "Hermetic Sight", desc: "Grants vision into the spirit world overlaid atop physical reality.", sys: "Perceives spirits and Umbral landscape for 1 hour (+30 minutes per extra success)." },
+          2: { name: "Astral Cant", desc: "Allows two-way speech in the natural languages of spirits.", sys: "Speaks with spirits visible via Hermetic Sight for 15 minutes (+15 minutes per extra success)." },
+          3: { name: "Voice of Command", desc: "Issues binding orders that compel a spirit to obey against its will.", sys: "Opposed Willpower roll vs. spirit (Manipulation + Occult diff). Successes dictate task complexity (1 success = simple favor; 5 successes = suicidal/lengthy task)." },
+          4: { name: "Entrap Ephemera", desc: "Binds a spirit into a physical object to craft a magical fetish.", sys: "Opposed Willpower roll vs. spirit. Creates a fetish of rating 1–5 based on net successes. User activates fetish with Willpower roll vs Rating + 3." },
+          5: { name: "Duality", desc: "Steps across the Shroud to exist physically in both the material world and the spirit realm simultaneously.", sys: "Interacts physically with spirits and Umbral objects for 15 minutes (+15 minutes per extra success). Takes +1 diff to Perception; vulnerable to attacks from both realms. Botching traps the vampire in the spirit world." }
+        }
+      },
+      "Path of the Defiler": {
+        parent: "Dark Thaumaturgy",
+        source: "Sins of the Blood, pp. 90–92",
+        summary: "Born of hatred and jealousy, this path warps and taints a victim's self-perception, moral conviction, nature, and soul.",
+        baseline: "Standard Dark Thaumaturgy activation (Willpower vs. Power Level + 3, costs 1 Blood). Includes the optional Price: Jealousy (the infernalist becomes possessively territorial over their victims; must roll Self-Control diff 7 to avoid frenzy if anyone else touches, aids, or targets their victim).",
+        dots: {
+          1: { name: "Call the Weakness", desc: "Reads an individual's emotional and moral composition through casual conversation.", sys: "Engage target in conversation, spend 1 Blood, roll Willpower. Each success allows asking 1 truthful question regarding target's emotional/moral self (Nature, Demeanor, Willpower, Virtues, blood bonds) and adds +1 die to all Social rolls against the target for 1 scene." },
+          2: { name: "Tainted", desc: "Plants self-loathing regarding a victim's most cherished trait, asset, or quality.", sys: "Requires prior use of Call the Weakness. Spend 1 Blood, roll Willpower vs. target Willpower (diff Manipulation + Subterfuge). Success forces the victim to spend 1 Willpower point every time they attempt to use or acknowledge that trait/quality. Duration ranges from 1 scene (1 success) up to 1 year (5 successes)." },
+          3: { name: "Degradation", desc: "Causes drastic personality shifts by altering a target's Nature or inflicting a derangement.", sys: "Spend 1 Blood, roll Willpower. Success permanently alters the target's Nature to a contradictory one (forcing self-debasement to regain Willpower) OR inflicts a derangement of the caster's choice. Duration ranges from 1 scene up to 1 year based on successes." },
+          4: { name: "Poisoned Soul", desc: "Strips away moral inhibitions, reducing Humanity and compelling the target to commit heinous sins.", sys: "Spend 1 Blood, roll Willpower vs. target Conscience (diff Manipulation + Empathy). Each success reduces target's Humanity/Path rating by 1 (at a rate of 1 per night) and compels them to sin. Duration ranges from 1 night up to 1 year." },
+          5: { name: "Chancrous Blossom", desc: "Transforms a target's guilt and perversion into a physical cancer that erupts as malignant sores and boils.", sys: "Must catch target engaging in a depraved act. Spend 1 Blood, roll Willpower. Deals 1 health level of aggravated damage per success; target cannot heal these wounds for nights equal to successes." }
+        }
+      },
+      "Path of the Focused Mind": {
+        parent: "Thaumaturgy",
+        source: "Rites of the Blood, pp. 139–141",
+        summary: "Enhances mental alacrity, speed of thought, and lucidity, allowing a thaumaturge to calculate complex scenarios, resist frenzy, and take extra mental actions.",
+        baseline: "Activated as Thaumaturgy (Willpower vs Power Level + 3, costs 1 Blood). Powers on this path do not require an action to invoke; a thaumaturge may use one power from this path reflexively during a single turn.",
+        dots: {
+          1: { name: "Readiness", desc: "Grants heightened lucidity and rapid tactical comprehension.", sys: "Adds 1 die per success to a special pool usable on any Wits-related rolls during the turn, OR adds +1 per die removed to initiative." },
+          2: { name: "Centering", desc: "Whispers soothing words to instill sudden, profound emotional calmness.", sys: "Target within earshot ignores all dice pool penalties (wound penalties, situational modifiers, Disciplines) and gains +2 dice to avoid or break frenzy for turns equal to successes." },
+          3: { name: "One-Tracked Mind", desc: "Fixates a subject on a single, declared course of action, preventing them from changing tactics.", sys: "Target within earshot cannot split dice pools or change declared actions. Reduces difficulty of the declared action by -1. Target must spend 1 Willpower/turn to attempt a different action. Lasts 1 scene or 1 turn per success in combat." },
+          4: { name: "Dual Thought", desc: "Divides the thaumaturge's concentration to execute two separate tasks simultaneously.", sys: "Grants 1 additional mental action (such as casting Thaumaturgy, using Auspex, or contemplating a problem) during the turn without multiple action penalties." },
+          5: { name: "Perfect Clarity", desc: "Brings a moment of total Zen insight, protecting the mind and Beast from all outside influence.", sys: "Reduces all action difficulties by -2 for 1 scene (or turns equal to successes in combat). Grants complete immunity to frenzy and Rötschreck, and increases the difficulty of mental/social control attempts against the caster by +2." }
+        }
+      },
+      "Path of the Unspoken": {
+        parent: "Dark Thaumaturgy",
+        source: "Sins of the Blood, pp. 91–94",
+        summary: "An insidious path of forbidden lore that grants access to lost secrets, omniscient voices, past shadows, and memory manipulation at the cost of the caster's own sanity and memory.",
+        baseline: "Standard Dark Thaumaturgy activation (Willpower vs. Power Level + 3, costs 1 Blood). Includes the optional Price: Memory Lapse (+1 difficulty penalty to all Knowledge rolls for every level possessed in this path; if Path rating exceeds Willpower, caster forgets personal details like name, clan, and haven).",
+        dots: {
+          1: { name: "Whispers of the Unborn", desc: "Listens to entropic childlike voices for brief omniscient answers or danger premonitions.", sys: "Spend 1 Blood, roll Willpower. Each success grants an answer to 1 question (in 3–5 cryptic words) or subtracts 1 from the difficulty of a future roll during the scene." },
+          2: { name: "Scribing the Unknown", desc: "Enters a trance to subconsciously transcribe the written contents of any existing document in the world.", sys: "Requires knowing the source's name/title. Spend 1 Blood, roll Willpower. Accuracy of transcription ranges from 20% (1 success) to 95% (5 successes)." },
+          3: { name: "Shadow Thoughts", desc: "Steps into a target's shadow to peer into their past actions and memories.", sys: "Stand in target's shadow, spend 1 Blood, roll Willpower. Allows viewing target's past thoughts/actions like a spectator. Lookback range extends from 1 night (1 success) up to 1 year (5 successes)." },
+          4: { name: "Fragments of the Forgotten", desc: "Transcribes lost, destroyed, or unwritten documents and artwork (such as original Book of Nod fragments or lost paintings).", sys: "Functions like Scribing the Unknown, but works on non-existent or lost texts. Demons \"fill in the blanks\" subjectively, rendering text 5% to 50% accurate based on successes (roll made in secret by Storyteller)." },
+          5: { name: "Forsaken", desc: "Erases a person or inanimate object from the collective subconscious memory of the world.", sys: "Spend 1 permanent Willpower + suffer 1 permanent health level loss. Anyone attempting to see, remember, or interact with the target must roll Perception + Occult (diff 5 + successes). Lasts until caster dies, ends effect, or targets a new subject." }
+        }
+      },
+      "Potestas Elementorum": {
+        parent: "Thaumaturgy",
+        source: "V20DA Core Rulebook, pp. 299–301",
+        summary: "Greater Path. Commands and animates elemental earth, air, fire, and water, culminating in elemental summoning.",
+        baseline: "Spend 1 Blood, roll Willpower vs. Power Level + 3.",
+        dots: {
+          1: { name: "Strength of the Earth", desc: "Draws power from the ground to boost physical attributes.", sys: "Assign 3 temporary points between Strength and Stamina for turns equal to successes." },
+          2: { name: "Wooden Tongues", desc: "Awakens the minor spirit of an object to learn what it witnessed.", sys: "Successes determine detail of information regarding recent events near the object." },
+          3: { name: "Animate the Unmoving", desc: "Imbues inanimate objects with motion (doors open, statues walk, chairs slide).", sys: "Spend 1 Willpower + 1 Blood. Animates 1 object for up to 1 hour within line of sight." },
+          4: { name: "Elemental Form", desc: "Transforms the thaumaturge's body into raw earth, stone, air, or water.", sys: "Lasts until sunrise. Caster is impervious to normal harm but takes 1 unsoakable bashing damage if the form is physically disrupted." },
+          5: { name: "Summon Elemental", desc: "Summons a classical elemental (sylph, gnome, salamander, or undine).", sys: "Must be near source element. Roll Willpower to summon, then roll Manipulation + Occult (diff 4 + summoning successes) to command." }
+        }
+      },
+      "Potestas Exsecrabilis": {
+        parent: "Thaumaturgy",
+        source: "V20DA Core Rulebook, pp. 300–302",
+        summary: "Greater Path. Malicious curses that warp, afflict, and ruin an opponent's physical form, social standing, or mental state.",
+        baseline: "Requires vocal declaration and a physical component (hair, blood, nail) from target. Target can resist with a Willpower roll (diff 7).",
+        dots: {
+          1: { name: "Stigma", desc: "Lays an aura of wrongness on the target, making everyone distrust them.", sys: "Spend 1 Blood. Roll Willpower. Target takes +2 penalty to all Social rolls until sunset." },
+          2: { name: "Malady", desc: "Simulates crippling illness, reducing the target's physical attributes.", sys: "Reduces target's Strength, Dexterity, and Stamina pools by 1 per success (max -3) for nights equal to caster's Willpower." },
+          3: { name: "Scapegoat", desc: "Causes everyone looking at the target to perceive them as their most hated rival or enemy.", sys: "Lasts 1 night per success. Cannot be pierced by Auspex." },
+          4: { name: "Corrupt Body", desc: "Painfully warps and atrophies the victim's body over turns, permanently reducing physical traits for the duration.", sys: "Reduces one physical Attribute or Appearance to 1, and applies -1 to all dice pools for a duration ranging from 1 night (1 success) to 1 year (5 successes)." },
+          5: { name: "Acedia", desc: "Instills crushing self-loathing; all actions negate 1 success automatically, and max successes capped at 2.", sys: "Target rolls Willpower (diff 8) to resist. Botching while caster gets 3+ successes makes the curse permanent." }
+        }
+      },
+      "Potestas Motus": {
+        parent: "Thaumaturgy",
+        source: "V20DA Core Rulebook, pp. 297–298",
+        summary: "Lesser Path. Lifts, moves, and hurls inanimate objects or creatures telekinetically.",
+        baseline: "Scaling Telekinetic Weight. Spend 1 Blood, roll Willpower vs. Power Level + 3. Each success maintains manipulation for 1 turn (5 successes = whole scene). At Dot 2+, can attack (Melee + Thaumaturgy). At Dot 3+, can levitate self/others.",
+        dots: {
+          1: { name: "1 pound / 0.5 kg limit", desc: "", sys: "" },
+          2: { name: "20 pounds / 10 kg limit", desc: "", sys: "" },
+          3: { name: "200 pounds / 100 kg limit", desc: "", sys: "" },
+          4: { name: "500 pounds / 250 kg limit", desc: "", sys: "" },
+          5: { name: "1000 pounds / 500 kg limit", desc: "", sys: "" }
+        }
+      },
+      "Potestas Tempestatum": {
+        parent: "Thaumaturgy",
+        source: "V20DA Core Rulebook, pp. 298–299",
+        summary: "Lesser Path. Influences weather, summoning wind, fog, rain, storms, and lightning strikes.",
+        baseline: "Scaling Weather Phenomena. Spend 1 Blood, roll Willpower vs. Power Level + 3. Successes determine speed of weather shift (1 = 1 day, 5 = instant). Lasts 1 scene per success. Indoors increases difficulty by +2.",
+        dots: {
+          1: { name: "Fog or light breezes; minor temperature shifts (+1 Perception diff)", desc: "", sys: "" },
+          2: { name: "Rain or snow (+2 Perception diff, ranged weapon ranges halved)", desc: "", sys: "" },
+          3: { name: "High winds (+2 ranged attack diff, Dexterity check diff 6 to stay standing)", desc: "", sys: "" },
+          4: { name: "Storm (combines rain and high winds)", desc: "", sys: "" },
+          5: { name: "Thunderstorm: Caster can roll Perception + Occult to strike a target with lightning for 10 dice of lethal damage.", desc: "", sys: "" }
+        }
+      },
+      "Potestas Vitae": {
+        parent: "Thaumaturgy",
+        source: "V20DA Core Rulebook, pp. 301–303",
+        summary: "Greater Path. Direct control, analysis, and manipulation of blood and vampiric vitae.",
+        baseline: "Spend 1 Blood, roll Willpower vs. Power Level + 3.",
+        dots: {
+          1: { name: "A Taste for Blood", desc: "Divines the Generation, blood pool level, freshness, and purity of a tasted drop of blood.", sys: "Taste 1 drop, spend 1 Blood. Successes give detailed information on blood source (moves caster 1 step closer to blood bond with source)." },
+          2: { name: "Blood Awakening (\"Blood Rage\")", desc: "Forces a touched target to spend blood on healing or physical boosts, triggering potential hunger frenzy.", sys: "Touch target, spend 1 Blood. Each success forces target to spend 1 Blood and increases their frenzy resistance difficulty by 1 per success." },
+          3: { name: "Inner Vessel", desc: "Concentrates vitae internally to temporarily lower Generation.", sys: "Spend 1 Blood. Divide successes between lowering effective Generation by 1/success or extending duration (1 hour/success)." },
+          4: { name: "Theft of Vitae", desc: "Siphons blood through the air from a target up to 50 feet away into the caster's own body.", sys: "Spend 1 Blood. Drains 1 blood point per success from target. Mortals take 1 lethal damage per blood point stolen." },
+          5: { name: "Cauldron of Blood", desc: "Boils and burns a target's blood from within through touch.", sys: "Touch target, spend 1 Blood. Kills a mortal with 1 success. Against vampires, each success inflicts 1 aggravated wound and destroys 1 blood point." }
+        }
+      },
+      "Rego Calatio": {
+        parent: "Dark Thaumaturgy",
+        source: "V20 DA Tome of Secrets, pp. 111–113",
+        summary: "The ancient art of summoning, binding, and commanding physical manifestations of demonic entities.",
+        baseline: "Scaling Demon Grade / Summoning. Each level requires sacrificing a living being (usually an innocent) inside a bloodied circle and spending Willpower equal to the power level. Generates a necromantic sequela in the local area and inflicts severe nightmares on the summoner.",
+        dots: {
+          1: { name: "Petty Demon", desc: "Summons a weak, mischievous entity (e.g., Jollux).", sys: "" },
+          2: { name: "Madness Demon", desc: "Summons a entity capable of inducing mania and wielding Dementation/Obfuscate (e.g., Shp'murrl Tsong).", sys: "" },
+          3: { name: "Passion Demon", desc: "Summons an entity focused on emotional/physical assault and temptation (e.g., Tuqburni).", sys: "" },
+          4: { name: "Murderous Demon", desc: "Summons a heavily armored, brutal combat demon (e.g., Sacristan).", sys: "" },
+          5: { name: "Named Demon", desc: "Summons an exceptionally powerful, unique named arch-demon (e.g., Marquis Decarabia).", sys: "" }
+        }
+      },
+      "The Bialowieza Kraina": {
+        parent: "Koldunic Sorcery",
+        source: "V20 DA Tome of Secrets, pp. 46–48",
+        summary: "Connects the koldun to the primeval spirits of the Białowieza Forest, commanding forest vegetation, shifting undergrowth, and subterranean bone structures.",
+        baseline: "Spills blood on the soil (free within Białowieza Forest). Roll specified Raw Attribute + Occult vs. Power Level + 4 (or Power Level + 2 if primary Kraina).",
+        dots: {
+          1: { name: "Domain Breach", desc: "Senses intruders entering or leaving the koldun's territory.", sys: "Spend 1+ Blood. Roll Perception + Occult. Affects 1 square kilometer per blood point spent for the rest of the night." },
+          2: { name: "Fingers of Bialowieza", desc: "Commands nearby roots, plants, and trees to ensnare and grapple passing targets.", sys: "Touch plant with blood. Roll Dexterity + Occult. Plant grapples targets passing within 2 meters for 1 night per blood spent, dealing bashing damage. (Effects doubled in Białowieza Forest)." },
+          3: { name: "Grondrska’s Impasse", desc: "Causes dense forest undergrowth to actively move and block pathways, trapping or misdirecting intruders.", sys: "Spend 1+ Blood. Roll Perception + Occult. Intruders suffer a +3 difficulty penalty to navigation/tracking rolls; on a failure, the koldun controls their direction of travel." },
+          4: { name: "The Mouth of Djabelek", desc: "Opens a grinding pit of mud and rock beneath an intruder's feet to crush and trap them.", sys: "Spend 1 Blood + 1 Willpower. Roll Strength + Occult. A 2x3 meter pit opens within 10 meters; target is trapped for turns equal to blood spent and takes 2 levels of lethal damage per turn." },
+          5: { name: "The White Tower", desc: "Summons a multi-story fortification made of earth and bleached bones to serve as a fortress or allow underground travel.", sys: "Spend 1 Blood + 1 Willpower. Roll Stamina + Occult. Spawns a 5-meter tall tower with 20 health levels, adding an extra 5-meter floor per success. Can fold into the earth to transport the koldun up to 20 km away." }
+        }
+      },
+      "The Black Sea Kraina": {
+        parent: "Koldunic Sorcery",
+        source: "V20DA Core Rulebook, pp. 277–278",
+        summary: "Channels the aquatic and abyssal spirits of the Danube and Black Sea waterways.",
+        baseline: "Offer 1 Blood Point to water (free if Black Sea/Danube). Roll specified Raw Attribute + Occult vs. Power Level + 4 (or Power Level + 2 if primary Kraina).",
+        dots: {
+          1: { name: "Danubian Voices", desc: "Communes with water spirits to send messages or gather intelligence along waterways.", sys: "Drip blood into water. Roll Charisma + Occult. Spirit serves as a messenger/scout for days equal to successes." },
+          2: { name: "Grave of the Marea Neagra", desc: "Imbues water with protective abyssal qualities, allowing safe, undetected daytime slumber beneath waves.", sys: "Splash blood into body of water. Roll Wits + Occult. Sun protection and preservation granted. Spotting the caster requires Perception + Alertness (diff 8) exceeding caster's successes. Attacking targets underwater suffer 2 lethal cold damage/turn." },
+          3: { name: "Pontos Euxeinos", desc: "Uses the \"Hospitable Sea\" to embrace and heal severe wounds.", sys: "Submerge body, release blood. Roll Stamina + Occult. Successes convert to health level recovery (1 success = 1 bashing/lethal; 5 successes = 1 aggravated)." },
+          4: { name: "Minions of Deep Marmora", desc: "Summons aquatic frog-fish humanoid monstrosities from the water to perform tasks or fight.", sys: "Splash 1+ Blood. Roll Manipulation + Occult. Summons 1 minion per success/blood spent." },
+          5: { name: "Pontos Axeinos", desc: "Creates waterborne hazards like whirlpools, jagged rocks, dense fog, or gales.", sys: "Drip blood into water. Roll Intelligence + Occult. Allocate successes to summon various severe marine hazards for 1 scene." }
+        }
+      },
+      "The Fires of the Inferno": {
+        parent: "Dark Thaumaturgy",
+        source: "Rites of the Blood, pp. 167–168",
+        summary: "Conjures green, demonic balefire that springs from the caster's hands to burn targets with Hell's torment.",
+        baseline: "Scaling Fire Size. Spend 1 Blood, roll Willpower vs. Power Level + 3. Fire deals aggravated damage; requires Fortitude to soak.",
+        dots: {
+          1: { name: "Lighter", desc: "", sys: "Diff 3 to soak, 1 aggravated damage/turn." },
+          2: { name: "Stovetop", desc: "", sys: "Diff 4 to soak, 2 aggravated damage/turn." },
+          3: { name: "Blowtorch", desc: "", sys: "Diff 5 to soak, 3 aggravated damage/turn." },
+          4: { name: "Flame-thrower", desc: "", sys: "Diff 7 to soak, 4 aggravated damage/turn." },
+          5: { name: "Conflagration", desc: "", sys: "Diff 9 to soak, 5 aggravated damage/turn." }
+        }
+      },
+      "The Grave’s Decay": {
+        parent: "Necromancy",
+        source: "V20DA Core Rulebook, pp. 283–285",
+        summary: "(Mortuus Path). Channels entropy, decay, rot, and dissolution against living and undead matter.",
+        baseline: "Standard Necromancy activation.",
+        dots: {
+          1: { name: "Ashes to Ashes", desc: "Instantly disintegrates a human corpse into unremarkable ash.", sys: "Drip blood on corpse. Roll Intelligence + Medicine (diff 6). Disintegrates in 5 - successes turns." },
+          2: { name: "Rigor Mortis", desc: "Locks an opponent's muscles into rigid, corpse-like paralysis.", sys: "Spend 1 Willpower. Roll Intelligence + Medicine (diff 7). Freezes target within 25 meters for 1 turn per success." },
+          3: { name: "Ashen Lady’s Embrace", desc: "Withering touch that rots, dries out, and cripples a target's limb or sensory organ.", sys: "Touch target, spend 1 Willpower. Inflicts 2 levels of aggravated damage and cripples the targeted limb/feature until fully healed." },
+          4: { name: "Gift of Melancholia", desc: "Inflicts a contagious, rotting wasting illness that causes severe weakness and vomiting.", sys: "Spend 1 Willpower. Roll Intelligence + Medicine (diff 6) vs. target Stamina + Fortitude. Halves Strength and Wits, forces extra blood spend to wake, and causes feeding to fail." },
+          5: { name: "Dust to Dust", desc: "Dissolves a living vampire into a pile of ash using corrosive blood.", sys: "Cut skin, spend 2 Blood + 1 Willpower. Touch target and roll Willpower vs. target Stamina + 3. Each success inflicts 1 aggravated wound and turns affected flesh to dust." }
+        }
+      },
+      "The Hunter’s Winds": {
+        parent: "Dur-An-Ki",
+        source: "Rites of the Blood, pp. 159–161",
+        summary: "Enhances vampiric stealth, masking scent, adapting skin camouflage, blending into crowds, intoxicating onlookers, and achieving intangibility.",
+        baseline: "Standard Dur-An-Ki activation (Willpower vs Power Level + 3, costs 1 Blood). Superior to Obfuscate in that Auspex does not automatically pierce its effects.",
+        dots: {
+          1: { name: "Scent of Deception", desc: "Eliminates or alters the target's physical scent.", sys: "Leaves no trackable scent or adopts the scent of a known individual." },
+          2: { name: "Chameleon’s Skin", desc: "Matches skin and clothing color/texture to nearby surfaces.", sys: "Increases Perception difficulty to detect the stationary target by +4 for 1 scene." },
+          3: { name: "Unassuming Pose", desc: "Effortlessly blends into any crowd, causing onlookers to perceive the target as belonging.", sys: "Observers automatically view the target as a legitimate presence (cannot fool camera/CCTV feeds)." },
+          4: { name: "Whiff of Kalif", desc: "Generates an aura that physically intoxicates onlookers.", sys: "Observers failing a Wits + Alertness roll (diff 7) become dazed/intoxicated for hours equal to successes (ends if threatened)." },
+          5: { name: "Ghost Body", desc: "Grants complete invisibility, inaudibility, and physical intangibility.", sys: "Spend 3 Blood. Target becomes fully immaterial and invisible, moving through physical barriers (except anti-vampire wards). Cannot use Disciplines or touch physical objects." }
+        }
+      },
+      "The Keepers Way": {
+        parent: "Dur-An-Ki",
+        source: "V20 DA Tome of Secrets, pp. 42–43",
+        summary: "An exclusive path practiced by the Keepers of the Pool in Alamut, allowing sorcerers to divine distant events, stretch blood drawn from the Great Pool, perceive brethren across vast distances, discern vampiric fates, and collectively alter the destiny of Clan Assamite.",
+        baseline: "Standard activation rolls for Dur-An-Ki using Willpower or Attribute + Occult.",
+        dots: {
+          1: { name: "Sense the Ripples", desc: "Reads disturbance currents in the Great Pool to identify major clan events, such as an Elder entering torpor or a planned betrayal.", sys: "Each success allows asking one yes/no clarifying question regarding the event." },
+          2: { name: "The Gift of Haqim", desc: "Stretches the magical sustenance drawn from the Great Pool, filling the sorcerer's body regardless of distance.", sys: "Caster must drink at least 1 blood point from the pool. Gains additional blood points equal to successes, awarded at a rate of 1 per hour." },
+          3: { name: "The Distant Crimson", desc: "Observes the physical surroundings and emotional/combat state of any Assamite within a 100-kilometer radius.", sys: "Sees through the target's eyes and senses their status. Additional successes allow filtering perceptions by specific traits (caste, age)." },
+          4: { name: "Know the Fate of One", desc: "Divines the moral depravity or dramatic shifts in destiny for a specific vampire target.", sys: "Allows asking yes/no questions about the subject's fate equal to the number of successes rolled." },
+          5: { name: "Cast into the Pool of Blood", desc: "A powerful collective rite requiring four sorcerers that directly influences major events or outcomes for Clan Assamite.", sys: "Must be cast by four sorcerers with hands in the pool. All casters permanently lose one Generation. Players choose a shared goal; successes grant dice pool bonuses to allies or difficulty penalties to opponents attempting to thwart that goal." }
+        }
+      },
+      "The Kraina of Enoch": {
+        parent: "Koldunic Sorcery",
+        source: "The Black Hand: A Guide to the Tal’Mahe’Ra, pp. 169–172",
+        summary: "Pioneered by Old Clan Tzimisce in Enoch, this kraina embodies the Underworld itself, requiring the koldun to mutilate or sacrifice a portion of their own body to channel the forces of the Shadowlands and Tempest.",
+        baseline: "Spills blood or sacrifices body part. Roll specified Raw Attribute + Occult vs. Power Level + 4 (or Power Level + 2 if primary Kraina).",
+        dots: {
+          1: { name: "Shroud of Oblivion", desc: "Crumble skin to ash and pull a sheet of Underworld night over the surrounding area, muting the environment and reducing sunlight damage.", sys: "Spend 1 Willpower, roll Stamina + Occult. Radius equal to 5 feet per success, duration in turns equal to successes. Reduces sunlight damage in the living world to bashing (and no damage in the Underworld). Koldun bleeds 1 Blood/turn after duration ends until healed." },
+          2: { name: "Spectral Cloak", desc: "Plucks out and crushes own eyes to shroud self in invisibility while inflicting horrific Deathsight visions on onlookers.", sys: "Roll Perception + Occult. Radius 10 feet per success, duration in turns equal to successes. Vanishes from normal vision. Onlookers within radius must roll Willpower or suffer the Deathsight Flaw and flee in terror. Koldun remains blind after power ends until spending 1 Blood to heal eyes." },
+          3: { name: "Pond of Malevolent Dread", desc: "Eviscerates own self to send bowels into the Sea of Shadows, creating a pool of writhing spectres that slows enemies and drains Willpower.", sys: "Spend 1 turn eviscerating self, roll Stamina + Occult. Radius 15 feet per success, duration in turns equal to successes. Targets in pool have speed reduced to 1/4 and must roll Willpower each turn or lose 1 permanent Willpower. Koldun takes 2 unsoakable lethal wounds upon power expiration." },
+          4: { name: "Wrath of the Tempest", desc: "Opens throat to unleash a roaring Underworld hurricane that lifts the koldun into the air and drives surrounding victims into a Harrowing fugue.", sys: "Spend 1 Willpower, roll Strength + Occult. Radius 20 feet per success, duration in turns equal to successes. Targets must roll Willpower (diff 8) each turn or enter a Harrowing fugue state for the scene. Koldun takes 1 unsoakable bashing damage/turn while mindless in the air." },
+          5: { name: "Hunger of the Void", desc: "Pulls out own soul, contorts its mouth, and dives into it to transform the ground into a crushing 5-foot Nihil crater.", sys: "Spend 1 Willpower, roll Strength + Occult. Radius 25 feet per success, duration in turns equal to successes. Drags nearby targets inward; consumed targets must roll Willpower (diff 9) or have virtues/morality reduced to 0 (mortals enter permanent coma). Inflicts 2 aggravated damage on the koldun upon conclusion." }
+        }
+      },
+      "The Kraina of the Well": {
+        parent: "Koldunic Sorcery",
+        source: "The Black Hand: A Guide to the Tal’Mahe’Ra, pp. 172–174",
+        summary: "Practiced by Old Clan Tzimisce and Order of Moloch Baali, this kraina establishes a sympathetic link to the original Well of Sacrifice to detect, defend against, exorcise, and chain demonic entities.",
+        baseline: "Requires constructing and maintaining a duplicate Well of Sacrifice (takes 6 hours/night for 1 week, 6 Blood/night, extended Manipulation + Occult diff 7 requiring 25 successes). Roll specified Raw Attribute + Occult vs. Power Level + 4 (or Power Level + 2 if primary Kraina).",
+        dots: {
+          1: { name: "Call the Children", desc: "Traces blood glyphs around the Well of Sacrifice to summon an un-hosted demon in its Apocalyptic Form into a circle.", sys: "Spend 1 Blood, extended Wits + Occult roll over 1 scene (successes required equal difficulty level 5–9 based on demon grade). Demon is bound inside circle for turns equal to summoning difficulty." },
+          2: { name: "Heed the Hell-bound Heart", desc: "Sips blood from the Well to gain supernatural awareness of nearby demonic presence or infernal contamination.", sys: "Sip 1 Blood from Well. Adds Kraina of the Well rating to Awareness checks to detect demonic/infernal influence for as long as the blood remains in system." },
+          3: { name: "Aegis Alighieri", desc: "Lacerates a vein to coat a Well-soaked amulet in blood, shielding the koldun against infernal attacks, investments, and demonic powers.", sys: "Spend 1 turn + 1 Blood on amulet, roll Charisma + Occult. Adds successes to the difficulty of incoming infernal/demonic attacks targeting the caster, and adds equal dice to resistance rolls for 1 scene." },
+          4: { name: "Heave the Host of Hell", desc: "Digs a small bowl in the earth, fills it with blood, and chants to cleanse infernal marks or banish possessing demons.", sys: "Dig bowl, spend 1 Blood, roll Manipulation + Occult. Successes required depend on corruption level (1–4+). Demons failing Willpower resistance roll are banished back to Hell; infernal marks are expelled." },
+          5: { name: "Reap the Well", desc: "Pools blood in cupped hands to hurl six blood-hook chains that impale a demon, forcing it to reveal its True Name or binding it into thrall.", sys: "Spend 1 turn pooling 1 Blood, spend 1 Willpower, roll Strength + Occult. Hooks lunge up to 100 feet to snag a demon. Each turn, koldun can roll Intelligence + Intimidation vs target Willpower to force the demon to reveal its True Name or absorb it into a chained thrall (max 6 thralls within 100 ft)." }
+        }
+      },
+      "The Nightshade Path": {
+        parent: "Necromancy",
+        source: "The Black Hand: A Guide to the Tal’Mahe’Ra, pp. 70–73",
+        summary: "Developed by the Drakaina and shared with Bahari necromancers and Lilin Nagaraja, this path manipulates natural cycles, rot, decay, and the interplay between living flora and the Shadowlands.",
+        baseline: "Standard Necromancy activation.",
+        dots: {
+          1: { name: "Tend the Body Garden", desc: "Speeds up or arrests the natural decomposition of a dead body or newly slain vampire.", sys: "Drip blood on corpse, spend 1 Blood, roll Wits + Occult (diff 6). Successes delay or accelerate rot from 1 day up to 1 year or more." },
+          2: { name: "Witch’s Fruit", desc: "Concentrates necrotic energy into edible plant matter/fruit so that any living creature consuming it enters a trance allowing them to see and touch the Shadowlands.", sys: "Touch plant matter, spend 1 Blood. First living creature to eat it falls into a waking trance for 1 scene, gaining the ability to interact with ghosts and the Underworld." },
+          3: { name: "Raise the Green One", desc: "Animates a corpse enveloped in red-tinged vines, leaves, and plant matter to serve as a fast, resilient zombie.", sys: "Target corpse must lie on/in fertile soil. Spend 1 Willpower + 1 Blood, roll Wits + Occult (diff 8). Creates a Green One (Strength 4, Dexterity 4, Stamina 4, Fortitude 2). Only 1 Green One may be active at a time." },
+          4: { name: "Wails and Whispers", desc: "Screams like a banshee to drive a target toward death or whispers like a mother to set aside incoming physical damage.", sys: "Spend 1 Willpower, roll Wits + Occult (diff 8). Screaming adds +1 lethal damage per success to the next injury the target suffers. Whispering sets aside 1 health level of damage per success until the end of the scene." },
+          5: { name: "Chthonic Womb", desc: "Drinks a mortal's blood at the moment of death to trap their soul within the necromancer's body, later birthing it forth as a bound ghost.", sys: "Drink 1+ Blood from a dying mortal, spend 1 Willpower, roll Wits + Occult (diff 8). Soul remains dormant inside the vampire for 1 month per success (drains +1 Blood/night if storing multiple souls). Can be summoned forth as a ghost bound to perform 3 services." }
+        }
+      },
+      "The Path of Ash": {
+        parent: "Necromancy",
+        source: "V20DA Core Rulebook, pp. 288–290",
+        summary: "Enables the necromancer to gaze into, speak within, interact with, and physically enter the Shadowlands of the Underworld.",
+        baseline: "Standard Necromancy activation.",
+        dots: {
+          1: { name: "Shroudsight", desc: "Allows the vampire to look directly through the Shroud into the Underworld.", sys: "Roll Perception + Awareness (diff 7). Lasts 1 scene." },
+          2: { name: "Tongue of the Dark Kingdoms", desc: "Allows speech across the Shroud with ghosts in the Underworld.", sys: "Spend 1 Willpower. Roll Perception + Occult. Allows two-way conversation for 1 scene." },
+          3: { name: "Touch the Nether", desc: "Straddles both sides of the Shroud, allowing physical interaction with ghostly objects/wraiths.", sys: "Spend 1 Willpower. Roll Wits + Occult (diff 7). Lasts 1 scene (extendable for 1 Blood/scene)." },
+          4: { name: "Ex Nihilo", desc: "Physically opens a doorway into the Underworld to step into the Shadowlands.", sys: "Draw door in chalk/blood. Spend 2 Willpower + 2 Blood. Roll Stamina + Occult (diff 8). Caster enters the Underworld physically." },
+          5: { name: "Shroud Mastery", desc: "Manipulates the density of the local Shroud to empower or hinder ghostly magics.", sys: "Spend 2 Willpower. Roll Willpower (diff 9). Adjusts difficulty of all ghostly powers in a half-mile radius by +/-1 per success." }
+        }
+      },
+      "The Path of Bone": {
+        parent: "Necromancy",
+        source: "V20DA Core Rulebook, pp. 279–281",
+        summary: "Manipulates dead flesh, animating corpses, limbs, and reanimating anatomical constructs.",
+        baseline: "Standard Necromancy activation.",
+        dots: {
+          1: { name: "Seal of Abamixtra", desc: "Animates corpses to perform single, mindless labor tasks until destroyed or rotted.", sys: "Spend 1 Blood. Roll Wits + Occult (diff 7). Animates 1 corpse per success to follow simple instructions." },
+          2: { name: "Awaken the Homuncular Servant", desc: "Reanimates a severed hand, head, eye, or small dead animal (feraculum) as a spy/companion.", sys: "Spend 1 Blood. Roll Intelligence + Occult (diff 7). Lasts 1 night per success; communicates telepathically within 100 yards." },
+          3: { name: "Shambling Hordes", desc: "Raises a squad of aggressive undead warriors to assault foes.", sys: "Roll Wits + Occult (diff 8). Spend 1 Blood per two corpses raised. For +1 extra blood per corpse, add physical attributes." },
+          4: { name: "Baleful Exorcism", desc: "Forcibly tears a living mortal's soul from their body, turning them into a helpless ghost.", sys: "Spend 1 Willpower. Contested Willpower roll vs. target. Banishes soul for 1 hour per net success." },
+          5: { name: "Daemonic Possession", desc: "Channels a disembodied spirit or ghost into a freshly dead or vacant body.", sys: "Target corpse must be warm/prepared. Requires willing ghost or contested Willpower roll if forcing into a dying vampire body (5 successes needed)." }
+        }
+      },
+      "The Path of Haunting": {
+        parent: "Necromancy",
+        source: "V20DA Core Rulebook, pp. 285–287",
+        summary: "Projects the terror, cold, and dread of the Underworld onto the minds of living and undead victims.",
+        baseline: "Standard Necromancy activation.",
+        dots: {
+          1: { name: "Song of the Dead", desc: "Chants an unearthly melody that fills the listener with paralyzing depression and morbid fixation.", sys: "Spend 1 Blood. Roll Manipulation + Occult vs. target Willpower. Inflicts social penalties (+2 diff) and general penalties (+1 diff). Extended exposure causes permanent Willpower loss leading to suicide or torpor." },
+          2: { name: "Summon Wisp", desc: "Conjures a floating, dancing orb of pale ghostly light to distract or lure victims.", sys: "Spend 1 Blood. Roll Charisma + Occult (diff 5). Mortals must roll Willpower or be mesmerized/led into danger." },
+          3: { name: "Harrowing", desc: "Haunts a target's dreams with horrific, traumatic visions of their own death.", sys: "Eye contact, spend 1 Blood. Roll Manipulation + Occult vs. target permanent Willpower. Prevents Willpower recovery and inflicts the Nightmares flaw." },
+          4: { name: "Phantasms", desc: "Creates multi-sensory, freezing hallucinations of horror and death.", sys: "Spend 1 Blood. Roll Manipulation + Occult (diff 7). Each success crafts 1 phenomenon or feature in line of sight." },
+          5: { name: "Spectral Menacing", desc: "Rends the Shroud around a victim, summoning hostile spectres to torment them.", sys: "Spend 1 Blood. Roll Manipulation + Occult (diff 8). Reduces difficulty for local spectres to attack the target by 1 per success." }
+        }
+      },
+      "The Path of Pain": {
+        parent: "Dark Thaumaturgy",
+        source: "Sins of the Blood, pp. 86–88",
+        summary: "Fueled by sadomasochism, this path allows an infernalist to flay flesh, shatter bones, and rupture internal organs through pain.",
+        baseline: "Standard Dark Thaumaturgy activation (Willpower vs. Power Level + 3, costs 1 Blood). Includes the optional Price: Addicted to Pain (at Level 3+, the infernalist becomes addicted to taking damage; failing casting rolls for self-harm powers forces repeated self-mutilation every turn unless Willpower is spent).",
+        dots: {
+          1: { name: "The Numbing", desc: "Overrides the Beast's pain avoidance instincts, enabling the infernalist to ignore injury penalties.", sys: "For each success on the Willpower roll, ignore the dice pool and movement penalties for one health level of bashing or lethal damage for 1 scene." },
+          2: { name: "Anguish", desc: "Floods a touched target with phantom, agonizing sensations that can render them unconscious or comatose.", sys: "Requires physical touch. Each success inflicts dice pool penalties equivalent to losing health levels (starting with Hurt). Supernatural targets can resist by rolling Willpower to negate successes; spending 1 Blood heals 1 level of Anguish pain." },
+          3: { name: "Shattering", desc: "Sacrifices the caster's own vitality to break bones and burst organs of a target in line of sight.", sys: "Requires sacrificing 1 self-inflicted health level. Spend 1 Blood, roll Willpower. Each success deals 1 health level of unsoakable lethal damage to the target. Target can resist with Willpower successes." },
+          4: { name: "Agony Within", desc: "Forms hooked blood-barbs and tendrils inside the target's veins that rip them apart from within.", sys: "Spend 1 Blood, roll Willpower. Self-inflicting bashing damage adds +1 success per level sacrificed directly to the lethal damage dealt to the target. Target resists with a Willpower roll (diff 6 + self-damage taken); every 2 successes reduces incoming damage by 1." },
+          5: { name: "Hundred Deaths", desc: "Lacerates the victim with countless deep cuts that continually heal and reopen, driving them mad.", sys: "Requires self-inflicting 1 aggravated wound (Willpower diff 6 roll). Spend 1 Blood, roll Willpower. Each success deals 1 aggravated wound to the target (soakable only with Fortitude) and completely paralyzes them with pain. The victim takes 1 additional lethal wound each night until healed." }
+        }
+      },
+      "The Path of Phobos": {
+        parent: "Dark Thaumaturgy",
+        source: "Rites of the Blood, pp. 168–170",
+        summary: "Taps into the deepest phobias and nightmares of victims' psyches, making their worst terrors manifest to drive them mad or feed on their fear.",
+        baseline: "Activated as Dark Thaumaturgy (Willpower vs Power Level + 3, costs 1 Blood). Using more than once per story forces a Manipulation + Empathy (diff 7) roll to avoid waking soaked in blood from reliving victim nightmares.",
+        dots: {
+          1: { name: "Induce Fear", desc: "Twists the victim's mind, leaving them dazed, paranoid, and distracted.", sys: "Line of sight. Target must roll Courage (diff 4 + successes, max 9) to take any action other than searching for imagined stalkers. Reduces target dice pools by -1 for a duration based on successes (1 turn to 2 nights)." },
+          2: { name: "Spook", desc: "Transforms paranoia into tangible dread, forcing targets to flee.", sys: "Mortals must roll Courage (diff 7) or flee. Vampires failing the roll immediately enter Rötschreck." },
+          3: { name: "Terrorize", desc: "Forces a victim to visually hallucinate their specific worst phobia.", sys: "Target must roll Courage (diff 7) or cower helplessly. Botching inflicts a permanent derangement. Duration ranges from 1 turn to 1 night based on successes." },
+          4: { name: "Fear Plague", desc: "Curses a victim to plunge deep into their phobia every waking moment for a week.", sys: "Target's effective permanent Willpower rating is reduced by 3 (min 1) for all rolls for 1 week." },
+          5: { name: "Leech of Fear", desc: "Feeds upon a victim's active terror as a substitute for blood vitae.", sys: "Transmutes fear from a frightened target into a temporary \"fear pool\" usable as blood points until sunrise." }
+        }
+      },
+      "The Path of Pleasure": {
+        parent: "Dark Thaumaturgy",
+        source: "Sins of the Blood, pp. 88–90",
+        summary: "Manipulates and perverts physical and emotional desires, fanning self-indulgence into self-destructive, addicting infernos of depravity.",
+        baseline: "Standard Dark Thaumaturgy activation (Willpower vs. Power Level + 3, costs 1 Blood). Includes the optional Price: Desires Sated (at Level 3+, all frenzy rolls suffer a +1 difficulty penalty) and Side Effect (targets failing a Self-Control diff 6 roll after exposure gain the Obsessive/Compulsive derangement for weeks equal to power level).",
+        dots: {
+          1: { name: "Ecstasy", desc: "Induces overwhelming physical pleasure or drug-like euphoria in a touched target.", sys: "Physical contact + 1 Blood. Target must score more successes on a Wits + Self-Control roll (diff 7) than the caster's Willpower roll to take any action other than enjoying the sensation. Lasts while touch is maintained, then fades over 10 - Willpower turns." },
+          2: { name: "Intrusion", desc: "Telepathically projects overwhelming physical pleasure into any target within eyesight.", sys: "Line-of-sight range. Deals 1 bashing health level per success due to sensory overload (vampires resist with Willpower diff 7). Target must also make a Wits + Self-Control roll (diff 7) to act." },
+          3: { name: "Daisy Chain", desc: "Spreads pleasure through a human vector, causing the sensation to jump from target to target via touch.", sys: "Functions like Ecstasy, but spreads to 1 additional target per success (1 per turn). Each affected target can infect others through physical contact unless the new victim succeeds on a Self-Control roll." },
+          4: { name: "Deadening", desc: "Strips away all physical sensation and emotion, trapping the victim in a numb, emotionally torpid state.", sys: "Spend 1 Blood, roll Willpower vs. target Willpower (diff Manipulation + Empathy). Target cannot spend Willpower points, and all Virtue rolls suffer +2 difficulty. Duration ranges from 1 turn (1 success) up to 1 month (5 successes). (Exempt from the Desires Sated price penalty)." },
+          5: { name: "The Garden of Earthly Delights", desc: "Floods a target already experiencing Ecstasy with visions of pleasure until they fall into a catatonic coma.", sys: "Target must already be under Ecstasy. Spend 1 Blood, roll Willpower vs. target Willpower (diff 8). Sends target into a comatose dream-state lasting from 1 night (1 success) up to 1 year (5 successes). Target takes 1 bashing damage per night while in coma unless hospitalized." }
+        }
+      },
+      "The Path of Praapti": {
+        parent: "Sadhana",
+        source: "Rites of the Blood, p. 165",
+        summary: "Power of instantaneous teleportation developed by Indian sadhus.",
+        baseline: "Scaling Teleportation Distance. Spend 1 Blood, roll Willpower vs. Power Level + 3. Botching blind teleports merges caster into solid matter (1 aggravated wound per 1 rolled). 1 success carries nude body; +1 success per +20 lbs.",
+        dots: {
+          1: { name: "Teleport up to 10 yards/meters", desc: "", sys: "" },
+          2: { name: "Teleport up to 50 yards/meters", desc: "", sys: "" },
+          3: { name: "Teleport up to 500 yards/meters", desc: "", sys: "" },
+          4: { name: "Teleport up to 5 miles/8 kilometers", desc: "", sys: "" },
+          5: { name: "Teleport up to 500 miles/800 kilometers", desc: "", sys: "" }
+        }
+      },
+      "The Path of Skulls": {
+        parent: "Necromancy",
+        source: "V20 DA Tome of Secrets, pp. 54–57",
+        summary: "A secretive Cappadocian/Harbinger path focused on gathering intelligence, extracting truth, creating deadly traps, and absorbing traits or memories from the dead using harvested skulls.",
+        baseline: "Requires physical possession of a skull or decapitated head. Standard Necromancy activation.",
+        dots: {
+          1: { name: "Calvaria Emissicius", desc: "Allows the necromancer to spy remotely through the eye sockets of a skull belonging to someone they personally killed.", sys: "Spend 1 Blood. Roll Perception + Occult (diff 5). Enters a meditative trance to view through the skull until sunrise or interrupted." },
+          2: { name: "Consilium Mortuus", desc: "Compels a severed head to answer questions truthfully using vestigial memories left in the brain.", sys: "Spend 1+ Blood. Roll Manipulation + Empathy (diff 6). Forces the head to answer 1 question truthfully per blood point spent." },
+          3: { name: "Ammorsus Vicarius", desc: "Animates a toothless skull to sprout sharp fangs, acting as a hand-held weapon or an automated trap that drains blood.", sys: "Spend 1 Willpower + 1 Blood. The skull bites targets within range, dealing 3 aggravated damage per turn and draining 1 blood point per turn back to the caster." },
+          4: { name: "Exedo Animus", desc: "Ingests the lingering personality and memories of a deceased individual from their skull.", sys: "Spend 2 Willpower + 2 Blood. Roll Intelligence + Occult (diff 7). Grants 1 hour per success of total access to the deceased's memories (-3 diff to recall info) and impersonation bonuses (+3 dice to Performance)." },
+          5: { name: "Degulo", desc: "Consumes a fragment of a dead soul, permanently replacing one of the necromancer's own traits (Attributes, Skills, or Clan Disciplines) with that of the deceased.", sys: "Spend 2 Willpower. Roll Willpower (diff 9). On success, permanently swaps one trait rating on the character sheet with the deceased's rating." }
+        }
+      },
+      "The Path of the Cenotaph": {
+        parent: "Necromancy",
+        source: "V20DA Core Rulebook, pp. 280–282",
+        summary: "Uses the necromancer's undead vessel to sense, track, and bind the ties between the living world and the Underworld.",
+        baseline: "Standard Necromancy activation.",
+        dots: {
+          1: { name: "A Touch of Death", desc: "Senses residual energy left on objects or people touched by ghosts.", sys: "Touch object/target. Roll Perception + Awareness (diff 6) to detect ghostly influence or passage." },
+          2: { name: "Reveal the Catene", desc: "Identifies whether an object is a ghostly fetter and learns the ghost’s identity.", sys: "Examine item for 3 turns. Spend 1 Blood. Roll Perception + Occult (diff 7)." },
+          3: { name: "Tread Upon the Grave", desc: "Senses the local thickness or thinness of the Shroud.", sys: "Roll Willpower (diff 8). Reveals local Shroud density and artificial tampering." },
+          4: { name: "Death Knell", desc: "Senses when someone dies and becomes a ghost within half a mile, locating their position.", sys: "Spend 1 Willpower. Roll Perception + Occult (diff 7) to determine direction and precise distance to the new wraith." },
+          5: { name: "Ephemeral Binding", desc: "Coats an item with blood to forge an artificial, temporary fetter for a wraith.", sys: "Coat item/target with blood, spend 1 Willpower. Roll Manipulation + Occult (diff 8). Binds ghost for 1 night per success (can be extended to a year and a day with permanent Willpower)." }
+        }
+      },
+      "The Path of the Corpse in the Monster": {
+        parent: "Necromancy",
+        source: "V20DA Core Rulebook, pp. 282–284",
+        summary: "(Mortuus Path). Applies the physical traits and immunities of a corpse to living or undead targets.",
+        baseline: "Standard Necromancy activation.",
+        dots: {
+          1: { name: "Mortuus in Vultus", desc: "Makes a vampire appear as a long-dead mummified corpse to hide or intimidate.", sys: "Spend 1 Blood. Reduces Dexterity/Appearance by 2; adds +2 dice to Intimidation. Requires Perception + Medicine (diff 7, 5 successes) for onlookers to realize they are undead rather than a corpse." },
+          2: { name: "Algor Mortis", desc: "Chills the vampire's body, rendering them indifferent to pain and emotional manipulation.", sys: "Spend 1 Willpower. Ignores wound penalties; adds dice to resist emotional manipulation based on Path rating, but +1 diff on social rolls to manipulate others." },
+          3: { name: "Intimations of Mortality", desc: "Curses a target vampire with mortal frailties (hunger, weakness, pain sensitivity).", sys: "Spend 1 Willpower. Roll Intelligence + Medicine (diff 8). Target suffers +2 diff on all actions and cannot spend blood to boost Physical Attributes until sunrise." },
+          4: { name: "Benedictio Mortem", desc: "Fully assumes corpse status to ignore vampire banes (stakes, fire damage converted to lethal, sunlight causes only bashing).", sys: "Spend 1 Willpower. Roll Stamina + Occult (diff 8). Benefit lasts 1 turn per success. Immune to frenzy/Rötschreck during effect." },
+          5: { name: "Benedictio Vitae", desc: "Temporarily represses the Beast, allowing the vampire to enjoy human food, sex, daylight travel, and warmth without losing power.", sys: "Spend 12 Blood points continuously. Lasts until the following midnight. Incur +3 difficulty to resist frenzy/Rötschreck for 6 nights afterward as backlash." }
+        }
+      },
+      "The Path of the Evil Eye": {
+        parent: "Dur-An-Ki",
+        source: "Rites of the Blood, pp. 160–163",
+        summary: "Invokes wrathful djinn or malicious intent to curse enemies with public humiliation, asset loss, physical danger, social isolation, and agonizing injuries.",
+        baseline: "Eye contact and verbal curse required (or effigy via Sympathy/Contagion). Activated with Willpower vs Power Level + 3.",
+        dots: {
+          1: { name: "Humiliation", desc: "Causes a target to suffer embarrassing public mishaps.", sys: "Adds automatic 1s equal to path rating to the target's Social rolls once per night for nights equal to successes, and triggers embarrassing environmental accidents." },
+          2: { name: "Loss", desc: "Strips away material wealth, property, herd, or personal assets.", sys: "Target loses 1 dot from a Background (Resources, Herd, Haven) within one week per success." },
+          3: { name: "Peril", desc: "Places the victim in dangerous, life-threatening environmental encounters.", sys: "Storyteller rolls daily encounters for nights equal to successes (ranging from muggings to car crashes, burning buildings, or werewolf encounters)." },
+          4: { name: "Enemy", desc: "Turns allies against the victim or manifests a dedicated new nemesis.", sys: "Target loses 1 dot of Allies, Contacts, Influence, or Retainers per success, OR gains a new Enemy Flaw." },
+          5: { name: "The Eye That Wounds", desc: "Strikes a victim with immediate, agonizing physical injuries shaped by spoken words.", sys: "Inflicts 1 level of aggravated damage per two successes (rounded up) to target or an object, burning out eyes/tongues or maiming limbs." }
+        }
+      },
+      "The Path of the Sepulchre": {
+        parent: "Necromancy",
+        source: "V20DA Core Rulebook, pp. 287–289",
+        summary: "The core art of perceiving, summoning, commanding, and binding spirits of the restless dead.",
+        baseline: "Standard Necromancy activation.",
+        dots: {
+          1: { name: "Peering Across the Shroud", desc: "Grants the ability to see and hear ghosts in the Underworld.", sys: "Roll Perception + Awareness (diff 5). Lasts 1 scene. Caster's eyes glow bright blue to ghosts." },
+          2: { name: "Summon Soul", desc: "Calls a specific named ghost from the Underworld to the physical location.", sys: "Requires item/corpse piece handled by ghost. Spend 1 Blood. Roll Manipulation + Occult (diff 7 or ghost's Willpower)." },
+          3: { name: "Compel Soul", desc: "Forces a ghost to obey commands or answer questions truthfully.", sys: "Hold a fetter/item of the ghost. Spend 1 Blood. Contested Manipulation + Occult vs. ghost Willpower (diff 6). Net successes dictate level/severity of commands obeyed." },
+          4: { name: "Haunting", desc: "Binds a ghost into a specific physical object or location.", sys: "Draw blood circle, spend 1 Blood. Roll Manipulation + Occult vs. 4 + target Willpower. Binds ghost for 1 night per success (can be extended to a year and a day with permanent Willpower)." },
+          5: { name: "Torment", desc: "Strikes physical blows across the Shroud directly against an incorporeal ghost's body.", sys: "Roll Stamina + Empathy vs. target ghost Willpower. Each success deals 1 level of lethal damage to the ghost." }
+        }
+      },
+      "The Path of the Twilight Garden": {
+        parent: "Necromancy",
+        source: "V20DA Core Rulebook, pp. 289–291",
+        summary: "The secret, martial necromancy of the Lamiae (\"Path of the Four Humors\"), combining death magic with bodily humors.",
+        baseline: "Standard Necromancy activation.",
+        dots: {
+          1: { name: "Whispers to the Soul", desc: "Whispers a secret name of Lilith, inflicting terrifying visions and mental trauma.", sys: "Line of sight within 100 paces. Target rolls Willpower (diff 8) or loses 2 dice from all pools for days equal to caster's Manipulation." },
+          2: { name: "Kiss of the Dark Mother", desc: "Fills the mouth with acrid black bile and blood, making the next bite attack deal devastating damage.", sys: "Spend 1 Blood. Next bite attack deals double damage before soak." },
+          3: { name: "Dark Humors", desc: "Converts blood into one of four corrupted bodily humors (Phlegmatic, Melancholy, Sanguine, Bilious) that inflict penalties, despair, bleeding, or poison on contact.", sys: "Cut skin, spend 2 Blood. Exposure causes specific mechanical penalties (e.g. Bilious deals Stamina in lethal damage; Melancholy prevents Willpower spend)." },
+          4: { name: "Caul of the Neverborn", desc: "Drinks cold corpse blood to gain dark resilience, extra soak, and Underworld vision.", sys: "Drink 5 blood points from a cold corpse, spend 5 blood points. Gains +2 soak dice, immunity to wound penalties, and Shroudsight for 1 scene." },
+          5: { name: "Lament of D’hainu", desc: "An agonizing howl that emits an overwhelming miasma driving all caught inside to attempt immediate suicide (or torpor for vampires).", sys: "Spend 2 Willpower. Roll Stamina + Athletics (diff 7). Radius expands 5 meters/success. Targets must roll Willpower (diff 7) or attempt to kill themselves immediately." }
+        }
+      },
+      "The Power of Blood Nectar": {
+        parent: "Sadhana",
+        source: "V20 Dark Ages Companion, pp. 102–103",
+        summary: "Lesser Path. Allows a sadhu to distill their vitae into a sweet nectar that confers temporary levels of specific Disciplines or Blood Magic Paths to a recipient (mortal, ghoul, or vampire).",
+        baseline: "Scaling Capacity / Level. Activated as Thaumaturgy powers using Intelligence + Theology rather than Occult. Spent 1 blood point and 1 minute of concentration per level created. Recipient drinks draught directly from veins; lasts for one evening, fading at dawn. Can only confer: Animalism, Auspex, Chimerstry, Fortitude, Potence, and Sadhana (excluding Blood Nectar itself).",
+        dots: {
+          1: { name: "Level One Nectar", desc: "Confers 1 level of an eligible Discipline/Path.", sys: "Cost: 1 Blood, 1 minute concentration." },
+          2: { name: "Level Two Nectar", desc: "Confers 2 levels of eligible Disciplines/Paths, split or stacked.", sys: "Cost: 2 Blood, 2 minutes concentration." },
+          3: { name: "Level Three Nectar", desc: "Confers 3 levels of eligible Disciplines/Paths, split or stacked.", sys: "Cost: 3 Blood, 3 minutes concentration." },
+          4: { name: "Level Four Nectar", desc: "Confers 4 levels of eligible Disciplines/Paths, split or stacked.", sys: "Cost: 4 Blood, 4 minutes concentration." },
+          5: { name: "Level Five Nectar", desc: "Confers 5 levels of eligible Disciplines/Paths, split or stacked.", sys: "Cost: 5 Blood, 5 minutes concentration." }
+        }
+      },
+      "The Power of Karma": {
+        parent: "Sadhana",
+        source: "V20 Dark Ages Companion, pp. 103–104",
+        summary: "Greater Path. Allows the sadhu to analyze, divine, and manipulate an individual's fate and placement upon samsara (the wheel of reincarnation) through the cosmic sum of their spiritual actions.",
+        baseline: "Activated as Thaumaturgy using Theology instead of Occult. A sadhu cannot cast a level of a Sadhana Path higher than her Theology Knowledge rating.",
+        dots: {
+          1: { name: "Threads of the Past", desc: "Reveals the most recent formative steps on a target's karmic path and what brought them to this moment.", sys: "Does not require spending a blood point. Roll Perception + Theology (diff 5). Each success grants a brief impression/glimpse of a major formative event in the target's past or reason for being in the area. When targeting Cainites, it always reveals the Embrace and the target's true name." },
+          2: { name: "Weave of the Future", desc: "Divines specific outcomes regarding a single individual's near future.", sys: "Spend 1 Blood Point. Roll Perception + Theology (diff 5). Each success allows asking the Storyteller one yes/no question about the subject's future (answered clearly with \"Yes\", \"No\", or \"Irrelevant\")." },
+          3: { name: "Certain Fate", desc: "Reads deeper into where a target will fall upon the wheel of karma next.", sys: "Roll Perception + Theology. Each success informs the sadhu of a relevant future fact regarding the individual. At 3+ successes, reveals the likely manner of the subject's death and whether they are destined to become a Cainite, ghost, or Wan Kuei." },
+          4: { name: "Past Lives", desc: "Temporarily turns back the wheel of rebirth to draw upon hard-won experience and memories from previous incarnations.", sys: "Roll Perception + Theology. Each success allows gaining 1 dot in any Ability or 1 dot in the Language Merit (up to a maximum limit of 3 dots total). The sadhu may temporarily adopt personality tics, speech patterns, or languages of past lives." },
+          5: { name: "Master of Samsara", desc: "Grants near-divine control over the wheel of rebirth, allowing the sadhu to alter future fates, manipulate reincarnation, or temporarily suspend the vampiric curse.", sys: "Requires achieving 5 successes on a roll at difficulty 8, OR spending 1 permanent Willpower point. The player chooses one of the following effects: Ordain one fact about a target's future; Preordain that the target becomes a wraith or Wan Kuei upon death; Transform a mortal's mind into a past life for one week, OR briefly transform a Cainite target back into their human self; Set the exact circumstances of the target's (or sadhu's own) next incarnation upon Final Death." }
+        }
+      },
+      "The Revelations of Duat": {
+        parent: "Akhu",
+        source: "V20 DA Tome of Secrets, pp. 61–64",
+        summary: "An Egyptian Setite/Cappadocian path combining death magic with funerary judgment to perceive ghosts, weigh moral deeds, and construct immortal sentries or mummified constructs.",
+        baseline: "Activated like Thaumaturgy, substituting Theology for Occult.",
+        dots: {
+          1: { name: "Sight of the Jackal", desc: "Grants grey-filmed vision that detects un-manifested ghosts or spirits hiding in living hosts or objects.", sys: "Roll Perception + Theology. Lasts 1 scene. Detects wraiths and reveals details regarding their strength and history." },
+          2: { name: "Weigh the Virtues", desc: "Divines the defining moral deeds and sins of a ghost, corpse, or vampire.", sys: "Roll Perception + Theology. Each success reveals one major virtuous deed or crime committed during life." },
+          3: { name: "Pharaoh’s Sentry", desc: "Binds a spirit fragment into a fresh corpse to create a permanent, unthinking automaton guard.", sys: "Requires prior use of Weigh the Virtues. Animates a corpse to follow a strict one-sentence command indefinitely." },
+          4: { name: "Imbue with the Grace of Anubis", desc: "Imbues an animated corpse sentry with emotional compulsions and violent inclinations based on the spirit's past deeds.", sys: "Plants specific behavioral memories into the sentry, causing it to act out violent reflections of its past life when not executing direct orders." },
+          5: { name: "The Sorcery of Life", desc: "Creates a powerful, intelligent Proto-Bane Mummy from an animated corpse, capable of using Disciplines and carrying out complex instructions.", sys: "Converts extra successes into bonus Attribute points or Disciplines (drawn from the caster's own known Disciplines) for the construct." }
+        }
+      },
+      "The Revelations of Eden": {
+        parent: "Akhu",
+        source: "V20 DA Tome of Secrets, p. 64",
+        summary: "An insidious path favored by the Decadents of Constantinople to systematically break down a target's conviction, faith, road, and personality, replacing their identity with loyalty to the Serpent.",
+        baseline: "Tiered Willpower & Personality Erosion. Activated as Thaumaturgy using Intelligence + Theology vs. target Willpower (diff 6). Successes strip temporary Willpower, with higher path ratings inflicting severe permanent rating losses.",
+        dots: {
+          1: { name: "Level 1", desc: "Strips temporary Willpower and removes 1 permanent dot from the target's Willpower rating.", sys: "" },
+          2: { name: "Level 2", desc: "Strips temporary Willpower and removes 1 permanent dot from the target's Road rating.", sys: "" },
+          3: { name: "Level 3", desc: "Strips temporary Willpower and removes 1 permanent dot from the target's Self-Control/Instinct rating.", sys: "" },
+          4: { name: "Level 4", desc: "Strips temporary Willpower and allows the caster to permanently choose the target's new Demeanor.", sys: "" },
+          5: { name: "Level 5", desc: "Strips temporary Willpower and allows the caster to permanently choose the target's new Nature.", sys: "" }
+        }
+      },
+      "The Revelations of Midgard": {
+        parent: "Akhu",
+        source: "V20 DA Tome of Secrets, pp. 65–67",
+        summary: "Practiced by the Norse Hall of Jörmungandr, this path utilizes cultic devotion to share physical damage, empower ghouls, draw spilt blood, and transform cultists into giant serpentine monstrosities.",
+        baseline: "Activated like Thaumaturgy, substituting Theology for Occult.",
+        dots: {
+          1: { name: "Bestowment of Scales", desc: "Reflexively redirects physical damage dealt to a cultist onto the sorcerer, sprouting protective scales on the cultist.", sys: "Transfers incoming damage from a cultist/ghoul to the vampire, who soaks it normally. Cultist gains permanent scale patches." },
+          2: { name: "Suffer for Jormungandr", desc: "Reflexively transfers physical damage taken by the vampire onto a nearby bound cultist.", sys: "Requires cultist in eyeshot who has shared blood. Extra successes transfer additional damage levels to the cultist, causing serpentine facial deformities." },
+          3: { name: "Swallow the Tail", desc: "Draws spilt vitae or blood pools across the battlefield back into the vampire's mouth in slithering streams.", sys: "Activated at end of turn. Each success draws 1 nearby unconsumed blood point from the ground into the caster's mouth to refill their blood pool." },
+          4: { name: "Cycle of the Midgard Serpent", desc: "Temporarily bestows the sorcerer's own Discipline dots upon a ghoul servant until sunset.", sys: "Bestows total Discipline dots equal to successes rolled to a ghoul who has consumed the caster's blood." },
+          5: { name: "Apep’s Transformation", desc: "Permanently mutates a mortal or ghoul cultist into a massive, limbless serpent beast (the size of a warhorse) equipped with lethal combat traits.", sys: "Over 10 turns (minus successes), the cultist contorts into a permanent bestial ghoul serpent loyal to the caster." }
+        }
+      },
+      "The Taking of the Spirit": {
+        parent: "Dark Thaumaturgy",
+        source: "Rites of the Blood, pp. 170–171",
+        summary: "Strips away a victim's temporary Willpower through physical touch, turning them into a mindlessly obedient zombie automaton.",
+        baseline: "Touch contact (Dexterity + Brawl to strike). Contested Willpower roll vs. target (diff 8). If victim is reduced to 0 Willpower, they become a completely obedient, blank automaton until Willpower recovers. Caster's path rating determines victim's slow Willpower recovery rate (1 dot = 3 Willpower/day; 5 dots = 1 Willpower/2 weeks). Botching reduces caster's own temporary Willpower by path rating.",
+        dots: {}
+      },
+      "The Transylvanian Kraina": {
+        parent: "Koldunic Sorcery",
+        source: "V20DA Core Rulebook, pp. 275–277",
+        summary: "Binds the spirits of Transylvania and the Carpathian Mountains to command elemental earth, frost, and seismic force.",
+        baseline: "Offer 1 Blood Point to the land (free if within sight of the Carpathians). Roll specified Raw Attribute + Occult vs. Power Level + 4 (or Power Level + 2 if primary Kraina). Raw Attributes are used without blood or Discipline augmentation.",
+        dots: {
+          1: { name: "Burebista’s Throne", desc: "Sends senses soaring high into the air to survey surrounding territory.", sys: "Roll Perception + Occult. Senses project in an expanding radius (50yd at 1 success, up to 3 miles at 5 successes) for the scene." },
+          2: { name: "Pietrosu’s Hospitality", desc: "Summons biting, frigid winds from Mount Pietrosu that freeze enemies while protecting the caster.", sys: "Toss blood into the air. Roll Dexterity + Occult. Wind lasts turns equal to successes, dealing 1 bashing damage/turn and reducing enemy Dexterity by 2 and movement by half. Grants immunity to cold/wind to the caster." },
+          3: { name: "The Banks of the Bâsca", desc: "Releases blood into running water to trigger a devastating flash flood.", sys: "Drip blood into a waterway. Roll Strength + Occult. Flood sweeps targets downstream at 100 yards/turn, dealing 5 bashing damage/turn (double if blocked). Mortals must roll Swimming (diff 8) or take unsoakable lethal damage." },
+          4: { name: "Kupala’s Exhalation", desc: "Erupts freezing, flammable volcanic gasses from beneath the earth.", sys: "Spend 1+ Blood. Roll Stamina + Occult. Erupts cold gas cones (10-ft radius) causing freezing damage. Any nearby flame ignites gas into an explosion dealing 5 lethal damage (aggravated to vampires)." },
+          5: { name: "Restless Medias", desc: "Causes violent earthquakes to shake and collapse structures.", sys: "Spend 1 Willpower + 1 Blood. Roll Strength + Occult. Deals 10 lethal damage/turn to targets in area and collapses buildings over 1–5 turns based on structure size." }
+        }
+      },
+      "The Vitreous Path": {
+        parent: "Necromancy",
+        source: "V20DA Core Rulebook, pp. 290–292",
+        summary: "The exclusive Necromancy of the Nagaraja, manipulating the raw, destructive energies of Oblivion and the Void.",
+        baseline: "Standard Necromancy activation.",
+        dots: {
+          1: { name: "Eyes of the Wraith", desc: "Grants the ghostly perception of Deathsight, viewing the aura and decay of all things.", sys: "Roll Perception + Occult (diff 6). Gains Deathsight (p. 403) for 1 scene." },
+          2: { name: "Aura of Decay", desc: "Emits an aura that rapidly ages, rots, and disintegrates inanimate objects and non-living organic matter.", sys: "Spend 1 to 5 Blood points. Aura extends 1 meter. Decays objects from 1 week (1 Blood) down to 1 turn (5 Blood)." },
+          3: { name: "Pischacha’s Feast", desc: "Allows the vampire to feed directly on ambient necrotic decay energy in haunting sites, or feast on a ghost’s corpus.", sys: "Spend 1 Willpower. Absorbs 1–4 energy points from death sites to use as blood points." },
+          4: { name: "Curse of the Maelstrom", desc: "Summons destructive Spectres to devastate an area, or strikes a target with a dark entropic wasting illness.", sys: "Spend 1+ Blood. Roll Willpower (diff 8). Summons 1 Spectre per success to wreak havoc in a half-mile radius, OR deals 1 aggravated wound and marks target's soul." },
+          5: { name: "Night Cry", desc: "Unleashes an unearthly wail that either aids allies (-1 difficulty to actions) or inflicts 1 level of aggravated damage on foes.", sys: "Spend 1 Willpower (+1 Blood per extra target). Roll Manipulation + Occult (diff 6)." }
+        }
+      },
+      "Ushabti": {
+        parent: "Akhu",
+        source: "Rites of the Blood, pp. 163–165",
+        summary: "Creates wax or clay figurines bathed in honey and beer that expand into life-sized, animated golem servants.",
+        baseline: "Scaling Construct Stats. Spend 1 Blood + roll Willpower. Successes dictate realism (1 = crude wax; 5 = living body). Lasts 1 lunar month in haven.",
+        dots: {
+          1: { name: "Laborer", desc: "Basic mindless servant (Physicals 2, Mentals 1, Socials 0, No Abilities).", sys: "" },
+          2: { name: "Servitor", desc: "Adds +3 Attribute dots and 2 non-combat Ability dots.", sys: "" },
+          3: { name: "Guard", desc: "Adds +6 Attribute dots and 4 Ability dots (max 2 in Social/Mental/Abilities).", sys: "" },
+          4: { name: "Overseer", desc: "Adds +9 Attribute dots and 6 Ability dots (max 3 in Social/Mental/Abilities).", sys: "" },
+          5: { name: "Gift of Khnum", desc: "Creates an effectively living, sentient body (adds +12 Attribute dots, 8 Ability dots, Virtues/Willpower of a starting vampire). Costs 2 Willpower. Effectively immortal unless convinced it is fake.", sys: "" }
+        }
+      }
+    };
 
     // Official Sourcebook Backgrounds Database
     const backgroundsDatabase = {
@@ -2008,7 +2676,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
           1:  { mw: "Spending a night without human contact", r: "" }
         }
       },
-      "The Path of Community": {
+        "The Path of Community": {
         altName: "Via Humanitas",
         aura: "Humanity",
         virtues: { v1: "Conscience", v2: "Self-Control" },
@@ -3113,6 +3781,263 @@ Nothing in this agreement limits our liability to you in the event of death or p
       }
     };
 
+    /* --- PARENT DISCIPLINE FILTERING ENGINE FOR PATHS --- */
+
+    function setParentFilter(btnEl, disciplineName) {
+      const isAlreadyActive = btnEl.classList.contains('active');
+      
+      // Un-highlight all filter buttons
+      document.querySelectorAll('.path-filter-btn').forEach(btn => btn.classList.remove('active'));
+
+      if (isAlreadyActive) {
+        activeParentFilter = null;
+      } else {
+        btnEl.classList.add('active');
+        activeParentFilter = disciplineName;
+      }
+
+      updateAllPathDropdowns();
+    }
+
+    function updateAllPathDropdowns() {
+      document.querySelectorAll('#paths-list .path-row-container').forEach(container => {
+        const select = container.querySelector('select.dynamic-name');
+        if (!select) return;
+
+        const currentVal = select.value;
+        const allPaths = Object.keys(pathsDatabase).sort((a, b) => a.localeCompare(b));
+
+        let optionsHTML = `<option value="" disabled ${!currentVal ? 'selected' : ''}>Select Path...</option>`;
+        optionsHTML += `<option value="custom" ${currentVal === 'custom' ? 'selected' : ''}>Custom...</option>`;
+
+        // If current value is custom or a value not in the filtered list, ensure option persists
+        if (currentVal && currentVal !== 'custom' && !allPaths.includes(currentVal)) {
+          optionsHTML += `<option value="${currentVal}" selected>${currentVal}</option>`;
+        }
+
+        allPaths.forEach(pName => {
+          const pathObj = pathsDatabase[pName];
+          if (!activeParentFilter || (pathObj && pathObj.parent === activeParentFilter) || currentVal === pName) {
+            optionsHTML += `<option value="${pName}" ${currentVal === pName ? 'selected' : ''}>${pName}</option>`;
+          }
+        });
+
+        select.innerHTML = optionsHTML;
+      });
+    }
+
+    /* --- DYNAMIC PATH ROW & PATH CARDS SYSTEM --- */
+
+    function addPathRow(targetListId, initialName = '', initialVal = 0, initialDesc = '', initialPowers = '') {
+      const list = document.getElementById(targetListId);
+      if (!list) return;
+      const rowId = `path-container-${dynamicRowId++}`;
+
+      const container = document.createElement('div');
+      container.className = 'path-row-container';
+      container.id = rowId;
+      container.style.marginBottom = "10px";
+      container.style.width = "100%";
+
+      const allPaths = Object.keys(pathsDatabase).sort((a, b) => a.localeCompare(b));
+      let optionsHTML = `<option value="" disabled ${!initialName ? 'selected' : ''}>Select Path...</option>`;
+      optionsHTML += `<option value="custom" ${initialName === 'custom' ? 'selected' : ''}>Custom...</option>`;
+
+      if (initialName && initialName !== 'custom' && !allPaths.includes(initialName)) {
+        optionsHTML += `<option value="${initialName}" selected>${initialName}</option>`;
+      }
+
+      allPaths.forEach(pName => {
+        const pathObj = pathsDatabase[pName];
+        if (!activeParentFilter || (pathObj && pathObj.parent === activeParentFilter) || initialName === pName) {
+          optionsHTML += `<option value="${pName}" ${initialName === pName ? 'selected' : ''}>${pName}</option>`;
+        }
+      });
+
+      const isCustom = initialName === 'custom' || (initialName && !pathsDatabase[initialName]);
+
+      container.innerHTML = `
+        <div class="dynamic-row" style="display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%;">
+          <div class="path-select-container" style="position: relative; display: inline-flex; align-items: center; flex-grow: 1;">
+            <select class="dynamic-name" onchange="handlePathChange(this)" style="width: 100%; background: transparent; border: none; border-bottom: 1px dashed var(--border-color); font-family: inherit; font-size: 0.9rem; padding-right: 20px; appearance: none; -webkit-appearance: none; -moz-appearance: none; color: var(--text-dark); cursor: pointer;">
+              ${optionsHTML}
+            </select>
+            <span class="path-caret" style="position: absolute; right: 5px; pointer-events: none; color: var(--accent-red); font-size: 0.7rem; font-family: sans-serif;">▼</span>
+          </div>
+          <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${initialVal}" style="flex-shrink: 0; margin-bottom: 0;">
+            <div class="dots-container"></div>
+          </div>
+          <button class="delete-btn" onclick="removePathRow('${rowId}')" style="flex-shrink: 0; font-size: 1.2rem;">&times;</button>
+        </div>
+        <div class="custom-path-boxes" style="display: ${isCustom ? 'block' : 'none'}; margin-top: 6px;">
+          <textarea class="custom-path-desc" rows="3" placeholder="Path Description..." oninput="queueAutoSave()">${initialDesc}</textarea>
+          <textarea class="custom-path-powers" rows="5" placeholder="Path Powers..." oninput="queueAutoSave()">${initialPowers}</textarea>
+        </div>
+      `;
+
+      list.appendChild(container);
+      renderDots(container.querySelector('.trait'));
+
+      renderGrimoirePaths();
+      queueAutoSave();
+    }
+
+    function removePathRow(rowId) {
+      const container = document.getElementById(rowId);
+      if (container) container.remove();
+      renderGrimoirePaths();
+      queueAutoSave();
+    }
+
+    function handlePathChange(selectEl) {
+      const container = selectEl.closest('.path-row-container');
+      if (!container) return;
+
+      const customBoxes = container.querySelector('.custom-path-boxes');
+
+      if (selectEl.value === 'custom') {
+        const customName = prompt("Enter custom Path Name:");
+        if (customName && customName.trim() !== '') {
+          const cleaned = customName.trim();
+          let exists = false;
+          for (let opt of selectEl.options) {
+            if (opt.value === cleaned) {
+              exists = true;
+              selectEl.value = cleaned;
+              break;
+            }
+          }
+          if (!exists) {
+            const newOpt = document.createElement('option');
+            newOpt.value = cleaned;
+            newOpt.text = cleaned;
+            selectEl.add(newOpt);
+            selectEl.value = cleaned;
+          }
+          if (customBoxes) customBoxes.style.display = 'block';
+        } else {
+          selectEl.value = '';
+          if (customBoxes) customBoxes.style.display = 'none';
+        }
+      } else {
+        if (customBoxes) customBoxes.style.display = 'none';
+      }
+
+      renderGrimoirePaths();
+      queueAutoSave();
+    }
+
+    function renderGrimoirePaths() {
+      const container = document.getElementById('dynamic-grimoire-paths');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const activePaths = [];
+      document.querySelectorAll('#paths-list .path-row-container').forEach(rowContainer => {
+        const select = rowContainer.querySelector('.dynamic-name');
+        if (!select) return;
+        const name = select.value;
+        const dots = parseInt(rowContainer.querySelector('.trait').getAttribute('data-value')) || 0;
+
+        if (name && pathsDatabase[name]) {
+          activePaths.push({ name, dots });
+        }
+      });
+
+      if (activePaths.length === 0) return;
+
+      // Sort alphabetically by Path Name
+      activePaths.sort((a, b) => a.name.localeCompare(b.name));
+
+      activePaths.forEach(item => {
+        const pathData = pathsDatabase[item.name];
+        if (!pathData) return;
+
+        const isCollapsed = !!collapsedPaths[item.name];
+
+        const cardWrapper = document.createElement('div');
+        cardWrapper.style.marginBottom = "15px";
+        cardWrapper.style.padding = "12px 15px";
+        cardWrapper.style.background = "rgba(0,0,0,0.02)";
+        cardWrapper.style.borderLeft = "3px solid var(--accent-red)";
+        cardWrapper.style.borderRadius = "0 4px 4px 0";
+        cardWrapper.style.boxSizing = "border-box";
+        cardWrapper.id = `path-card-${item.name.replace(/\s+/g, '-')}`;
+
+        // Header container with click-to-minimize chevron
+        const headerEl = document.createElement('div');
+        headerEl.style.display = "flex";
+        headerEl.style.justifyContent = "space-between";
+        headerEl.style.alignItems = "center";
+        headerEl.style.cursor = "pointer";
+        headerEl.style.borderBottom = isCollapsed ? "none" : "1px solid rgba(140, 126, 110, 0.3)";
+        headerEl.style.paddingBottom = "4px";
+        headerEl.style.marginBottom = isCollapsed ? "0" : "12px";
+
+        const titleEl = document.createElement('h3');
+        titleEl.style.margin = "0";
+        titleEl.style.color = "var(--accent-red)";
+        titleEl.style.fontSize = "1.05rem";
+        titleEl.style.textTransform = "uppercase";
+        titleEl.textContent = `${item.name} (Level ${item.dots})`;
+
+        const chevronEl = document.createElement('span');
+        chevronEl.style.fontSize = "1.1rem";
+        chevronEl.style.color = "var(--accent-red)";
+        chevronEl.style.fontWeight = "bold";
+        chevronEl.innerHTML = isCollapsed ? "&#9660;" : "&#9650;"; // Toggle arrow
+
+        headerEl.appendChild(titleEl);
+        headerEl.appendChild(chevronEl);
+        cardWrapper.appendChild(headerEl);
+
+        const contentEl = document.createElement('div');
+        contentEl.style.display = isCollapsed ? "none" : "block";
+
+        headerEl.addEventListener('click', () => {
+          collapsedPaths[item.name] = !collapsedPaths[item.name];
+          renderGrimoirePaths();
+        });
+
+        let html = `
+          <div style="font-size: 0.88rem; line-height: 1.45; color: var(--text-dark);">
+            <p style="margin: 2px 0;"><strong>Path Summary:</strong> ${pathData.summary}</p>
+            <p style="margin: 2px 0;"><strong>Parent Discipline:</strong> ${pathData.parent}</p>
+            <p style="margin: 2px 0;"><strong>Source:</strong> ${pathData.source}</p>
+            <p style="margin: 2px 0 10px 0;"><strong>System:</strong> ${pathData.baseline}</p>
+            <div style="border-top: 1px dashed rgba(140, 126, 110, 0.3); padding-top: 8px;">
+        `;
+
+        if (pathData.dots && Object.keys(pathData.dots).length > 0) {
+          for (let i = 1; i <= 5; i++) {
+            const dot = pathData.dots[i];
+            if (dot) {
+              html += `
+                <div style="margin-bottom: 8px;">
+                  <h4 style="margin: 0 0 2px 0; font-size: 0.9rem; color: #1f1a17;"><strong>Level ${i}: ${dot.name}</strong></h4>
+              `;
+              if (dot.desc) {
+                html += `<p style="margin: 2px 0;"><strong>Description:</strong> ${dot.desc}</p>`;
+              }
+              if (dot.sys) {
+                html += `<p style="margin: 2px 0;"><strong>System:</strong> ${dot.sys}</p>`;
+              }
+              html += `</div>`;
+            }
+          }
+        }
+
+        html += `
+            </div>
+          </div>
+        `;
+
+        contentEl.innerHTML = html;
+        cardWrapper.appendChild(contentEl);
+        container.appendChild(cardWrapper);
+      });
+    }
+
     // Dynamically populates and renders active Page 1 Disciplines in the Grimoire Tab
     function renderGrimoireDisciplines() {
       const container = document.getElementById('dynamic-grimoire-disciplines');
@@ -3730,6 +4655,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
       container.setAttribute('data-value', currentVal);
       renderDots(container);
       renderGrimoireDisciplines(); // Instantly synchronize Grimoire description updates
+      renderGrimoirePaths();       // Instantly synchronize Grimoire Path Cards updates
       renderPage4Backgrounds();    // Instantly synchronize Page 4 Background updates
       
       // Dynamic updates
@@ -4426,28 +5352,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
       queueAutoSave();
     }
 
-    function addPathRow(targetListId, name = '', val = 0) {
-      const list = document.getElementById(targetListId);
-      if (!list) return;
-      const rowId = `path-${dynamicRowId++}`;
-      
-      const row = document.createElement('div');
-      row.className = 'dynamic-row';
-      row.id = rowId;
-
-      row.innerHTML = `
-        <input type="text" class="dynamic-name" placeholder="Path Name..." value="${name}" oninput="queueAutoSave()">
-        <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${val}">
-          <div class="dots-container"></div>
-        </div>
-        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button>
-      `;
-
-      list.appendChild(row);
-      renderDots(row.querySelector('.trait'));
-      queueAutoSave();
-    }
-
     function addDerangementRow(targetListId, name = '') {
       const list = document.getElementById(targetListId);
       if (!list) return;
@@ -4710,7 +5614,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
         'academics', 'enigmas', 'hearth_wisdom', 'investigation', 'law', 'medicine', 'occult', 'politics', 'seneschal', 'theology'
       ];
       abilitiesList.forEach(id => {
-        data.abilities[id] = parseInt(document.querySelector(`[data-id="${id}"]`).getAttribute('data-value'));
+        data.abilities[id] = parseInt(document.querySelector(`[data-id="${id}"]`).getAttribute('data-value')) || 0;
       });
 
       document.querySelectorAll('#custom-talents-list .custom-ability-row').forEach(row => {
@@ -4731,13 +5635,13 @@ Nothing in this agreement limits our liability to you in the event of death or p
 
       document.querySelectorAll('#disciplines-list .dynamic-row').forEach(row => {
         const name = row.querySelector('.dynamic-name').value;
-        const val = parseInt(row.querySelector('.trait').getAttribute('data-value'));
+        const val = parseInt(row.querySelector('.trait').getAttribute('data-value')) || 0;
         if (name || val > 0) data.disciplines.push({ name, rating: val });
       });
 
       document.querySelectorAll('#backgrounds-list .dynamic-row').forEach(row => {
         const name = row.querySelector('.dynamic-name').value;
-        const val = parseInt(row.querySelector('.trait').getAttribute('data-value'));
+        const val = parseInt(row.querySelector('.trait').getAttribute('data-value')) || 0;
         if (name || val > 0) data.backgrounds.push({ name, rating: val });
       });
 
@@ -4762,7 +5666,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
       document.querySelectorAll('#other-traits-list .dynamic-row').forEach(row => {
         data.otherTraits.push({
           name: row.querySelector('.dynamic-name').value,
-          val: parseInt(row.querySelector('.trait').getAttribute('data-value'))
+          val: parseInt(row.querySelector('.trait').getAttribute('data-value')) || 0
         });
       });
 
@@ -4774,11 +5678,15 @@ Nothing in this agreement limits our liability to you in the event of death or p
         });
       });
 
-      document.querySelectorAll('#paths-list .dynamic-row').forEach(row => {
-        data.paths.push({
-          name: row.querySelector('.dynamic-name').value,
-          val: parseInt(row.querySelector('.trait').getAttribute('data-value'))
-        });
+      document.querySelectorAll('#paths-list .path-row-container').forEach(container => {
+        const select = container.querySelector('select.dynamic-name');
+        const name = select ? select.value : '';
+        const val = parseInt(container.querySelector('.trait').getAttribute('data-value')) || 0;
+        const desc = container.querySelector('.custom-path-desc') ? container.querySelector('.custom-path-desc').value : '';
+        const powers = container.querySelector('.custom-path-powers') ? container.querySelector('.custom-path-powers').value : '';
+        if (name || val > 0 || desc || powers) {
+          data.paths.push({ name, val, desc, powers });
+        }
       });
 
       document.querySelectorAll('#derangements-list .derangement-row-container').forEach(container => {
@@ -5055,7 +5963,11 @@ Nothing in this agreement limits our liability to you in the event of death or p
 
       const pathList = document.getElementById('paths-list');
       if (pathList) pathList.innerHTML = '';
-      if (data.paths) data.paths.forEach(p => addPathRow('paths-list', p.name, p.val));
+      if (data.paths && data.paths.length > 0) {
+        data.paths.forEach(p => addPathRow('paths-list', p.name, p.val, p.desc || '', p.powers || ''));
+      } else {
+        addPathRow('paths-list');
+      }
 
       const gNotes = document.getElementById('grimoire-notes');
       if (gNotes) gNotes.value = data.grimoire_notes || '';
@@ -5315,6 +6227,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
 
       isLoadingSheet = false; 
       renderGrimoireDisciplines(); 
+      renderGrimoirePaths();
       renderPage4Backgrounds();
     }
 
