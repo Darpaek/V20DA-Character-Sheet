@@ -6,14 +6,14 @@
   <title>V20 Dark Ages Scribe - Character Ledger</title>
   <style>
     :root {
-      --bg-color: #12100e;
+      --bg-color: #000000;
       --parchment: #f5f0e6;
       --accent-red: #7c0b0b;
       --text-dark: #2c2520;
       --border-color: #8c7e6e;
       --dot-filled: #7c0b0b;
       --dot-empty: #d1c6b8;
-      --card-bg: #221d1a;
+      --card-bg: #1c1815;
       --text-dark-gray: #3e3530;
       --text-light: #e5dec9;
     }
@@ -28,6 +28,7 @@
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
+      box-sizing: border-box;
     }
 
     .app-container {
@@ -35,6 +36,9 @@
       max-width: 1000px;
       padding: 20px;
       box-sizing: border-box;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     header {
@@ -64,7 +68,9 @@
     }
 
     .view.active {
-      display: block;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
     }
 
     /* Dashboard Layout */
@@ -79,6 +85,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 20px;
+      margin-bottom: 30px;
     }
 
     .char-card {
@@ -208,7 +215,7 @@
       color: #6e5e50;
     }
 
-    /* Page Tabs (Hides default desktop scrollbar arrows) */
+    /* Page Tabs */
     .tabs-nav {
       display: flex;
       border-bottom: 2px solid var(--border-color);
@@ -552,6 +559,110 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* Dashboard Footer Layout */
+    .dashboard-footer {
+      margin-top: auto;
+      padding-top: 25px;
+      padding-bottom: 15px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    .dashboard-footer-text {
+      font-size: 0.82rem;
+      color: #b8ac9c;
+      text-align: center;
+      margin: 0;
+      line-height: 1.4;
+      flex-grow: 1;
+    }
+
+    .dashboard-footer a {
+      display: inline-block;
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+
+    .dashboard-footer img {
+      height: 55px;
+      width: auto;
+      vertical-align: middle;
+      cursor: pointer;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+
+    .dashboard-footer img:hover {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+
+    @media (max-width: 650px) {
+      .dashboard-footer {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    /* Full-Screen Legal Views */
+    .legal-view {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #000000;
+      color: #ffffff;
+      z-index: 99999;
+      overflow-y: auto;
+      box-sizing: border-box;
+      padding: 80px 30px 40px 30px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .legal-view.active {
+      display: flex;
+    }
+
+    .legal-content {
+      max-width: 800px;
+      width: 100%;
+      text-align: left;
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      white-space: pre-line;
+      color: #eeeeee;
+    }
+
+    .legal-back-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background-color: #1a1a1a;
+      border: 1px solid #7c0b0b;
+      color: #ffffff;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-family: inherit;
+      z-index: 100000;
+    }
+
+    .legal-back-btn:hover {
+      background-color: #7c0b0b;
+      color: #ffffff;
+    }
   </style>
 </head>
 <body>
@@ -572,7 +683,23 @@
           <input type="file" id="file-import" accept=".json" onchange="importCharacter(event)">
         </div>
       </div>
+      
       <div id="character-list" class="dashboard-grid"></div>
+
+      <!-- DASHBOARD FOOTER -->
+      <div class="dashboard-footer">
+        <a href="#" onclick="showLegalView('dp-legal-view'); return false;" title="Dark Pack Agreement">
+          <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 160' width='200' height='160'><rect width='100%' height='100%' fill='black'/><text x='100' y='65' fill='white' font-family='Georgia,serif' font-weight='900' font-size='42' text-anchor='middle' letter-spacing='2'>DARK</text><text x='100' y='120' fill='white' font-family='Georgia,serif' font-weight='900' font-size='42' text-anchor='middle' letter-spacing='2'>PACK</text></svg>" alt="Dark Pack Logo">
+        </a>
+        
+        <p class="dashboard-footer-text">
+          “Portions of the materials are the copyrights and trademarks of Paradox Interactive AB, and are used with permission. All rights reserved. For more information please visit worldofdarkness.com.”
+        </p>
+
+        <a href="#" onclick="showLegalView('sv-legal-view'); return false;" title="Storytellers Vault Terms">
+          <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 160' width='240' height='160'><rect width='100%' height='100%' fill='black'/><text x='120' y='45' fill='white' font-family='Georgia,serif' font-style='italic' font-size='22' text-anchor='middle'>storytellers</text><text x='120' y='115' fill='white' font-family='Georgia,serif' font-weight='900' font-size='50' text-anchor='middle' letter-spacing='3'>VAULT</text></svg>" alt="Storytellers Vault Logo">
+        </a>
+      </div>
     </div>
 
     <!-- SHEET EDITOR VIEW -->
@@ -1278,6 +1405,57 @@
         </div>
 
       </div>
+    </div>
+  </div>
+
+  <!-- STORYTELLERS VAULT LEGAL VIEW -->
+  <div id="sv-legal-view" class="legal-view">
+    <button class="legal-back-btn" onclick="hideLegalViews()">&larr; Back</button>
+    <div class="legal-content">
+World of Darkness, Vampire: The Masquerade, Vampire: The Dark Ages, Victorian Age: Vampire, Werewolf: The Apocalypse, Werewolf: The Wild West, Mage: The Ascension, Mage: The Sorcerers Crusade, Wraith: The Oblivion, Wraith: The Great War, Changeling: The Dreaming, Hunter: The Reckoning, Demon: The Fallen, Mummy: The Resurrection, Orpheus, Exalted, Chronicles of Darkness, Vampire:The Requiem, Werewolf: The Forsaken, Mage: The Awakening, Changeling: The Lost, Hunter: The Vigil, Giest: The Sin Eaters, Demon: The Descent, Mummy: The Curse, Beast: The Primordial, Promethean: The Created, World of Darkness, Storyteller System™, Storytelling System™, and Storytellers Vault™ and their respective logos, icons and symbols are trademarks or registered trademarks of Paradox Interactive AB. All rights reserved.
+
+This work contains material that is copyright of Paradox Interactive AB. Such material is used with permission under the Community Content Agreement for the Storytellers Vault.
+
+©2024 Paradox Interactive AB, Magnus Ladulåsgatan 4 SE-118 66 Stockholm Västgötagatan 5, SE-118 27 Stockholm, Sweden.
+    </div>
+  </div>
+
+  <!-- DARK PACK LEGAL VIEW -->
+  <div id="dp-legal-view" class="legal-view">
+    <button class="legal-back-btn" onclick="hideLegalViews()">&larr; Back</button>
+    <div class="legal-content">
+Finally, include a notice which informs users that Your Material is not official World of Darkness material. (Editor's Note: This web application in not official World of Darkness material.)
+
+You may not remove or alter any copyright or trademark notices of World of Darkness.
+
+Your use of World of Darkness IP is strictly for non-commercial purposes only. For example, you may not offer goods or services for sale in connection with your use of the World of Darkness IP.
+
+You may not sell or charge any fees in connection with Your Material, with these exceptions:
+
+You may accept donations for your time and materials through Patreon or similar services, or through sponsorships.
+
+You may accept subscription fees and revenues allowable through streaming platforms such as Twitch, YouTube, Mixer, etc.
+
+You may sell your Material through the Storytellers Vault, our official program that allows you to create and sell certain types of content through our authorized web portal.
+
+You warrant and represent that Your Material at all times shall comply with all applicable laws, and that it does not infringe any third party’s intellectual property rights or any other right.
+
+Use of materials: what is reasonable?
+Use of works embodying World of Darkness IP is strictly limited to what is deemed reasonable extent. Paradox reserves the right to decide, in its sole and absolute discretion, what constitutes “reasonable extent” in each case. With the exception for artwork, the copying, distributing, or making publicly available of any World of Darkness work (such as book) in full is never deemed reasonable for the purpose of this Agreement.
+
+You may provide links to materials provided by Paradox Interactive for free, such as quickstart guides, character sheets, or other promotional products.
+
+Term and termination
+This Agreement is effective until terminated.
+
+You may terminate this Agreement at any time by removing the Dark Pack logo and ceasing to use the World of Darkness IP on Your Material.
+
+Paradox Interactive may terminate this Agreement at any time for any reason. You must then immediately cease to use all World of Darkness IP on Your Material.
+
+Limitation of liability
+To the maximum extent permitted by applicable law, in no event shall Paradox Interactive, its affiliates or licensees, be liable for any special, incidental, indirect, or consequential damages whatsoever (including, without limitation, damages for loss of business profits, business interruption, loss of business information, or any other pecuniary loss) arising out of your use of or inability to use the World of Darkness IP.​
+
+Nothing in this agreement limits our liability to you in the event of death or personal injury resulting from gross negligence, fraud, or knowing misrepresentation on our part.
     </div>
   </div>
 
@@ -2462,7 +2640,7 @@
         willpower: "Regain a point of Willpower whenever you raise the spirits of those in great misery, or when you undermine a bully or tyrant by making him the object of ridicule."
       },
       "Loner": {
-        description: "The Loner prefers her own company to that of others, and the feeling is often reciprocated.",
+        description: "The Loner prefers her own company to that of others, and the feeling is always reciprocated.",
         willpower: "Regain a point of Willpower when you accomplish something by yourself that still benefits the coterie as a whole in some way."
       },
       "Martyr": {
@@ -2515,7 +2693,7 @@
       },
       "Survivor": {
         description: "The Survivor always manages to pull through, no matter the odds or opposition. The Survivor’s utter refusal to accept defeat often makes the difference between success and failure.",
-        willpower: "Regain a point of Willpower whenever you survive a threatening situation through sheer tenacity, or when your counsel causes someone else to persist in spite of opposition."
+        willpower: "Regain a point of Willpower whenever you survive a dangerous situation through sheer tenacity, or when your counsel causes someone else to persist in spite of opposition."
       },
       "Thrill-Seeker": {
         description: "The Thrill-Seeker lives for the rush of danger and actively pursues hazardous and possibly deadly situations. He is not actively suicidal or self-destructive; he simply seeks the stimulation of risk.",
@@ -2546,7 +2724,7 @@
         { level: 6, name: "Incarnate Darkness", desc: "The vampire becomes a writhing mass of pure shadow, gaining flight, earth-burrowing, or combat bonuses.", sys: "This power costs three blood points, but requires no roll, as the Laibon’s blood bursts from his skin and transforms him into roiling darkness." }
       ],
       "Abyss Mysticism": [
-        { level: "Sorcery", name: "Abyss Mysticism", desc: "A specialized branch of blood magic practiced by the Lasombra, drawing upon raw, unholy essence from the eternal abyss to manifest shadows, summon dark entities, and bridge the physical world with the void.", sys: "All Blood Sorcery Paths and Rituals are activated by spending 1 blood point and <strong>Roll Intelligence + Occult</strong> (Difficulty 6) unless stated otherwise in the power's description." }
+        { level: "Sorcery", name: "Abyss Mysticism", desc: "A specialized branch of blood magic practiced by the Lasombra, drawing upon raw, unholy essence from the eternal abyss to manifest shadows, summon dark entities, and bridge the physical world with the void.", sys: "All Blood Sorcery Paths are activated by spending 1 blood point and rolling Willpower against the power's level +3, and Rituals are activated by rolling <strong>Intelligence + Occult</strong> against the Ritual's level +3, unless stated otherwise in the power's description." }
       ],
       "Animalism": [
         { level: 1, name: "Whispers to the Wild", desc: "Establishes telepathic communication with an animal.", sys: "No roll is necessary to talk with an animal. However, the vampire must make eye contact to initiate Whispers to the Wild. Once she’s established the power, she does not need to maintain eye contact for the current scene." },
@@ -2597,7 +2775,7 @@
         { level: 6, name: "Shared Nightmare", desc: "Inflicts a Horrid Reality illusion on an entire crowd of targets simultaneously.", sys: "To use this power, the player must spend two Willpower points plus one blood point per target. <strong>Roll Manipulation + Subterfuge</strong> once, with a difficulty rating of the target’s <strong>Perception + Self-Control/Instinct</strong>." }
       ],
       "Clan Sorcery": [
-        { level: "Sorcery", name: "Clan Sorcery", desc: "Evocative, insular magical practices specific to individual clans and bloodlines (such as *Akhu*, *Dur-An-Ki*, or *Sadhana*).", sys: "All Blood Sorcery Paths and Rituals are activated by spending 1 blood point and <strong>Roll Intelligence + Occult</strong> (Difficulty 6) unless stated otherwise in the power's description." }
+        { level: "Sorcery", name: "Clan Sorcery", desc: "Evocative, insular magical practices specific to individual clans and bloodlines (such as *Akhu*, *Dur-An-Ki*, or *Sadhana*).", sys: "All Blood Sorcery Paths are activated by spending 1 blood point and rolling Willpower against the power's level +3, and Rituals are activated by rolling <strong>Intelligence + Occult</strong> against the Ritual's level +3, unless stated otherwise in the power's description." }
       ],
       "Daimonion": [
         { level: 1, name: "Sense the Sin", desc: "Discovers the target's underlying moral flaws and weaknesses.", sys: "<strong>Roll Perception + Empathy</strong> against living or undead beings; the difficulty is equal to the subject's <strong>Self-Control + 4</strong> or <strong>Instinct + 4</strong>." },
@@ -2609,7 +2787,7 @@
         { level: 6, name: "Lure Diabolik", desc: "Speaks the dark truths of the void to strip Road dots from a target, lowering their defenses against the Baali.", sys: "The Baali must speak the dark truths of the void to their victim in the language of Hell. Spend a point of Willpower and <strong>Roll Manipulation + Empathy</strong> at a difficulty equal to the victim's current Willpower." }
       ],
       "Dark Thaumaturgy": [
-        { level: "Sorcery", name: "Dark Thaumaturgy", desc: "A corrupted, highly illicit discipline of blood sorcery fueled by pacts with demons, spirits, and the dark entities of the Outer Dark, offering terrifying destructive power at the cost of the user's soul.", sys: "All Blood Sorcery Paths and Rituals are activated by spending 1 blood point and <strong>Roll Intelligence + Occult</strong> (Difficulty 6) unless stated otherwise in the power's description." }
+        { level: "Sorcery", name: "Dark Thaumaturgy", desc: "A corrupted, highly illicit discipline of blood sorcery fueled by pacts with demons, spirits, and the dark entities of the Outer Dark, offering terrifying destructive power at the cost of the user's soul.", sys: "All Blood Sorcery Paths are activated by spending 1 blood point and rolling Willpower against the power's level +3, and Rituals are activated by rolling <strong>Intelligence + Occult</strong> against the Ritual's level +3, unless stated otherwise in the power's description." }
       ],
       "Dementation": [
         { level: 1, name: "Passion", desc: "Stirs, inflames, or blunts a victim's current emotions.", sys: "<strong>Roll Charisma + Empathy</strong> vs target's <strong>Humanity</strong> or <strong>Path</strong> (as difficulty)." },
@@ -2648,7 +2826,7 @@
         { level: 6, name: "The Knight's Bane", desc: "Hardens skin like wrought iron, shattering incoming weapons.", sys: "Spend 2 blood points. If your soak roll reduces damage to zero, the attacking weapon is destroyed." }
       ],
       "Koldunic Sorcery": [
-        { level: "Sorcery", name: "Koldunic Sorcery", desc: "The ancient Tzimisce art of landscape sorcery, drawing upon direct communion with the elements, rivers, and chthonic spirits of the Carpathian territory.", sys: "All Blood Sorcery Paths and Rituals are activated by spending 1 blood point and <strong>Roll Intelligence + Occult</strong> (Difficulty 6) unless stated otherwise in the power's description." }
+        { level: "Sorcery", name: "Koldunic Sorcery", desc: "The ancient Tzimisce art of landscape sorcery, drawing upon direct communion with the elements, rivers, and chthonic spirits of the Carpathian territory.", sys: "To cast Koldunic Sorcery, the Koldun must offer 1 blood point to the land and roll <strong>Attribute + Occult</strong> against the power's level +4 (or +2 if the power is the Koldun's primary Kraina)." }
       ],
       "Mytherceria": [
         { level: 1, name: "Folderol", desc: "Detects deliberate lies spoken by others.", sys: "No roll or blood cost required; takes 1 turn to activate." },
@@ -2659,7 +2837,7 @@
         { level: 6, name: "Steal the Mind", desc: "Steals and reads a target's thoughts, memories, and skills.", sys: "<strong>Roll Perception + Subterfuge</strong> vs target's current Willpower points (as difficulty)." }
       ],
       "Necromancy": [
-        { level: "Sorcery", name: "Necromancy", desc: "The extensive study and manipulation of the forces of death, the Shroud, and the restless dead, enabling physical entry to the Underworld or the binding of souls.", sys: "All Blood Sorcery Paths and Rituals are activated by spending 1 blood point and <strong>Roll Intelligence + Occult</strong> (Difficulty 6) unless stated otherwise in the power's description." }
+        { level: "Sorcery", name: "Necromancy", desc: "The extensive study and manipulation of the forces of death, the Shroud, and the restless dead, enabling physical entry to the Underworld or the binding of souls.", sys: "All Blood Sorcery Paths are activated by spending 1 blood point and rolling Willpower against the power's level +3, and Rituals are activated by rolling <strong>Intelligence + Occult</strong> against the Ritual's level +3, unless stated otherwise in the power's description." }
       ],
       "Obfuscate": [
         { level: 1, name: "Silence of Death", desc: "Generates a zone of complete, unyielding silence in a 7-meter radius.", sys: "Passive, no roll required. Spending 2 blood points lets the silence linger in a room." },
@@ -2759,7 +2937,7 @@
         { level: 6, name: "Kiss of Lachesis", desc: "Ages or de-ages targets by decades or centuries with a touch.", sys: "Touch target. Spend 2 blood points and <strong>Roll Manipulation + Occult</strong> vs 4 + target's Stamina." }
       ],
       "Thaumaturgy": [
-        { level: "Sorcery", name: "Thaumaturgy", desc: "The highly structured, Hermetic discipline of blood magic developed by the Tremere, utilizing predictable Paths and meticulously researched Rituals.", sys: "All Blood Sorcery Paths and Rituals are activated by spending 1 blood point and <strong>Roll Intelligence + Occult</strong> (Difficulty 6) unless stated otherwise in the power's description." }
+        { level: "Sorcery", name: "Thaumaturgy", desc: "The highly structured, Hermetic discipline of blood magic developed by the Tremere, utilizing predictable Paths and meticulously researched Rituals.", sys: "All Blood Sorcery Paths are activated by spending 1 blood point and rolling Willpower against the power's level +3, and Rituals are activated by rolling <strong>Intelligence + Occult</strong> against the Ritual's level +3, unless stated otherwise in the power's description." }
       ],
       "Valeren - Healer": [
         { level: 1, name: "Sense Vitality", desc: "Instantly reads a target's health markers.", sys: "The player makes a <strong>Roll Perception + Empathy</strong> or <strong>Roll Medicine</strong> (difficulty 7)." },
@@ -4325,6 +4503,16 @@
       const btnId = tabId.replace('tab-', 'btn-');
       const activeBtn = document.getElementById(btnId);
       if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    /* --- LEGAL MODAL SWITCHING --- */
+
+    function showLegalView(id) {
+      document.getElementById(id).classList.add('active');
+    }
+
+    function hideLegalViews() {
+      document.querySelectorAll('.legal-view').forEach(el => el.classList.remove('active'));
     }
 
     /* --- CORE SYNC ENGINE --- */
