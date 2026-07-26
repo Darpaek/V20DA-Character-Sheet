@@ -46,20 +46,16 @@
       margin-bottom: 25px;
       border-bottom: 2px solid var(--accent-red);
       padding-bottom: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 180px; /* Increased header height by 150% */
     }
 
-    header h1 {
-      color: var(--accent-red);
-      margin: 0;
-      font-size: 2.3rem;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-    }
-
-    header p {
-      margin: 5px 0 0 0;
-      font-style: italic;
-      color: #9c8e80;
+    header img.header-logo {
+      height: 100%;
+      width: auto;
+      object-fit: contain; /* Fits image height while preserving aspect ratio */
     }
 
     /* Views */
@@ -908,8 +904,7 @@
 
   <div class="app-container">
     <header>
-      <h1>Vampire: The Dark Ages</h1>
-      <p>V20 Dark Ages Interactive Character Sheet Web Application</p>
+      <img src="https://cdn.jsdelivr.net/gh/Darpaek/V20DA-Character-Sheet@main/V20DA.png" alt="Vampire: The Dark Ages" class="header-logo">
     </header>
 
     <!-- DASHBOARD VIEW -->
