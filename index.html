@@ -4563,19 +4563,23 @@ Nothing in this agreement limits our liability to you in the event of death or p
       });
     }
 
-    async function renderDashboard() {
-      // 1. Render local index immediately (Instant load)
+      async function renderDashboard() {
+      // 1. Render local index immediately (0ms)
       const localList = getLocalIndex();
       renderDashboardGrid(localList);
 
-      // 2. Fetch cloud index in background if API_URL is connected
+      // 2. Fetch cloud index in background if connected
       if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
         try {
           const response = await fetch(API_URL);
           const cloudList = await response.json();
           if (Array.isArray(cloudList)) {
-            localStorage.setItem('v20_da_characters_index', JSON.stringify(cloudList));
-            renderDashboardGrid(cloudList);
+            // Filter out any IDs that were deleted locally
+            const deletedIds = new Set(JSON.parse(localStorage.getItem('v20_da_deleted_ids') || '[]'));
+            const validCloudList = cloudList.filter(item => !deletedIds.has(item.id));
+
+            localStorage.setItem('v20_da_characters_index', JSON.stringify(validCloudList));
+            renderDashboardGrid(validCloudList);
           }
         } catch (err) {
           console.warn("Background cloud list fetch failed; retaining local list.", err);
@@ -4602,7 +4606,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
       }
     }
 
-    function toggleNpc(id) {
+      async function toggleNpc(id) {
       let charData = null;
       try {
         charData = JSON.parse(localStorage.getItem(id));
@@ -4615,21 +4619,37 @@ Nothing in this agreement limits our liability to you in the event of death or p
         if (password === null) return; // Canceled
         charData.isNpc = true;
         charData.npcPassword = password;
-        localStorage.setItem(id, JSON.stringify(charData));
-        saveLocalIndex(id, charData.meta ? charData.meta.name : '', charData.meta ? charData.meta.clan : '', charData.mechanics ? charData.mechanics.roadName : '', true, password);
-        renderDashboard();
       } else {
         const input = prompt("Enter the NPC Password to unlock:");
         if (input === null) return; // Canceled
-        if (input === (charData.npcPassword || "")) {
-          charData.isNpc = false;
-          charData.npcPassword = "";
-          localStorage.setItem(id, JSON.stringify(charData));
-          saveLocalIndex(id, charData.meta ? charData.meta.name : '', charData.meta ? charData.meta.clan : '', charData.mechanics ? charData.mechanics.roadName : '', false, "");
-          renderDashboard();
-        } else {
+        if (input !== (charData.npcPassword || "")) {
           alert("Incorrect NPC Password.");
+          return;
         }
+        charData.isNpc = false;
+        charData.npcPassword = "";
+      }
+
+      // 1. Save locally instantly
+      localStorage.setItem(id, JSON.stringify(charData));
+      saveLocalIndex(
+        id, 
+        charData.meta ? charData.meta.name : '', 
+        charData.meta ? charData.meta.clan : '', 
+        charData.mechanics ? charData.mechanics.roadName : '', 
+        charData.isNpc, 
+        charData.npcPassword
+      );
+
+      // 2. Render local screen immediately
+      renderDashboardGrid(getLocalIndex());
+
+      // 3. Sync NPC status to Google Sheets in background
+      if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+        fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify(charData)
+        }).catch(err => console.warn("Background cloud NPC sync failed:", err));
       }
     }
 
@@ -4789,13 +4809,23 @@ Nothing in this agreement limits our liability to you in the event of death or p
       await renderDashboard();
     }
 
-    async function deleteCharacter(id) {
+      async function deleteCharacter(id) {
       if (!confirm("Are you sure you want to permanently delete this character?")) return;
 
-      localStorage.removeItem(id);
-      const localList = getLocalIndex().filter(item => item.id !== id);
-      localStorage.setItem('v20_da_characters_index', JSON.stringify(localList));
+      // 1. Record deletion locally so cloud fetches don't resurrect it
+      const deletedIds = JSON.parse(localStorage.getItem('v20_da_deleted_ids') || '[]');
+      if (!deletedIds.includes(id)) deletedIds.push(id);
+      localStorage.setItem('v20_da_deleted_ids', JSON.stringify(deletedIds));
 
+      // 2. Delete character data and index locally
+      localStorage.removeItem(id);
+      const updatedList = getLocalIndex().filter(item => item.id !== id);
+      localStorage.setItem('v20_da_characters_index', JSON.stringify(updatedList));
+
+      // 3. Update dashboard immediately
+      renderDashboardGrid(updatedList);
+
+      // 4. Send deletion request to Google Sheets in background
       if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
         try {
           await fetch(API_URL, {
@@ -4803,11 +4833,9 @@ Nothing in this agreement limits our liability to you in the event of death or p
             body: JSON.stringify({ action: "delete", id: id })
           });
         } catch (err) {
-          console.warn("Cloud deletion failed.");
+          console.warn("Background cloud deletion failed:", err);
         }
       }
-
-      await renderDashboard();
     }
 
     /* --- DOM DOTS SYSTEM --- */
