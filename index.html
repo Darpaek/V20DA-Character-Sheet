@@ -4574,12 +4574,26 @@ Nothing in this agreement limits our liability to you in the event of death or p
           const response = await fetch(API_URL);
           const cloudList = await response.json();
           if (Array.isArray(cloudList)) {
-            // Filter out any IDs that were deleted locally
             const deletedIds = new Set(JSON.parse(localStorage.getItem('v20_da_deleted_ids') || '[]'));
-            const validCloudList = cloudList.filter(item => !deletedIds.has(item.id));
+            const localMap = new Map(getLocalIndex().map(item => [item.id, item]));
 
-            localStorage.setItem('v20_da_characters_index', JSON.stringify(validCloudList));
-            renderDashboardGrid(validCloudList);
+            // Merge cloud list with local list, prioritizing local NPC status and password
+            const mergedList = cloudList
+              .filter(item => !deletedIds.has(item.id))
+              .map(cloudItem => {
+                const localItem = localMap.get(cloudItem.id);
+                if (localItem) {
+                  return {
+                    ...cloudItem,
+                    isNpc: localItem.isNpc !== undefined ? localItem.isNpc : cloudItem.isNpc,
+                    npcPassword: localItem.npcPassword !== undefined ? localItem.npcPassword : cloudItem.npcPassword
+                  };
+                }
+                return cloudItem;
+              });
+
+            localStorage.setItem('v20_da_characters_index', JSON.stringify(mergedList));
+            renderDashboardGrid(mergedList);
           }
         } catch (err) {
           console.warn("Background cloud list fetch failed; retaining local list.", err);
