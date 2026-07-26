@@ -507,7 +507,7 @@
       font-size: 0.9rem;
       padding: 8px;
       resize: vertical;
-      min-height: 80px;
+      min-height: 60px; /* Reduced to 3 lines height */
       color: var(--text-dark);
     }
 
@@ -1513,7 +1513,7 @@
           </div>
           <div class="text-area-group" style="margin-top: 25px;">
             <label>Sorcerous Notes & Theories</label>
-            <textarea id="grimoire-notes" style="min-height: 250px;" placeholder="Abyss Mysticism or Koldunic Sorcery drafting space..." oninput="queueAutoSave()"></textarea>
+            <textarea id="grimoire-notes" style="min-height: 60px;" placeholder="Abyss Mysticism or Koldunic Sorcery drafting space..." oninput="queueAutoSave()"></textarea>
           </div>
         </div>
 
@@ -1618,8 +1618,8 @@
         <!-- PAGE 5: HISTORY -->
         <div id="tab-page-5" class="tab-content">
           <h2>History & Narrative</h2>
-          <div class="text-area-group"><label>Prelude</label><textarea id="narrative-prelude" style="min-height: 150px;" oninput="queueAutoSave()"></textarea></div>
-          <div class="text-area-group"><label>Goals</label><textarea id="narrative-goals" style="min-height: 100px;" oninput="queueAutoSave()"></textarea></div>
+          <div class="text-area-group"><label>Prelude</label><textarea id="narrative-prelude" style="min-height: 60px;" oninput="queueAutoSave()"></textarea></div>
+          <div class="text-area-group"><label>Goals</label><textarea id="narrative-goals" style="min-height: 60px;" oninput="queueAutoSave()"></textarea></div>
 
           <div class="two-col-grid" style="margin-top: 25px;">
             <div class="column">
@@ -1640,7 +1640,7 @@
               <h3>Visuals & Records</h3>
               <div class="text-area-group">
                 <label>Coterie Chart & Connections</label>
-                <textarea id="vis-coterie" rows="5" style="width: 100%; box-sizing: border-box; font-family: inherit; font-size: 0.9rem; padding: 8px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-color); resize: vertical;" oninput="queueAutoSave()"></textarea>
+                <textarea id="vis-coterie" rows="3" style="width: 100%; min-height: 60px; box-sizing: border-box; font-family: inherit; font-size: 0.9rem; padding: 8px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-color); resize: vertical;" oninput="queueAutoSave()"></textarea>
               </div>
               <div class="text-area-group">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
