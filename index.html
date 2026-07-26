@@ -4529,13 +4529,14 @@ Nothing in this agreement limits our liability to you in the event of death or p
       localStorage.setItem('v20_da_characters_index', JSON.stringify(list));
     }
 
-    async function renderDashboard() {
-      const list = await getCharacterList();
+    /* --- OPTIMIZED FAST LOCAL-FIRST DASHBOARD & EDITOR --- */
+
+    function renderDashboardGrid(list) {
       const listContainer = document.getElementById('character-list');
       if (!listContainer) return;
       listContainer.innerHTML = '';
 
-      if (list.length === 0) {
+      if (!list || list.length === 0) {
         listContainer.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #8c7e6e; font-style: italic;">No records found. Prepare a new character.</p>`;
         return;
       }
@@ -4560,6 +4561,26 @@ Nothing in this agreement limits our liability to you in the event of death or p
         `;
         listContainer.appendChild(card);
       });
+    }
+
+    async function renderDashboard() {
+      // 1. Render local index immediately (Instant load)
+      const localList = getLocalIndex();
+      renderDashboardGrid(localList);
+
+      // 2. Fetch cloud index in background if API_URL is connected
+      if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+        try {
+          const response = await fetch(API_URL);
+          const cloudList = await response.json();
+          if (Array.isArray(cloudList)) {
+            localStorage.setItem('v20_da_characters_index', JSON.stringify(cloudList));
+            renderDashboardGrid(cloudList);
+          }
+        } catch (err) {
+          console.warn("Background cloud list fetch failed; retaining local list.", err);
+        }
+      }
     }
 
     function checkNpcAccess(id, callback) {
@@ -4612,7 +4633,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
       }
     }
 
-    async function createNewCharacter() {
+      async function createNewCharacter() {
       const charId = 'char_' + Date.now();
       const initialSheet = {
         id: charId,
@@ -4669,70 +4690,55 @@ Nothing in this agreement limits our liability to you in the event of death or p
         vis: { coterie: '', sketch: '', image: '' }
       };
 
+      // 1. Save locally instantly
       localStorage.setItem(charId, JSON.stringify(initialSheet));
       saveLocalIndex(charId, initialSheet.meta.name, initialSheet.meta.clan, '', false, '');
 
-      if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
-        try {
-          await fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify(initialSheet)
-          });
-        } catch (err) {
-          console.warn("Cloud initialization failed, saved locally instead.");
-        }
-      }
+      // 2. Open editor INSTANTLY (0ms latency)
+      openEditor(charId);
 
-      await openEditor(charId);
+      // 3. Sync to Google Sheets in background without blocking UI
+      if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+        fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify(initialSheet)
+        }).catch(err => console.warn("Background cloud initialization queued.", err));
+      }
     }
 
-    async function openEditor(id) {
+      async function openEditor(id) {
       activeCharacterId = id;
       setSaveStatus('Loading draft...');
 
-      if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
-        try {
-          const sheetData = JSON.parse(localStorage.getItem(id));
-          if (sheetData) {
-            loadSheetIntoDOM(sheetData);
-            document.getElementById('dashboard-view').classList.remove('active');
-            document.getElementById('editor-view').classList.add('active');
-            switchTab('tab-page-1');
-            setSaveStatus('Draft Loaded');
-          } else {
-            setSaveStatus('Draft not found');
-          }
-        } catch (e) {
-          console.error("Error loading sheet from local storage:", e);
-          setSaveStatus('Error loading sheet');
-        }
-        return;
-      }
-
+      // 1. Load local draft INSTANTLY
+      let localData = null;
       try {
-        const response = await fetch(`${API_URL}?id=${id}`);
-        const sheetData = await response.json();
-        loadSheetIntoDOM(sheetData);
+        localData = JSON.parse(localStorage.getItem(id));
+      } catch(e) {}
+
+      if (localData) {
+        loadSheetIntoDOM(localData);
         document.getElementById('dashboard-view').classList.remove('active');
         document.getElementById('editor-view').classList.add('active');
         switchTab('tab-page-1');
-        setSaveStatus('Draft Loaded (Cloud)');
-      } catch (err) {
-        console.warn("Cloud fetch failed, trying local fallback...", err);
-        try {
-          const sheetData = JSON.parse(localStorage.getItem(id));
-          if (sheetData) {
-            loadSheetIntoDOM(sheetData);
-            document.getElementById('dashboard-view').classList.remove('active');
-            document.getElementById('editor-view').classList.add('active');
-            switchTab('tab-page-1');
-            setSaveStatus('Draft Loaded (Local Fallback)');
-          } else {
-            setSaveStatus('Failed to load draft');
+        setSaveStatus('Draft Loaded (Local)');
+      }
+
+      if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) return;
+
+      // 2. Silently fetch cloud updates in background without locking UI
+      try {
+        const response = await fetch(`${API_URL}?id=${id}`);
+        const cloudData = await response.json();
+        if (cloudData && cloudData.id) {
+          localStorage.setItem(id, JSON.stringify(cloudData));
+          if (activeCharacterId === id) {
+            loadSheetIntoDOM(cloudData);
+            setSaveStatus('Synced with Cloud');
           }
-        } catch (e) {
-          setSaveStatus('Failed to load draft');
         }
+      } catch (err) {
+        if (!localData) setSaveStatus('Offline Mode');
       }
     }
 
