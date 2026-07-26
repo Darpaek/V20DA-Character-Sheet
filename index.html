@@ -703,6 +703,159 @@
       background-color: #7c0b0b;
       color: #ffffff;
     }
+
+    /* ==========================================
+       PRINTABILITY STYLESHEET
+       ========================================== */
+    @media print {
+      /* 1. Hide interface controls & navigation */
+      header,
+      .dashboard-footer,
+      .sheet-header-nav,
+      .tabs-nav,
+      .legal-view,
+      .legal-back-btn,
+      .delete-btn,
+      #file-import,
+      #parent-discipline-filters,
+      button,
+      .clan-caret,
+      .gen-caret,
+      .nature-caret,
+      .demeanor-caret,
+      .road-caret,
+      .path-caret,
+      .disc-caret,
+      .bg-caret,
+      .rituals-toggle-triangle {
+        display: none !important;
+      }
+
+      /* 2. Page setup */
+      @page {
+        size: A4 portrait;
+        margin: 12mm 10mm;
+      }
+
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .app-container,
+      .sheet-container {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+      }
+
+      /* 3. Show all 5 tabs concurrently */
+      .view {
+        display: block !important;
+      }
+
+      #dashboard-view {
+        display: none !important;
+      }
+
+      #editor-view {
+        display: block !important;
+      }
+
+      .tab-content {
+        display: block !important;
+        visibility: visible !important;
+      }
+
+      /* Force Tabs 2-5 to start cleanly on a fresh printed page */
+      #tab-page-2,
+      #tab-page-3,
+      #tab-page-4,
+      #tab-page-5 {
+        break-before: page !important;
+        page-break-before: always !important;
+      }
+
+      /* 4. Uncollapse all minimized cards for printing */
+      #dynamic-grimoire-disciplines > div > div,
+      #dynamic-grimoire-paths > div > div,
+      #dynamic-page4-backgrounds > div > div,
+      #rituals-list {
+        display: block !important;
+      }
+
+      /* 5. Prevent elements from being cut in half across pages */
+      .trait,
+      .info-group,
+      .char-card,
+      .column,
+      .two-col-grid > div,
+      .three-col-grid > div,
+      .road-enlightenment-grid > div,
+      .status-section > div,
+      .dynamic-row,
+      .custom-ability-row,
+      .custom-trait-container,
+      .ritual-entry-container,
+      .path-row-container,
+      .derangement-row-container,
+      table,
+      tr,
+      tbody,
+      .combat-table tr {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+
+      /* 6. Text Field & Input Formatting */
+      input[type="text"],
+      input[type="number"],
+      select {
+        color: #000000 !important;
+        border-bottom: 1px solid #8c7e6e !important;
+        background: transparent !important;
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+      }
+
+      textarea {
+        height: auto !important;
+        min-height: 2rem !important;
+        overflow: visible !important;
+        resize: none !important;
+        background: transparent !important;
+        border: 1px solid #8c7e6e !important;
+        color: #000000 !important;
+        white-space: pre-wrap !important;
+      }
+
+      /* 7. Preserve Dot Ratings and Checkboxes */
+      .dot {
+        border: 1px solid #7c0b0b !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .dot.filled {
+        background-color: #7c0b0b !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      input[type="checkbox"] {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        accent-color: #7c0b0b !important;
+      }
+    }
+    
   </style>
 </head>
 <body>
@@ -750,6 +903,7 @@
           <div>
             <button class="btn btn-secondary btn-small" onclick="closeEditor()">&larr; Dashboard</button>
             <button class="btn btn-small" onclick="triggerManualExport()">Export JSON</button>
+            <button class="btn btn-secondary btn-small" onclick="printCharacterSheet()">Printable</button>
             <span id="sheet-npc-indicator" style="display: none; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-red); font-size: 0.95rem; font-weight: bold; margin-left: 15px; vertical-align: middle;">NPC</span>
           </div>
           <span id="save-status" class="autosave-status">Draft Loaded</span>
@@ -6284,6 +6438,16 @@ Nothing in this agreement limits our liability to you in the event of death or p
       event.target.value = '';
     }
 
+    function printCharacterSheet() {
+      // Synchronize all dynamic cards and lists across all 5 pages
+      renderGrimoireDisciplines();
+      renderGrimoirePaths();
+      renderPage4Backgrounds();
+
+      // Trigger the native browser print dialog
+      window.print();
+    }
+    
     /* --- INITIALIZATION --- */
 
     function initApp() {
