@@ -5566,6 +5566,55 @@ Nothing in this agreement limits our liability to you in the event of death or p
       queueAutoSave();
     }
 
+/* --- AUTO-EXPANDING TEXTAREAS & ROAD HEIGHT SYNCHRONIZATION --- */
+
+    function autoExpandTextarea(ta) {
+      if (!ta || ta.offsetParent === null) return; // Skip hidden textareas to prevent inaccurate 0px calculations
+      
+      const compStyle = window.getComputedStyle(ta);
+      const minH = parseFloat(compStyle.minHeight) || 40;
+      
+      ta.style.height = 'auto';
+      const targetH = Math.max(minH, ta.scrollHeight + 4);
+      ta.style.height = targetH + 'px';
+    }
+
+    function syncRoadEnlightenmentHeights() {
+      for (let i = 1; i <= 10; i++) {
+        const numEl = document.getElementById(`road-rating-num-${i}`);
+        const wrongEl = document.getElementById(`road-wrongdoing-${i}`);
+        const ratEl = document.getElementById(`road-rationale-${i}`);
+        if (!numEl || !wrongEl || !ratEl) continue;
+        if (numEl.offsetParent === null) continue; // Skip if tab is hidden
+
+        numEl.style.height = 'auto';
+        wrongEl.style.height = 'auto';
+        ratEl.style.height = 'auto';
+
+        const maxH = Math.max(
+          numEl.scrollHeight,
+          wrongEl.scrollHeight,
+          ratEl.scrollHeight,
+          42 // Default minimum height for road rows
+        );
+
+        numEl.style.height = maxH + 'px';
+        wrongEl.style.height = maxH + 'px';
+        ratEl.style.height = maxH + 'px';
+      }
+    }
+
+    function autoResizeAllTextareas() {
+      document.querySelectorAll('textarea').forEach(ta => {
+        // Skip road hierarchy textareas as they are synced in trios
+        if (ta.id && ta.id.startsWith('road-') && (ta.id.includes('rating-num') || ta.id.includes('wrongdoing') || ta.id.includes('rationale'))) {
+          return;
+        }
+        autoExpandTextarea(ta);
+      });
+      syncRoadEnlightenmentHeights();
+    }
+
     /* --- TAB SWITCHING SYSTEM --- */
 
     function switchTab(tabId) {
@@ -5578,6 +5627,11 @@ Nothing in this agreement limits our liability to you in the event of death or p
       const btnId = tabId.replace('tab-', 'btn-');
       const activeBtn = document.getElementById(btnId);
       if (activeBtn) activeBtn.classList.add('active');
+
+      // Recalculate heights for newly visible textareas on this page
+      setTimeout(() => {
+        autoResizeAllTextareas();
+      }, 15);
     }
 
     /* --- LEGAL MODAL SWITCHING --- */
@@ -6400,6 +6454,9 @@ Nothing in this agreement limits our liability to you in the event of death or p
       renderGrimoireDisciplines(); 
       renderGrimoirePaths();
       renderPage4Backgrounds();
+
+      // Auto-expand all textareas for loaded character data
+      setTimeout(autoResizeAllTextareas, 20);
     }
 
     /* --- PRIVILEGED FILE IO --- */
@@ -6455,23 +6512,46 @@ Nothing in this agreement limits our liability to you in the event of death or p
       event.target.value = '';
     }
 
+    /* --- PRINTABILITY FUNCTION --- */
+
     function printCharacterSheet() {
       // 1. Synchronize all dynamic cards and lists across all 5 pages
       renderGrimoireDisciplines();
       renderGrimoirePaths();
       renderPage4Backgrounds();
 
-      // 2. Dynamically expand all textareas to fit their full content height for print
+      // 2. Temporarily unhide all tabs so scrollHeights calculate accurately for print
+      const tabs = document.querySelectorAll('.tab-content');
+      tabs.forEach(tab => tab.style.display = 'block');
+
+      // 3. Auto-expand every textarea to fit all lines of text
       document.querySelectorAll('textarea').forEach(ta => {
+        const compStyle = window.getComputedStyle(ta);
+        const minH = parseFloat(compStyle.minHeight) || 40;
         ta.style.height = 'auto';
-        if (ta.value && ta.value.trim() !== '') {
-          ta.style.height = (ta.scrollHeight + 6) + 'px';
-        }
+        const targetH = Math.max(minH, ta.scrollHeight + 4);
+        ta.style.height = targetH + 'px';
       });
 
-      // 3. Trigger native browser print dialog
+      syncRoadEnlightenmentHeights();
+
+      // 4. Reset inline display overrides so Print CSS manages tab pagination
+      tabs.forEach(tab => tab.style.display = '');
+
+      // 5. Trigger native browser print dialog
       window.print();
     }
+
+    // Global listener for live textarea auto-expansion as the user types
+    document.addEventListener('input', function(e) {
+      if (e.target && e.target.tagName.toLowerCase() === 'textarea') {
+        if (e.target.id && e.target.id.startsWith('road-') && (e.target.id.includes('rating-num') || e.target.id.includes('wrongdoing') || e.target.id.includes('rationale'))) {
+          syncRoadEnlightenmentHeights();
+        } else {
+          autoExpandTextarea(e.target);
+        }
+      }
+    });
     
     /* --- INITIALIZATION --- */
 
