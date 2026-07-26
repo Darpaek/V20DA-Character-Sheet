@@ -843,14 +843,15 @@
         display: block !important;
         width: 100% !important;
         box-sizing: border-box !important;
-        overflow: visible !important;
+        overflow: hidden !important; /* Eliminates all print scrollbars */
         resize: none !important;
         background: transparent !important;
         border: 1px solid #8c7e6e !important;
         color: #000000 !important;
         white-space: pre-wrap !important;
         word-wrap: break-word !important;
-        field-sizing: content !important;
+        padding: 6px 8px !important; /* Uniform whitespace top and bottom */
+        line-height: 1.35 !important;
       }
 
       /* 6. Preserve Dot Ratings and Checkboxes */
@@ -5579,17 +5580,24 @@ Nothing in this agreement limits our liability to you in the event of death or p
       ta.style.height = targetH + 'px';
     }
 
-    function syncRoadEnlightenmentHeights() {
+    function syncRoadEnlightenmentHeights(isForPrint = false) {
+      // Use extra buffer during print to handle print font line wrapping
+      const paddingBuffer = isForPrint ? 14 : 4;
+
       for (let i = 1; i <= 10; i++) {
         const numEl = document.getElementById(`road-rating-num-${i}`);
         const wrongEl = document.getElementById(`road-wrongdoing-${i}`);
         const ratEl = document.getElementById(`road-rationale-${i}`);
         if (!numEl || !wrongEl || !ratEl) continue;
-        if (numEl.offsetParent === null) continue; // Skip if tab is hidden
+        if (numEl.offsetParent === null && !isForPrint) continue; // Skip if tab is hidden during normal editing
 
         numEl.style.height = 'auto';
         wrongEl.style.height = 'auto';
         ratEl.style.height = 'auto';
+
+        numEl.style.overflow = 'hidden';
+        wrongEl.style.overflow = 'hidden';
+        ratEl.style.overflow = 'hidden';
 
         const maxH = Math.max(
           numEl.scrollHeight,
@@ -5598,9 +5606,11 @@ Nothing in this agreement limits our liability to you in the event of death or p
           42 // Default minimum height for road rows
         );
 
-        numEl.style.height = maxH + 'px';
-        wrongEl.style.height = maxH + 'px';
-        ratEl.style.height = maxH + 'px';
+        const targetH = maxH + paddingBuffer;
+
+        numEl.style.height = targetH + 'px';
+        wrongEl.style.height = targetH + 'px';
+        ratEl.style.height = targetH + 'px';
       }
     }
 
@@ -6514,7 +6524,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
 
     /* --- PRINTABILITY FUNCTION --- */
 
-    function printCharacterSheet() {
+      function printCharacterSheet() {
       // 1. Synchronize all dynamic cards and lists across all 5 pages
       renderGrimoireDisciplines();
       renderGrimoirePaths();
@@ -6524,22 +6534,29 @@ Nothing in this agreement limits our liability to you in the event of death or p
       const tabs = document.querySelectorAll('.tab-content');
       tabs.forEach(tab => tab.style.display = 'block');
 
-      // 3. Auto-expand every textarea to fit all lines of text
+      // 3. Auto-expand every textarea with print buffer & hidden overflow
       document.querySelectorAll('textarea').forEach(ta => {
+        ta.style.overflow = 'hidden'; // Prevents scrollbars on paper
         const compStyle = window.getComputedStyle(ta);
         const minH = parseFloat(compStyle.minHeight) || 40;
         ta.style.height = 'auto';
-        const targetH = Math.max(minH, ta.scrollHeight + 4);
+        
+        // Add a 14px buffer so print line wrapping never clips the bottom line
+        const targetH = Math.max(minH, ta.scrollHeight + 14);
         ta.style.height = targetH + 'px';
       });
 
-      syncRoadEnlightenmentHeights();
+      // 4. Synchronize Road row heights with print buffer
+      syncRoadEnlightenmentHeights(true);
 
-      // 4. Reset inline display overrides so Print CSS manages tab pagination
+      // 5. Reset inline display overrides so Print CSS manages tab pagination
       tabs.forEach(tab => tab.style.display = '');
 
-      // 5. Trigger native browser print dialog
+      // 6. Trigger native browser print dialog
       window.print();
+
+      // 7. Recalculate screen heights after printing concludes
+      setTimeout(autoResizeAllTextareas, 100);
     }
 
     // Global listener for live textarea auto-expansion as the user types
