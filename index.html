@@ -850,8 +850,8 @@
         color: #000000 !important;
         white-space: pre-wrap !important;
         word-wrap: break-word !important;
-        padding: 6px 8px !important; /* Uniform whitespace top and bottom */
-        line-height: 1.35 !important;
+        padding: 6px 8px !important;
+        line-height: 1.4 !important;
       }
 
       /* 6. Preserve Dot Ratings and Checkboxes */
@@ -5581,8 +5581,8 @@ Nothing in this agreement limits our liability to you in the event of death or p
     }
 
     function syncRoadEnlightenmentHeights(isForPrint = false) {
-      // Use extra buffer during print to handle print font line wrapping
-      const paddingBuffer = isForPrint ? 14 : 4;
+      // Generous buffer (+36px) during print to accommodate narrower paper column text wraps
+      const paddingBuffer = isForPrint ? 36 : 4;
 
       for (let i = 1; i <= 10; i++) {
         const numEl = document.getElementById(`road-rating-num-${i}`);
@@ -6541,8 +6541,9 @@ Nothing in this agreement limits our liability to you in the event of death or p
         const minH = parseFloat(compStyle.minHeight) || 40;
         ta.style.height = 'auto';
         
-        // Add a 14px buffer so print line wrapping never clips the bottom line
-        const targetH = Math.max(minH, ta.scrollHeight + 14);
+        // Add 36px safety buffer for print mode to absorb narrower print column line-wrapping
+        const printBuffer = (ta.value && ta.value.trim() !== '') ? 36 : 0;
+        const targetH = Math.max(minH, ta.scrollHeight + printBuffer);
         ta.style.height = targetH + 'px';
       });
 
