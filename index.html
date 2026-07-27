@@ -951,8 +951,8 @@
       <div class="dashboard-header">
         <h2>Chronicle Ledger</h2>
         <div>
-          <button class="btn" onclick="createNewCharacter()">+ Create Character</button>
-          <button class="btn btn-secondary" onclick="document.getElementById('file-import').click()">Import JSON</button>
+          <button type="button" class="btn" onclick="createNewCharacter()">+ Create Character</button>
+          <button type="button" class="btn btn-secondary" onclick="document.getElementById('file-import').click()">Import JSON</button>
           <input type="file" id="file-import" accept=".json" onchange="importCharacter(event)">
         </div>
       </div>
@@ -981,9 +981,9 @@
         
         <div class="sheet-header-nav">
           <div>
-            <button class="btn btn-secondary btn-small btn-nav-view" onclick="closeEditor()">&larr; Dashboard</button>
-            <button class="btn btn-small btn-nav-view" onclick="triggerManualExport()">Export JSON</button>
-            <button class="btn btn-secondary btn-small btn-nav-view" onclick="printCharacterSheet()">Printable</button>
+            <button type="button" class="btn btn-secondary btn-small btn-nav-view" onclick="closeEditor()">&larr; Dashboard</button>
+            <button type="button" class="btn btn-small btn-nav-view" onclick="triggerManualExport()">Export JSON</button>
+            <button type="button" class="btn btn-secondary btn-small btn-nav-view" onclick="printCharacterSheet()">Printable</button>
             <span id="sheet-npc-indicator" style="display: none; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-red); font-size: 0.95rem; font-weight: bold; margin-left: 15px; vertical-align: middle;">NPC</span>
             <span id="sheet-readonly-indicator" style="display: none; text-transform: uppercase; letter-spacing: 1px; color: #8c7e6e; font-size: 0.95rem; font-weight: bold; margin-left: 15px; vertical-align: middle;">READ ONLY</span>
           </div>
@@ -992,11 +992,11 @@
 
         <!-- Page Tabs -->
         <div class="tabs-nav">
-          <button class="tab-btn btn-nav-view active" id="btn-page-1" onclick="switchTab('tab-page-1')">Page 1: Core</button>
-          <button class="tab-btn btn-nav-view" id="btn-page-2" onclick="switchTab('tab-page-2')">Page 2: Grimoire</button>
-          <button class="tab-btn btn-nav-view" id="btn-page-3" onclick="switchTab('tab-page-3')">Page 3: Traits & Combat</button>
-          <button class="tab-btn btn-nav-view" id="btn-page-4" onclick="switchTab('tab-page-4')">Page 4: Possessions</button>
-          <button class="tab-btn btn-nav-view" id="btn-page-5" onclick="switchTab('tab-page-5')">Page 5: History</button>
+          <button type="button" class="tab-btn btn-nav-view active" id="btn-page-1" onclick="switchTab('tab-page-1')">Page 1: Core</button>
+          <button type="button" class="tab-btn btn-nav-view" id="btn-page-2" onclick="switchTab('tab-page-2')">Page 2: Grimoire</button>
+          <button type="button" class="tab-btn btn-nav-view" id="btn-page-3" onclick="switchTab('tab-page-3')">Page 3: Traits & Combat</button>
+          <button type="button" class="tab-btn btn-nav-view" id="btn-page-4" onclick="switchTab('tab-page-4')">Page 4: Possessions</button>
+          <button type="button" class="tab-btn btn-nav-view" id="btn-page-5" onclick="switchTab('tab-page-5')">Page 5: History</button>
         </div>
 
         <!-- PAGE 1: CORE -->
@@ -1212,7 +1212,7 @@
               <!-- Right-aligned + Add button on talents header -->
               <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 3px; margin-bottom: 10px;">
                 <span style="text-transform: uppercase; letter-spacing: 1px; color: var(--accent-red); font-size: 0.95rem; font-weight: bold;">Talents</span>
-                <button class="btn btn-secondary btn-small" onclick="addCustomAbilityRow('custom-talents-list', 'talent'); return false;">+ Add</button>
+                <button type="button" class="btn btn-secondary btn-small" onclick="addCustomAbilityRow('custom-talents-list', 'talent'); return false;">+ Add</button>
               </div>
               <div class="trait" data-id="alertness" data-min="0" data-max="6" data-default="0"><label>Alertness</label><div class="dots-container"></div></div>
               <div class="trait" data-id="athletics" data-min="0" data-max="6" data-default="0"><label>Athletics</label><div class="dots-container"></div></div>
@@ -1237,7 +1237,7 @@
               <!-- Right-aligned + Add button on skills header -->
               <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 3px; margin-bottom: 10px;">
                 <span style="text-transform: uppercase; letter-spacing: 1px; color: var(--accent-red); font-size: 0.95rem; font-weight: bold;">Skills</span>
-                <button class="btn btn-secondary btn-small" onclick="addCustomAbilityRow('custom-skills-list', 'skill'); return false;">+ Add</button>
+                <button type="button" class="btn btn-secondary btn-small" onclick="addCustomAbilityRow('custom-skills-list', 'skill'); return false;">+ Add</button>
               </div>
               <div class="trait" data-id="animal_ken" data-min="0" data-max="6" data-default="0"><label>Animal Ken</label><div class="dots-container"></div></div>
               <div class="trait" data-id="archery" data-min="0" data-max="6" data-default="0"><label>Archery</label><div class="dots-container"></div></div>
@@ -1262,7 +1262,7 @@
               <!-- Right-aligned + Add button on knowledges header -->
               <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 3px; margin-bottom: 10px;">
                 <span style="text-transform: uppercase; letter-spacing: 1px; color: var(--accent-red); font-size: 0.95rem; font-weight: bold;">Knowledges</span>
-                <button class="btn btn-secondary btn-small" onclick="addCustomAbilityRow('custom-knowledges-list', 'knowledge'); return false;">+ Add</button>
+                <button type="button" class="btn btn-secondary btn-small" onclick="addCustomAbilityRow('custom-knowledges-list', 'knowledge'); return false;">+ Add</button>
               </div>
               <div class="trait" data-id="academics" data-min="0" data-max="6" data-default="0"><label>Academics</label><div class="dots-container"></div></div>
               <div class="trait" data-id="enigmas" data-min="0" data-max="6" data-default="0"><label>Enigmas</label><div class="dots-container"></div></div>
@@ -1289,12 +1289,12 @@
             <div class="column">
               <h3 class="column-header">Disciplines</h3>
               <div id="disciplines-list" class="dynamic-list"></div>
-              <button class="btn btn-secondary btn-small" style="align-self: flex-start;" onclick="addDynamicRow('disciplines-list', 'discipline')">+ Add Discipline</button>
+              <button type="button" class="btn btn-secondary btn-small" style="align-self: flex-start;" onclick="addDynamicRow('disciplines-list', 'discipline')">+ Add Discipline</button>
             </div>
             <div class="column">
               <h3 class="column-header">Backgrounds</h3>
               <div id="backgrounds-list" class="dynamic-list"></div>
-              <button class="btn btn-secondary btn-small" style="align-self: flex-start;" onclick="addDynamicRow('backgrounds-list', 'background')">+ Add Background</button>
+              <button type="button" class="btn btn-secondary btn-small" style="align-self: flex-start;" onclick="addDynamicRow('backgrounds-list', 'background')">+ Add Background</button>
             </div>
             <div class="column">
               <h3 class="column-header">Virtues</h3>
@@ -1511,13 +1511,13 @@
 
           <!-- Parent Discipline Filter Buttons Left-Aligned to Paths of Sorcery Column -->
           <div id="parent-discipline-filters" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; align-self: flex-start;">
-            <button class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Thaumaturgy')">Thaumaturgy</button>
-            <button class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Necromancy')">Necromancy</button>
-            <button class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Dark Thaumaturgy')">Dark Thaumaturgy</button>
-            <button class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Koldunic Sorcery')">Koldunic Sorcery</button>
-            <button class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Akhu')">Akhu</button>
-            <button class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Dur-An-Ki')">Dur-An-Ki</button>
-            <button class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Sadhana')">Sadhana</button>
+            <button type="button" class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Thaumaturgy')">Thaumaturgy</button>
+            <button type="button" class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Necromancy')">Necromancy</button>
+            <button type="button" class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Dark Thaumaturgy')">Dark Thaumaturgy</button>
+            <button type="button" class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Koldunic Sorcery')">Koldunic Sorcery</button>
+            <button type="button" class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Akhu')">Akhu</button>
+            <button type="button" class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Dur-An-Ki')">Dur-An-Ki</button>
+            <button type="button" class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Sadhana')">Sadhana</button>
           </div>
 
           <div class="two-col-grid">
@@ -1526,7 +1526,7 @@
                 <h3 style="margin-top: 0; margin-bottom: 10px; color: var(--accent-red); text-transform: uppercase;">Paths of Sorcery</h3>
                 <div id="paths-list" class="dynamic-list"></div>
               </div>
-              <button class="btn btn-secondary btn-small" style="width: 100%; box-sizing: border-box;" onclick="addPathRow('paths-list')">+ Add Path</button>
+              <button type="button" class="btn btn-secondary btn-small" style="width: 100%; box-sizing: border-box;" onclick="addPathRow('paths-list')">+ Add Path</button>
 
               <!-- Dynamic Path Cards Container (Confined to Column 1) -->
               <div id="dynamic-grimoire-paths" style="margin-top: 15px; width: 100%; box-sizing: border-box;">
@@ -1542,7 +1542,7 @@
                 </div>
                 <div id="rituals-list" class="dynamic-list"></div>
               </div>
-              <button class="btn btn-secondary btn-small" style="width: 100%; box-sizing: border-box;" onclick="addRitualRow('rituals-list')">+ Add Ritual</button>
+              <button type="button" class="btn btn-secondary btn-small" style="width: 100%; box-sizing: border-box;" onclick="addRitualRow('rituals-list')">+ Add Ritual</button>
             </div>
           </div>
           <div class="text-area-group" style="margin-top: 25px;">
@@ -1569,7 +1569,7 @@
             </thead>
             <tbody></tbody>
           </table>
-          <button class="btn btn-secondary btn-small" style="margin-top: 10px;" onclick="addCombatAttackRow()">+ Add Attack</button>
+          <button type="button" class="btn btn-secondary btn-small" style="margin-top: 10px;" onclick="addCombatAttackRow()">+ Add Attack</button>
 
           <div class="two-col-grid" style="margin-top: 20px;">
             <div class="column">
@@ -1582,7 +1582,7 @@
             <div class="column">
               <h3>Derangements</h3>
               <div id="derangements-list" class="dynamic-list"></div>
-              <button class="btn btn-secondary btn-small" onclick="addDerangementRow('derangements-list')">+ Add Derangement</button>
+              <button type="button" class="btn btn-secondary btn-small" onclick="addDerangementRow('derangements-list')">+ Add Derangement</button>
 
               <h3 style="margin-top: 20px;">Experience</h3>
               <div class="two-col-grid">
@@ -1597,18 +1597,18 @@
             <div class="column">
               <h3>Merits</h3>
               <div id="merits-list" class="dynamic-list"></div>
-              <button class="btn btn-secondary btn-small" onclick="addCustomRow('merits-list', 'merit')">+ Add Merit</button>
+              <button type="button" class="btn btn-secondary btn-small" onclick="addCustomRow('merits-list', 'merit')">+ Add Merit</button>
             </div>
             <div class="column">
               <h3>Flaws</h3>
               <div id="flaws-list" class="dynamic-list"></div>
-              <button class="btn btn-secondary btn-small" onclick="addCustomRow('flaws-list', 'flaw')">+ Add Flaw</button>
+              <button type="button" class="btn btn-secondary btn-small" onclick="addCustomRow('flaws-list', 'flaw')">+ Add Flaw</button>
             </div>
           </div>
 
           <h2>Other Traits (6 Dots)</h2>
           <div id="other-traits-list" class="dynamic-list"></div>
-          <button class="btn btn-secondary btn-small" onclick="addOtherTraitRow('other-traits-list')">+ Add Other Trait</button>
+          <button type="button" class="btn btn-secondary btn-small" onclick="addOtherTraitRow('other-traits-list')">+ Add Other Trait</button>
         </div>
 
         <!-- PAGE 4: POSSESSIONS -->
@@ -1678,16 +1678,16 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                   <label style="margin-bottom: 0;">Character Description</label>
                   <div style="display: flex; align-items: center; gap: 10px;">
-                    <button class="btn btn-secondary btn-small" onclick="document.getElementById('vis-image-file').click(); return false;">Upload an Image</button>
+                    <button type="button" class="btn btn-secondary btn-small" onclick="document.getElementById('vis-image-file').click(); return false;">Upload an Image</button>
                     <input type="file" id="vis-image-file" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
-                    <button class="delete-btn" id="vis-image-delete" onclick="deleteCharacterImage(); return false;" style="display: none; font-size: 1.2rem; line-height: 1; border: none; background: none; padding: 0;">&times;</button>
+                    <button type="button" class="delete-btn" id="vis-image-delete" onclick="deleteCharacterImage(); return false;" style="display: none; font-size: 1.2rem; line-height: 1; border: none; background: none; padding: 0;">&times;</button>
                   </div>
                 </div>
 
                 <!-- 2:3 Portrait Wrapper with Description Overlay capability -->
                 <div id="image-container" style="position: relative; width: 100%; aspect-ratio: 2/3; max-width: 320px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.4); overflow: hidden;">
                   <textarea id="vis-sketch" style="width: 100%; height: 100%; border: none; background: transparent; resize: none; font-family: inherit; font-size: 0.9rem; padding: 8px; box-sizing: border-box; color: var(--text-dark);" placeholder="Physical description notes..." oninput="queueAutoSave()"></textarea>
-                  <img id="vis-image-preview" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; pointer-events: none;" alt="Portrait" onerror="this.style.display='none'; document.getElementById('vis-image-delete').style.display='none';">
+                  <img id="vis-image-preview" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; pointer-events: none;" alt="Portrait" onerror="this.style.display='none'; const dBtn = document.getElementById('vis-image-delete'); if(dBtn) dBtn.style.display='none';">
                 </div>
               </div>
             </div>
@@ -1700,7 +1700,7 @@
 
   <!-- STORYTELLERS VAULT LEGAL VIEW -->
   <div id="sv-legal-view" class="legal-view">
-    <button class="legal-back-btn" onclick="hideLegalViews()">&larr; Back</button>
+    <button type="button" class="legal-back-btn" onclick="hideLegalViews()">&larr; Back</button>
     <div class="legal-content">
 World of Darkness, Vampire: The Masquerade, Vampire: The Dark Ages, Victorian Age: Vampire, Werewolf: The Apocalypse, Werewolf: The Wild West, Mage: The Ascension, Mage: The Sorcerers Crusade, Wraith: The Oblivion, Wraith: The Great War, Changeling: The Dreaming, Hunter: The Reckoning, Demon: The Fallen, Mummy: The Resurrection, Orpheus, Exalted, Chronicles of Darkness, Vampire:The Requiem, Werewolf: The Forsaken, Mage: The Awakening, Changeling: The Lost, Hunter: The Vigil, Giest: The Sin Eaters, Demon: The Descent, Mummy: The Curse, Beast: The Primordial, Promethean: The Created, World of Darkness, Storyteller System™, Storytelling System™, and Storytellers Vault™ and their respective logos, icons and symbols are trademarks or registered trademarks of Paradox Interactive AB. All rights reserved.
 
@@ -1712,7 +1712,7 @@ This work contains material that is copyright of Paradox Interactive AB. Such ma
 
   <!-- DARK PACK LEGAL VIEW -->
   <div id="dp-legal-view" class="legal-view">
-    <button class="legal-back-btn" onclick="hideLegalViews()">&larr; Back</button>
+    <button type="button" class="legal-back-btn" onclick="hideLegalViews()">&larr; Back</button>
     <div class="legal-content">
 Finally, include a notice which informs users that Your Material is not official World of Darkness material. (Editor's Note: This web application in not official World of Darkness material.)
 
@@ -1765,6 +1765,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
     let isLoadingSheet = false; // Flag to prevent auto-saves while sheet DOM is initializing
     let activeParentFilter = null; // Filter state for Paths of Sorcery
     window.activeImageName = ''; // Track uploaded image filename
+    let isUploadingImage = false; // Lock flag to prevent duplicate uploads
     const collapsedDisciplines = {}; // Persistent Grimoire minimizes
     const collapsedBackgrounds = {};  // Persistent Page 4 Background minimizes
     const collapsedPaths = {};        // Persistent Path Card minimizes
@@ -2686,7 +2687,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
           <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${initialVal}" style="flex-shrink: 0; margin-bottom: 0;">
             <div class="dots-container"></div>
           </div>
-          <button class="delete-btn" onclick="removePathRow('${rowId}')" style="flex-shrink: 0; font-size: 1.2rem;">&times;</button>
+          <button type="button" class="delete-btn" onclick="removePathRow('${rowId}')" style="flex-shrink: 0; font-size: 1.2rem;">&times;</button>
         </div>
         <div class="custom-path-boxes" style="display: ${isCustom ? 'block' : 'none'}; margin-top: 6px;">
           <textarea class="custom-path-desc" rows="3" placeholder="Path Description..." oninput="queueAutoSave()">${initialDesc}</textarea>
@@ -3164,14 +3165,14 @@ Nothing in this agreement limits our liability to you in the event of death or p
           </div>
           <div class="char-card-actions">
             <div style="display: flex; gap: 6px;">
-              <button class="btn btn-secondary btn-small" style="flex: 1;" onclick="openViewOnly('${meta.id}')">View</button>
-              <button class="btn btn-small" style="flex: 1;" onclick="checkNpcAccess('${meta.id}', function() { openEditor('${meta.id}', false); })">Edit</button>
-              <button class="btn btn-small btn-npc ${meta.isNpc ? 'active' : ''}" style="flex: 1;" onclick="toggleNpc('${meta.id}')">NPC</button>
+              <button type="button" class="btn btn-secondary btn-small" style="flex: 1;" onclick="openViewOnly('${meta.id}')">View</button>
+              <button type="button" class="btn btn-small" style="flex: 1;" onclick="checkNpcAccess('${meta.id}', function() { openEditor('${meta.id}', false); })">Edit</button>
+              <button type="button" class="btn btn-small btn-npc ${meta.isNpc ? 'active' : ''}" style="flex: 1;" onclick="toggleNpc('${meta.id}')">NPC</button>
             </div>
             <div style="display: flex; gap: 6px;">
-              <button class="btn btn-secondary btn-small" style="flex: 1;" onclick="checkNpcAccess('${meta.id}', function() { triggerManualExport('${meta.id}'); })">Export</button>
-              <button class="btn btn-secondary btn-small" style="flex: 1;" onclick="checkNpcAccess('${meta.id}', function() { cloneCharacter('${meta.id}'); })">Clone</button>
-              <button class="btn btn-danger btn-small" style="flex: 1;" onclick="checkNpcAccess('${meta.id}', function() { deleteCharacter('${meta.id}'); })">Delete</button>
+              <button type="button" class="btn btn-secondary btn-small" style="flex: 1;" onclick="checkNpcAccess('${meta.id}', function() { triggerManualExport('${meta.id}'); })">Export</button>
+              <button type="button" class="btn btn-secondary btn-small" style="flex: 1;" onclick="checkNpcAccess('${meta.id}', function() { cloneCharacter('${meta.id}'); })">Clone</button>
+              <button type="button" class="btn btn-danger btn-small" style="flex: 1;" onclick="checkNpcAccess('${meta.id}', function() { deleteCharacter('${meta.id}'); })">Delete</button>
             </div>
           </div>
         `;
@@ -3872,7 +3873,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
 
     /* --- PORTRAIT HANDLERS --- */
 
-    let isUploadingImage = false;
     function handleImageUpload(event) {
       if (isUploadingImage) return;
       const file = event.target.files[0];
@@ -3937,7 +3937,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
 
       row.innerHTML = `
         <input type="text" class="dynamic-name" style="background: transparent; border: none; border-bottom: 1px dashed var(--border-color); font-family: inherit; font-size: 0.9rem; flex-grow: 1; min-width: 50px; color: var(--text-dark);" placeholder="Custom ${type}..." value="${initialName}" oninput="queueAutoSave()">
-        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();" style="color: var(--accent-red); font-weight: bold; background: none; border: none; cursor: pointer; padding: 0 5px; font-size: 1.1rem; flex-shrink: 0;">&times;</button>
+        <button type="button" class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();" style="color: var(--accent-red); font-weight: bold; background: none; border: none; cursor: pointer; padding: 0 5px; font-size: 1.1rem; flex-shrink: 0;">&times;</button>
         <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${initialVal}" style="flex-shrink: 0; margin-bottom: 0;">
           <div class="dots-container"></div>
         </div>
@@ -4031,7 +4031,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
         <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${initialVal}">
           <div class="dots-container"></div>
         </div>
-        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); renderPage4Backgrounds(); queueAutoSave();" style="align-self: center; font-size: 1.2rem;">&times;</button>
+        <button type="button" class="delete-btn" onclick="document.getElementById('${rowId}').remove(); renderPage4Backgrounds(); queueAutoSave();" style="align-self: center; font-size: 1.2rem;">&times;</button>
       `;
 
       list.appendChild(row);
@@ -4181,7 +4181,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
           <input type="text" class="dynamic-name" style="width: 50%" placeholder="${placeholderName}" value="${name}" oninput="queueAutoSave()">
           <input type="text" class="dynamic-type" style="width: 23%" placeholder="Type..." value="${costType}" oninput="queueAutoSave()">
           <input type="text" class="dynamic-val" style="width: 15%" placeholder="${placeholderVal}" value="${costValue}" oninput="queueAutoSave()">
-          <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();" style="font-size: 1.2rem;">&times;</button>
+          <button type="button" class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();" style="font-size: 1.2rem;">&times;</button>
         </div>
         <textarea class="dynamic-desc" rows="2" style="width: 100%; box-sizing: border-box; font-family: inherit; font-size: 0.85rem; padding: 4px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-color); resize: vertical; margin-bottom: 8px;" placeholder="Description..." oninput="queueAutoSave()">${description}</textarea>
       `;
@@ -4209,7 +4209,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
         <div class="trait" data-id="${rowId}-trait" data-min="0" data-max="6" data-value="${val}" style="flex-shrink: 0;">
           <div class="dots-container"></div>
         </div>
-        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();" style="flex-shrink: 0;">&times;</button>
+        <button type="button" class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();" style="flex-shrink: 0;">&times;</button>
       `;
 
       list.appendChild(row);
@@ -4234,7 +4234,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
         <div class="dynamic-row" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
           <input type="text" class="dynamic-name" style="flex-grow: 1; min-width: 50px; background: transparent; border: none; border-bottom: 1px dashed var(--border-color); font-family: inherit; font-size: 0.9rem;" placeholder="Ritual Name..." value="${name}" oninput="queueAutoSave()">
           <input type="number" class="dynamic-val" style="width: 45px; text-align: center; background: transparent; border: none; border-bottom: 1px dashed var(--border-color); font-family: inherit; font-size: 0.9rem;" min="1" max="5" value="${level}" oninput="queueAutoSave()">
-          <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();" style="font-size: 1.2rem; cursor: pointer; color: var(--accent-red); background: none; border: none; padding: 0 5px;">&times;</button>
+          <button type="button" class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();" style="font-size: 1.2rem; cursor: pointer; color: var(--accent-red); background: none; border: none; padding: 0 5px;">&times;</button>
         </div>
         <textarea class="dynamic-desc" rows="3" style="width: 100%; box-sizing: border-box; font-family: inherit; font-size: 0.85rem; padding: 6px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-color); resize: vertical; margin-bottom: 4px;" placeholder="Ritual details/description..." oninput="queueAutoSave()">${desc}</textarea>
       `;
@@ -4259,7 +4259,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
 
       container.innerHTML = `
         <textarea class="dynamic-name" rows="3" style="flex-grow: 1; box-sizing: border-box; font-family: inherit; font-size: 0.9rem; padding: 6px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-color); resize: vertical;" placeholder="Derangement details..." oninput="queueAutoSave()">${name}</textarea>
-        <button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();" style="align-self: center; font-size: 1.2rem;">&times;</button>
+        <button type="button" class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();" style="align-self: center; font-size: 1.2rem;">&times;</button>
       `;
 
       list.appendChild(container);
@@ -4280,7 +4280,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
         <td><input type="text" class="c-rate" value="${rate}" oninput="queueAutoSave()"></td>
         <td><input type="text" class="c-clip" value="${clip}" oninput="queueAutoSave()"></td>
         <td><input type="text" class="c-conceal" value="${conceal}" oninput="queueAutoSave()"></td>
-        <td style="text-align: center;"><button class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button></td>
+        <td style="text-align: center;"><button type="button" class="delete-btn" onclick="document.getElementById('${rowId}').remove(); queueAutoSave();">&times;</button></td>
       `;
       tbody.appendChild(tr);
       queueAutoSave();
@@ -5212,7 +5212,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
         const imgPreview = document.getElementById('vis-image-preview');
         const delBtn = document.getElementById('vis-image-delete');
         if (imgPreview && delBtn) {
-          if (vis.image && typeof vis.image === 'string' && vis.image.trim() !== '') {
+          if (vis.imageName && vis.image && typeof vis.image === 'string' && vis.image.trim() !== '') {
             imgPreview.src = vis.image;
             imgPreview.style.display = 'block';
             delBtn.style.display = 'inline-block';
