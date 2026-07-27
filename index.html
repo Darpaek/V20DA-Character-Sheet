@@ -1714,7 +1714,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
 
 // Put your GOOGLE Sheet Web App exec URL below
     
-    const API_URL = "https://script.google.com/macros/s/AKfycby6WzTy1uFt3ADz5OYRCGKJ5cP9KFLm2OE-he8fbV-kcPAbGZRM7dLhBSKYhv50fQjffA/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbx17LZbB_3W3yZkgI4PYKNFbr4PCXzSTdPIYfisFzgGQtgzigfNvJ2nNR8YjKsug235VA/exec";
 
     let activeCharacterId = null;
     let saveTimeout = null;
@@ -5322,11 +5322,13 @@ Nothing in this agreement limits our liability to you in the event of death or p
       reader.readAsDataURL(file);
     }
 
-    function deleteCharacterImage() {
+    async function deleteCharacterImage() {
       if (!confirm("Are you sure you want to delete this portrait?")) return;
 
+      // Clear window active name tracker
       window.activeImageName = '';
 
+      // Completely remove image preview source
       const imgPreview = document.getElementById('vis-image-preview');
       if (imgPreview) {
         imgPreview.removeAttribute('src');
@@ -5339,7 +5341,23 @@ Nothing in this agreement limits our liability to you in the event of death or p
       const delBtn = document.getElementById('vis-image-delete');
       if (delBtn) delBtn.style.display = 'none';
 
+      // Save character sheet updates to clear image references from Google Sheet
       queueAutoSave();
+
+      // Send request to Apps Script to delete the file physically from Google Drive
+      if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE") && activeCharacterId) {
+        try {
+          await fetch(API_URL, {
+            method: "POST",
+            body: JSON.stringify({
+              action: "deleteImage",
+              charId: activeCharacterId
+            })
+          });
+        } catch (err) {
+          console.warn("Failed to delete image from Google Drive:", err);
+        }
+      }
     }
     
     /* --- DYNAMIC LIST ADDITIONS --- */
