@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=1024, initial-scale=0.38, maximum-scale=3.0, user-scalable=yes">
   <title>V20 Dark Ages Scribe - Character Ledger</title>
   <style>
     :root {
@@ -238,10 +238,11 @@
       border-bottom: 2px solid var(--border-color);
       margin-bottom: 20px;
       gap: 5px;
-      overflow-x: hidden;
+      overflow: hidden !important;
       flex-wrap: wrap;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
+      padding-bottom: 2px;
+      box-sizing: border-box;
+      overscroll-behavior: contain;
     }
 
     .tabs-nav::-webkit-scrollbar {
@@ -5321,6 +5322,26 @@ Nothing in this agreement limits our liability to you in the event of death or p
       reader.readAsDataURL(file);
     }
 
+    function deleteCharacterImage() {
+      if (!confirm("Are you sure you want to delete this portrait?")) return;
+
+      window.activeImageName = '';
+
+      const imgPreview = document.getElementById('vis-image-preview');
+      if (imgPreview) {
+        imgPreview.removeAttribute('src');
+        imgPreview.style.display = 'none';
+      }
+
+      const fileInput = document.getElementById('vis-image-file');
+      if (fileInput) fileInput.value = '';
+
+      const delBtn = document.getElementById('vis-image-delete');
+      if (delBtn) delBtn.style.display = 'none';
+
+      queueAutoSave();
+    }
+    
     /* --- DYNAMIC LIST ADDITIONS --- */
 
     function addCustomAbilityRow(targetListId, type, initialName = '', initialVal = 0) {
@@ -5816,7 +5837,15 @@ Nothing in this agreement limits our liability to you in the event of death or p
 
     function compileSheetData() {
       const imgPreview = document.getElementById('vis-image-preview');
-      const imgSrc = imgPreview ? imgPreview.src : '';
+      const hasImageName = window.activeImageName && window.activeImageName.trim() !== '';
+      let validImgSrc = '';
+
+      if (hasImageName && imgPreview) {
+        const rawSrc = imgPreview.getAttribute('src') || imgPreview.src || '';
+        if (rawSrc && (rawSrc.startsWith('data:image') || rawSrc.startsWith('http')) && !rawSrc.includes('.html')) {
+          validImgSrc = rawSrc;
+        }
+      }
 
       const data = {
         id: activeCharacterId,
@@ -5952,8 +5981,8 @@ Nothing in this agreement limits our liability to you in the event of death or p
         vis: {
           coterie: document.getElementById('vis-coterie').value,
           sketch: document.getElementById('vis-sketch').value,
-          image: (imgSrc && (imgSrc.startsWith('data:image') || imgSrc.startsWith('http'))) ? imgSrc : '',
-          imageName: window.activeImageName || ''
+          image: validImgSrc,
+          imageName: hasImageName ? window.activeImageName : ''
         }
       };
 
@@ -6754,6 +6783,14 @@ Nothing in this agreement limits our liability to you in the event of death or p
         renderDashboard();
       } catch (e) {
         console.error("Error rendering dashboard:", e);
+      }
+
+      // Suppress mouse wheel scrolling on tab navigation container
+      const tabsNav = document.querySelector('.tabs-nav');
+      if (tabsNav) {
+        tabsNav.addEventListener('wheel', function(e) {
+          e.preventDefault();
+        }, { passive: false });
       }
     }
 
