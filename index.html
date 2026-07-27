@@ -1710,7 +1710,10 @@ Nothing in this agreement limits our liability to you in the event of death or p
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxAgwcNPo5Iezo0vZjuushU0Q-FHc5R6AgVz6_Br9rC4SUR3tVlBG6C2zQosfxOSAXEsg/exec";
+
+// Put your GOOGLE Sheet Web App exec URL below
+    
+    const API_URL = "https://script.google.com/macros/s/AKfycby6WzTy1uFt3ADz5OYRCGKJ5cP9KFLm2OE-he8fbV-kcPAbGZRM7dLhBSKYhv50fQjffA/exec";
 
     let activeCharacterId = null;
     let saveTimeout = null;
@@ -5252,44 +5255,70 @@ Nothing in this agreement limits our liability to you in the event of death or p
       if (!file) return;
 
       isUploadingImage = true;
-      window.activeImageName = file.name || '';
+      setSaveStatus("Uploading image to Google Drive...");
 
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = async function(e) {
         const base64Data = e.target.result;
-        const imgPreview = document.getElementById('vis-image-preview');
-        if (imgPreview) {
-          imgPreview.src = base64Data;
-          imgPreview.style.display = 'block';
+
+        if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
+          try {
+            const response = await fetch(API_URL, {
+              method: "POST",
+              body: JSON.stringify({
+                action: "uploadImage",
+                charId: activeCharacterId,
+                imageName: file.name,
+                imageData: base64Data
+              })
+            });
+            const result = await response.json();
+
+            if (result.status === "success" && result.imageUrl) {
+              window.activeImageName = result.imageName || file.name;
+
+              const imgPreview = document.getElementById('vis-image-preview');
+              if (imgPreview) {
+                imgPreview.src = result.imageUrl;
+                imgPreview.style.display = 'block';
+              }
+              const delBtn = document.getElementById('vis-image-delete');
+              if (delBtn) delBtn.style.display = 'inline-block';
+
+              setSaveStatus("Image uploaded to Drive!");
+            } else {
+              alert("Error uploading image to Google Drive: " + (result.message || "Unknown error"));
+            }
+          } catch (err) {
+            console.error("Image upload failed:", err);
+            alert("Failed to upload image to Google Drive.");
+          } finally {
+            isUploadingImage = false;
+            event.target.value = '';
+            queueAutoSave();
+          }
+        } else {
+          // Local fallback if no API_URL is set
+          window.activeImageName = file.name;
+          const imgPreview = document.getElementById('vis-image-preview');
+          if (imgPreview) {
+            imgPreview.src = base64Data;
+            imgPreview.style.display = 'block';
+          }
+          const delBtn = document.getElementById('vis-image-delete');
+          if (delBtn) delBtn.style.display = 'inline-block';
+          isUploadingImage = false;
+          event.target.value = '';
+          queueAutoSave();
         }
-        const delBtn = document.getElementById('vis-image-delete');
-        if (delBtn) delBtn.style.display = 'inline-block';
-        
-        event.target.value = '';
-        isUploadingImage = false;
-        queueAutoSave();
       };
+
       reader.onerror = function() {
         isUploadingImage = false;
         event.target.value = '';
       };
-      reader.readAsDataURL(file);
-    }
 
-    function deleteCharacterImage() {
-      if (!confirm("Are you sure you want to delete this portrait?")) return;
-      window.activeImageName = '';
-      const imgPreview = document.getElementById('vis-image-preview');
-      if (imgPreview) {
-        imgPreview.src = '';
-        imgPreview.style.display = 'none';
-      }
-      const fileInput = document.getElementById('vis-image-file');
-      if (fileInput) fileInput.value = '';
-      const delBtn = document.getElementById('vis-image-delete');
-      if (delBtn) delBtn.style.display = 'none';
-      
-      queueAutoSave();
+      reader.readAsDataURL(file);
     }
 
     /* --- DYNAMIC LIST ADDITIONS --- */
