@@ -114,8 +114,8 @@
 
     .char-card-actions {
       display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 6px;
     }
 
     /* Buttons */
@@ -146,11 +146,12 @@
     }
 
     .btn-danger {
-      background-color: #4f1414;
+      background-color: #7c0b0b;
+      color: white;
     }
 
     .btn-danger:hover {
-      background-color: #701c1c;
+      background-color: #a31212;
     }
 
     .btn-shadow {
@@ -706,6 +707,43 @@
       line-height: 1.3 !important;
     }
 
+    /* ==========================================
+       READ-ONLY (VIEW MODE) STYLES
+       ========================================== */
+    .view-only input,
+    .view-only select,
+    .view-only textarea {
+      pointer-events: none !important;
+    }
+
+    .view-only .dot {
+      pointer-events: none !important;
+    }
+
+    .view-only input[type="checkbox"] {
+      pointer-events: none !important;
+    }
+
+    .view-only button:not(.btn-nav-view) {
+      display: none !important;
+    }
+
+    .view-only .delete-btn {
+      display: none !important;
+    }
+
+    .view-only .rituals-toggle-triangle,
+    .view-only .clan-caret,
+    .view-only .gen-caret,
+    .view-only .nature-caret,
+    .view-only .demeanor-caret,
+    .view-only .road-caret,
+    .view-only .path-caret,
+    .view-only .disc-caret,
+    .view-only .bg-caret {
+      display: none !important;
+    }
+
 /* ==========================================
        PRINTABILITY STYLESHEET
        ========================================== */
@@ -943,21 +981,22 @@
         
         <div class="sheet-header-nav">
           <div>
-            <button class="btn btn-secondary btn-small" onclick="closeEditor()">&larr; Dashboard</button>
-            <button class="btn btn-small" onclick="triggerManualExport()">Export JSON</button>
-            <button class="btn btn-secondary btn-small" onclick="printCharacterSheet()">Printable</button>
+            <button class="btn btn-secondary btn-small btn-nav-view" onclick="closeEditor()">&larr; Dashboard</button>
+            <button class="btn btn-small btn-nav-view" onclick="triggerManualExport()">Export JSON</button>
+            <button class="btn btn-secondary btn-small btn-nav-view" onclick="printCharacterSheet()">Printable</button>
             <span id="sheet-npc-indicator" style="display: none; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-red); font-size: 0.95rem; font-weight: bold; margin-left: 15px; vertical-align: middle;">NPC</span>
+            <span id="sheet-readonly-indicator" style="display: none; text-transform: uppercase; letter-spacing: 1px; color: #8c7e6e; font-size: 0.95rem; font-weight: bold; margin-left: 15px; vertical-align: middle;">READ ONLY</span>
           </div>
           <span id="save-status" class="autosave-status">Draft Loaded</span>
         </div>
 
         <!-- Page Tabs -->
         <div class="tabs-nav">
-          <button class="tab-btn active" id="btn-page-1" onclick="switchTab('tab-page-1')">Page 1: Core</button>
-          <button class="tab-btn" id="btn-page-2" onclick="switchTab('tab-page-2')">Page 2: Grimoire</button>
-          <button class="tab-btn" id="btn-page-3" onclick="switchTab('tab-page-3')">Page 3: Traits & Combat</button>
-          <button class="tab-btn" id="btn-page-4" onclick="switchTab('tab-page-4')">Page 4: Possessions</button>
-          <button class="tab-btn" id="btn-page-5" onclick="switchTab('tab-page-5')">Page 5: History</button>
+          <button class="tab-btn btn-nav-view active" id="btn-page-1" onclick="switchTab('tab-page-1')">Page 1: Core</button>
+          <button class="tab-btn btn-nav-view" id="btn-page-2" onclick="switchTab('tab-page-2')">Page 2: Grimoire</button>
+          <button class="tab-btn btn-nav-view" id="btn-page-3" onclick="switchTab('tab-page-3')">Page 3: Traits & Combat</button>
+          <button class="tab-btn btn-nav-view" id="btn-page-4" onclick="switchTab('tab-page-4')">Page 4: Possessions</button>
+          <button class="tab-btn btn-nav-view" id="btn-page-5" onclick="switchTab('tab-page-5')">Page 5: History</button>
         </div>
 
         <!-- PAGE 1: CORE -->
@@ -1639,7 +1678,7 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                   <label style="margin-bottom: 0;">Character Description</label>
                   <div style="display: flex; align-items: center; gap: 10px;">
-                    <button class="btn btn-secondary btn-small" onclick="document.getElementById('vis-image-file').click(); return false;">Upload a .WEBP Image</button>
+                    <button class="btn btn-secondary btn-small" onclick="document.getElementById('vis-image-file').click(); return false;">Upload an Image</button>
                     <input type="file" id="vis-image-file" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
                     <button class="delete-btn" id="vis-image-delete" onclick="deleteCharacterImage(); return false;" style="display: none; font-size: 1.2rem; line-height: 1; border: none; background: none; padding: 0;">&times;</button>
                   </div>
@@ -1648,7 +1687,7 @@
                 <!-- 2:3 Portrait Wrapper with Description Overlay capability -->
                 <div id="image-container" style="position: relative; width: 100%; aspect-ratio: 2/3; max-width: 320px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.4); overflow: hidden;">
                   <textarea id="vis-sketch" style="width: 100%; height: 100%; border: none; background: transparent; resize: none; font-family: inherit; font-size: 0.9rem; padding: 8px; box-sizing: border-box; color: var(--text-dark);" placeholder="Physical description notes..." oninput="queueAutoSave()"></textarea>
-                  <img id="vis-image-preview" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; pointer-events: none;" alt="Portrait">
+                  <img id="vis-image-preview" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; pointer-events: none;" alt="Portrait" onerror="this.style.display='none'; document.getElementById('vis-image-delete').style.display='none';">
                 </div>
               </div>
             </div>
@@ -1725,6 +1764,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
     let dynamicRowId = 0;
     let isLoadingSheet = false; // Flag to prevent auto-saves while sheet DOM is initializing
     let activeParentFilter = null; // Filter state for Paths of Sorcery
+    window.activeImageName = ''; // Track uploaded image filename
     const collapsedDisciplines = {}; // Persistent Grimoire minimizes
     const collapsedBackgrounds = {};  // Persistent Page 4 Background minimizes
     const collapsedPaths = {};        // Persistent Path Card minimizes
@@ -2562,1425 +2602,11 @@ Nothing in this agreement limits our liability to you in the event of death or p
       }
     };
 
-    // Common Ethics Templates for Path Variations
-    const beastBaseEthics = [
-      "- You have survived death, and now preservation of the self is the truest goal you can seek.",
-      "- The Beast exists to help you survive, not as some manifestation of evil.",
-      "- You have fought for everything you have, and have right to everything you’ve fought for.",
-      "- You cannot be led; you can listen to experiences gained by others, but no one determines the conditions of your existence but you.",
-      "- Civilization is a cushion that softens you and makes you weak. Exist beside it, but never in it."
-    ];
-
-    const heavenBaseEthics = [
-      "- The existence of a higher power and its dominion over all things.",
-      "- Vampiric existence as part of a divine plan.",
-      "- The Embrace is a call to direct service of the divine.",
-      "- Serving divine will over individual will.",
-      "- Following divine law and rejecting evil is the only way to shackle the Beast.",
-      "- Each Faithful must choose their own Path, which determines more specific ethics and morality that they adhere to."
-    ];
-
-    const humanityBaseEthics = [
-      "- Remaining human is a requirement to escape soul-death.",
-      "- Humanity is a universal experience that all Cainites can understand.",
-      "- Violating the boundaries and well-being of another depletes the soul.",
-      "- We were all human, and that gives us value despite accidents of birth or upbringing.",
-      "- Thought and compassion separate us from the Beast."
-    ];
-
-    const regalisBaseEthics = [
-      "- To rule others, you must first become your own master, taming the Beast within.",
-      "- Your word is your honor and your life. Do not break it.",
-      "- There are only two roles in the world: master and servant.",
-      "- Power does not hand itself to you. You must seize it and hold it."
-    ];
-
-    const lilitBaseEthics = [
-      "- Creation is vital, the act of creation is sacred, and like our Mother, you must create often and with daring and cunning.",
-      "- Seduce Angels.",
-      "- Creation is suffering, and the greater the creations, the greater the suffering. That suffering is valuable.",
-      "- Life teaches through suffering. Be a teacher.",
-      "- Creation is always an act of love and devotion. Be a lover.",
-      "- Rather than learn, some will seek to destroy you and take what you have created for their own. Be a torturer.",
-      "- Draw in the needy, those who have suffered enough to understand. Welcome them with passion and wisdom.",
-      "- Cultivate a garden. Plant seeds and feed them with your blood and milk."
-    ];
-
-    const peccatiBaseEthics = [
-      "- You are Damned already; there is nothing forbidden to you.",
-      "- The Beast belongs to you, but you do not belong to it.",
-      "- Act without hesitation. The laws of neither man nor God bind you.",
-      "- Your heart holds your hunger and your freedom. Find the courage to embrace both."
-    ];
-
-    // Comprehensive Roads & Paths Database
-    const roadsDatabase = {
-      "The Road of the Beast": {
-        altName: "Via Bestiae",
-        aura: "Menace",
-        virtues: { v1: "Conviction", v2: "Instinct" },
-        ethics: beastBaseEthics,
-        hierarchyName: "Hierarchy of Sins Against Who You Are",
-        hierarchy: {
-          10: { mw: "Risking your own life", r: "Survival is paramount." },
-          9:  { mw: "Acknowledging a leader", r: "There is no “us”, only “me.”" },
-          8:  { mw: "Killing for pleasure", r: "Never waste." },
-          7:  { mw: "Choosing to live in order over chaos", r: "Civilization softens you." },
-          6:  { mw: "Cruelty for pleasure", r: "Cruelty is wasted energy." },
-          5:  { mw: "Doing something for nothing", r: "Charity doesn’t feed the Beast." },
-          4:  { mw: "Failing to kill when survival is on the line", r: "If it comes down to you or them, it must be you." },
-          3:  { mw: "Not protecting what is yours", r: "Make it yours, keep it yours." },
-          2:  { mw: "Having no things that are yours", r: "Mark your territory, mark your people, mark your herd." },
-          1:  { mw: "Refusing to feed when hungry", r: "There is no balance when the Beast is denied." }
-        }
-      },
-      "The Path of the Hunter": {
-        altName: "Via Bestiae",
-        aura: "Menace",
-        virtues: { v1: "Conviction", v2: "Instinct" },
-        ethics: [...beastBaseEthics, "- Anything that is not the hunt, or meant to advance to hunt, is a distraction.", "- Short-sightedness is the hunter’s only real enemy.", "- Going hungry is the mark of a poor hunter.", "- You are a predator, and part of the hunt, but not the only part of it."],
-        hierarchyName: "Hierarchy of Sins Against the Hunt",
-        hierarchy: {
-          10: { mw: "Risking your own life", r: "Survival is paramount." },
-          9:  { mw: "Acknowledging a leader", r: "There is no “us”, only “me.”" },
-          8:  { mw: "Ignoring potential threats to your hunt", r: "Others will try to limit your hunting rights. Do not let them." },
-          7:  { mw: "Acting without a plan", r: "A careless Hunter is a failure before she starts." },
-          6:  { mw: "Cruelty for pleasure", r: "Cruelty is wasted energy." },
-          5:  { mw: "Doing something for nothing", r: "Charity doesn’t feed the Beast." },
-          4:  { mw: "Failing to kill when survival is on the line", r: "If it comes down to you or them, it must be you." },
-          3:  { mw: "Not protecting what is yours", r: "Make it yours, keep it yours." },
-          2:  { mw: "Hunting without ritual preparation", r: "The Hunt is the only sacred thing." },
-          1:  { mw: "Refusing to feed when hungry", r: "There is no balance when the Beast is denied." }
-        }
-      },
-      "The Path of Journeys": {
-        altName: "Via Bestiae",
-        aura: "Menace",
-        virtues: { v1: "Conviction", v2: "Self-Control" },
-        ethics: [...beastBaseEthics, "- Stagnation is worse than death.", "- Survival is a thing that must be tested, not simply accepted as important.", "- The moment you are used to a place and its people, it is time to move on."],
-        hierarchyName: "Hierarchy of Sins Against Journeys",
-        hierarchy: {
-          10: { mw: "Risking your own life", r: "Survival is paramount." },
-          9:  { mw: "Acknowledging a leader", r: "There is no “us”, only “me.”" },
-          8:  { mw: "Killing for pleasure", r: "Never waste." },
-          7:  { mw: "Choosing to live in order over chaos", r: "Civilization softens you." },
-          6:  { mw: "Cruelty for pleasure", r: "Cruelty is wasted energy." },
-          5:  { mw: "Doing something for nothing", r: "Charity doesn’t feed the Beast." },
-          4:  { mw: "Failing to kill when survival is on the line", r: "If it comes down to you or them, it must be you." },
-          3:  { mw: "Failing to explore", r: "You cannot know what lies around the corner if you don’t go looking." },
-          2:  { mw: "Acknowledging ties to a land or people", r: "Reject their titles and their attempts to domesticate you." },
-          1:  { mw: "Refusing to feed when hungry", r: "There is no balance when the Beast is denied." }
-        }
-      },
-      "The Path of Liberation": {
-        altName: "Via Bestiae",
-        aura: "Menace",
-        virtues: { v1: "Conviction", v2: "Instinct" },
-        ethics: [...beastBaseEthics, "- The Vampire was in its truest state in Nod before the First City.", "- Humanity was meant to live free, not in cities built to kennel them.", "- Liberation is the only thing that matters, and any act that frees a mind is worthwhile."],
-        hierarchyName: "Hierarchy of Sins Against Liberation",
-        hierarchy: {
-          10: { mw: "Risking your own life", r: "Survival is paramount." },
-          9:  { mw: "Acknowledging a leader", r: "There is no “us”, only “me.”" },
-          8:  { mw: "Failing to expose someone to a hard truth", r: "Liberation belongs to everyone." },
-          7:  { mw: "Choosing to live in order over chaos", r: "Civilization softens you." },
-          6:  { mw: "Taking comfort in the city instead of dismantling it", r: "If it makes your life easier, it makes you weaker. Destroy it." },
-          5:  { mw: "Doing something for nothing", r: "Charity doesn’t feed the Beast." },
-          4:  { mw: "Failing to kill when survival is on the line", r: "If it comes down to you or them, it must be you." },
-          3:  { mw: "Not protecting what is yours", r: "Make it yours, keep it yours." },
-          2:  { mw: "Having no things that are yours", r: "Mark your territory, mark your people, mark your herd." },
-          1:  { mw: "Empowering tyranny", r: "You create liberation, if they want it or not." }
-        }
-      },
-      "The Road of Heaven": {
-        altName: "Via Caeli",
-        aura: "Holiness",
-        virtues: { v1: "Conscience", v2: "Self-Control" },
-        ethics: heavenBaseEthics,
-        hierarchyName: "Hierarchy of Sins Against Heaven",
-        hierarchy: { 10:{mw:"",r:""}, 9:{mw:"",r:""}, 8:{mw:"",r:""}, 7:{mw:"",r:""}, 6:{mw:"",r:""}, 5:{mw:"",r:""}, 4:{mw:"",r:""}, 3:{mw:"",r:""}, 2:{mw:"",r:""}, 1:{mw:"",r:""} }
-      },
-      "The Path of Christ (Christianity)": {
-        altName: "Via Caeli",
-        aura: "Holiness",
-        virtues: { v1: "Conscience", v2: "Self-Control" },
-        ethics: heavenBaseEthics,
-        hierarchyName: "Hierarchy of Sins Against Christ",
-        hierarchy: {
-          10: { mw: "Failing to denounce corruption and sin", r: "All that evil needs to triumph is the inaction of the righteous." },
-          9:  { mw: "Acting out of pride, avarice, lust, or other sinful impulse", r: "The road to the Beast is paved in sin." },
-          8:  { mw: "Bearing false witness", r: "A lying tongue is hateful in the eyes of the Lord." },
-          7:  { mw: "Causing harm to a pious person", r: "God protects the innocent." },
-          6:  { mw: "Feeding from an innocent without permission", r: "Corruption of the innocent is a grave sin." },
-          5:  { mw: "Blasphemy or heresy in word or act", r: "Blasphemy is a sin against God." },
-          4:  { mw: "Murder of innocents", r: "Thou shalt not kill, sayeth the Lord." },
-          3:  { mw: "Worshiping false idols", r: "Thou shalt not have any other god before me." },
-          2:  { mw: "Aiding demons or supernatural evil", r: "It is the duty of the righteous to smite the wicked." },
-          1:  { mw: "Failing to spread the Gospel of Christ", r: "It is the duty of all Christians to spread the good news of our Lord." }
-        }
-      },
-      "The Derech Chaim – The Path of Life (Judaism)": {
-        altName: "Via Caeli",
-        aura: "Holiness",
-        virtues: { v1: "Conscience", v2: "Self-Control" },
-        ethics: heavenBaseEthics,
-        hierarchyName: "Hierarchy of Sins Against Life",
-        hierarchy: {
-          10: { mw: "Failing to maintain a state of ritual purity", r: "And ye shall be holy men unto me." },
-          9:  { mw: "Unnecessary contact with non-Jews", r: "The people must be protected." },
-          8:  { mw: "Failing to find a rabbinical authority to make rulings for you, and obey those rulings", r: "In whatever place there is a profanation of God’s name, they do not show respect to their rabbi." },
-          7:  { mw: "Failing to obey the laws and customs of the local Jewish community", r: "The spiritual needs of the individual can only be met through community." },
-          6:  { mw: "Failing to maintain a connection to a local Jewish community", r: "Jews cannot exist in isolation." },
-          5:  { mw: "Drinking impermissible blood", r: "For the life of the flesh is in the blood." },
-          4:  { mw: "Worshipping idols", r: "Hear, O Israel, God is One." },
-          3:  { mw: "Committing sexual violence", r: "It is worse to wrong a fellow person than it is to wrong God." },
-          2:  { mw: "Murder", r: "Whoever sheds the blood of man, by man shall his blood be shed." },
-          1:  { mw: "Endangering the Jewish community", r: "You shall not stand by the blood of your fellow." }
-        }
-      },
-      "The Path of the Prophet (Islam)": {
-        altName: "Via Caeli",
-        aura: "Holiness",
-        virtues: { v1: "Conscience", v2: "Self-Control" },
-        ethics: heavenBaseEthics,
-        hierarchyName: "Hierarchy of Sins Against the Prophet",
-        hierarchy: {
-          10: { mw: "Failing to honor your elders", r: "Say not to them a word of contempt but address them in terms of honor." },
-          9:  { mw: "Failing to care for the defenseless", r: "All power is a gift from God." },
-          8:  { mw: "Being dishonest or unfair in your dealings with others", r: "Give full measure for measure and weigh with a balance that is straight." },
-          7:  { mw: "Breaking a promise", r: "Every covenant will be inquired into on the Day of Reckoning." },
-          6:  { mw: "Boastfulness or arrogance", r: "Successful are those who humble themselves in prayers." },
-          5:  { mw: "Feeding from a non-Muslim", r: "He hath forbidden that which has been immolated to any other god." },
-          4:  { mw: "Killing unjustly", r: "Nor take life — which Allah has made sacred — for unjust cause." },
-          3:  { mw: "Acknowledging any god but Allah (and Muhammad is His Prophet)", r: "Take not with Allah another object of worship." },
-          2:  { mw: "Breaking the unity of Islam", r: "You Muslims are the best nation brought out for Mankind." },
-          1:  { mw: "Failing to submit to the will of Allah as revealed through his Prophet and revelation", r: "God alone possesses all power and glory." }
-        }
-      },
-      "The Path of the Eightfold Wheel": {
-        altName: "Via Caeli",
-        aura: "Holiness",
-        virtues: { v1: "Conscience", v2: "Self-Control" },
-        ethics: [...heavenBaseEthics, "- Honoring the gods and spirits of nature through devotion, serving balance in all things."],
-        hierarchyName: "Hierarchy of Sins Against the Eightfold Wheel",
-        hierarchy: {
-          10: { mw: "Failing to spend time alone in the silence of nature", r: "It is through nature that the gods are revealed to us." },
-          9:  { mw: "Betraying a secret", r: "The Druids teach us that we must be blind where secrets are concerned." },
-          8:  { mw: "Failing to care for the sick and the weak", r: "One cannot be strong without concern for others." },
-          7:  { mw: "Letting pride come before justice", r: "One must be strong toward the strong and weak toward the strengthless." },
-          6:  { mw: "Failing to honor the spirits of nature", r: "The spirits aid and guide us." },
-          5:  { mw: "Failing to honor the gods", r: "The gods created the world that sustains us." },
-          4:  { mw: "Breaking a promise", r: "A promise is a sacred bond." },
-          3:  { mw: "Acting to upset the balance of nature", r: "For the righteous must seek balance in all things." },
-          2:  { mw: "Failure to conduct yourself with honor", r: "The gods honor those who live with honor." },
-          1:  { mw: "Failure to seek self-knowledge", r: "Never permit self-deception to obscure knowledge of the self." }
-        }
-      },
-      "The Path of Watchful Gods": {
-        altName: "Via Caeli",
-        aura: "Holiness",
-        virtues: { v1: "Conscience", v2: "Self-Control" },
-        ethics: [...heavenBaseEthics, "- Devoting oneself to serving the gods through making regular sacrifices, honoring and protecting what the gods deem sacred, and adhering to strict codes of honor."],
-        hierarchyName: "Hierarchy of Sins Against the Watchful Gods",
-        hierarchy: {
-          10: { mw: "Failing to make regular sacrifices", r: "Regular sacrifices give the gods strength." },
-          9:  { mw: "Lying", r: "Do not dishonor yourself in the eyes of the gods with false words." },
-          8:  { mw: "Offending the gods or spirits with violence", r: "Do not disrespect the spirits with violence, for they are quick to take offense and their memory is long." },
-          7:  { mw: "Failing to act honorably", r: "The gods reward honor and punish dishonor." },
-          6:  { mw: "Stealing from offerings or sacrifices", r: "Give the gods the first fruits of your labor and do not grudge them their portion." },
-          5:  { mw: "Not honoring priests", r: "Priests are the servants of order and balance favored by the gods." },
-          4:  { mw: "Killing a sacred animal", r: "Honor that which the gods have decreed sacred." },
-          3:  { mw: "Defiling sacred places", r: "Defiling a temple is like cursing the gods themselves." },
-          2:  { mw: "Damaging the image of the gods", r: "One should strive always to honor the gods in thought and deed." },
-          1:  { mw: "Reviling a god or the gods", r: "The gods are the source of all life and goodness." }
-        }
-      },
-      "The Path of the Archangel": {
-        altName: "Via Caeli",
-        aura: "Holiness (Melancholia)",
-        virtues: { v1: "Conscience", v2: "Self-Control" },
-        ethics: [...heavenBaseEthics, "- Acting as muse and shepherd to all, and as martyr when need be; acting the part of angels to the mortal herd."],
-        hierarchyName: "Hierarchy of Sins Against the Archangel",
-        hierarchy: {
-          10: { mw: "Indulging in any temptation", r: "True katharsis purges all passions." },
-          9:  { mw: "Going one night without performing any creative work", r: "In art, we illuminate truth." },
-          8:  { mw: "Turning away from those who need inspiration", r: "An angel’s work is in guiding the lost." },
-          7:  { mw: "Refusing to make a minor sacrifice", r: "Shedding earthly things brings us closer to divinity." },
-          6:  { mw: "Leaving fellow Toreador to languish unbaptized", r: "We are all Michael’s chosen." },
-          5:  { mw: "Going one week without performing any creative work", r: "Art is how the soul worships." },
-          4:  { mw: "Indulging in temptations of the flesh", r: "In katharsis we renounce carnal passions." },
-          3:  { mw: "Abandoning any in your charge", r: "We must earn the worship of the flock." },
-          2:  { mw: "Giving in to your Beast, such as frenzy", r: "Katharsis purges our basest urges first and foremost." },
-          1:  { mw: "Refusing to make a major sacrifice", r: "We follow Michael’s example in all things." }
-        }
-      },
-      "The Path of the Pure": {
-        altName: "Via Caeli",
-        aura: "Holiness",
-        virtues: { v1: "Conscience", v2: "Self-Control" },
-        ethics: [...heavenBaseEthics, "- The world was made by the Demiurge who hides the true nature of the world in a cloak of matter, pain, and lust.", "- God represents absolute truth and perfection, beyond matter and desire.", "- To conquer matter, a vampire must deny worldly pleasures: fine clothing, food and drink, sex, the lust for power, and pride in one’s accomplishments.", "- Unity with the true God as Sophia, the wisdom principle personified, equivalent to beholding the Platonic Forms."],
-        hierarchyName: "Hierarchy of Sins Against Katharoi",
-        hierarchy: {
-          10: { mw: "Desiring a material object or person.", r: "Wanting the things of this world blinds us to true wisdom." },
-          9:  { mw: "Feeding beyond satiation (that is, filling more than half of one’s Blood Pool).", r: "Feeding beyond need is gluttony." },
-          8:  { mw: "Lying by omission or passive deception (such as by employing stealth).", r: "Deception is an act of the heart." },
-          7:  { mw: "Giving one’s blood to another.", r: "It is a sin to ensnare another in the illusions of this world." },
-          6:  { mw: "Telling a lie; tricking a person.", r: "Blinding another to the truth is the work of the Demiurge." },
-          5:  { mw: "Accepting a position of authority or honor, except as a teacher of the Path.", r: "Pride is the Demiurge’s motive, for he pretends to be God." },
-          4:  { mw: "Engaging in sexual congress or drinking another Cainite’s blood.", r: "Lust is of the world, and impure." },
-          3:  { mw: "Feeding for pleasure.", r: "Gluttony weighs us down; we ingest the world’s foulness." },
-          2:  { mw: "Stealing or killing for pleasure.", r: "You give reign to our material lusts, like Caine." },
-          1:  { mw: "Torturing a person or ravaging a community for pleasure or personal power.", r: "You condemn others to the prison of this world." }
-        }
-      },
-      "The Road of Humanity": {
-        altName: "Via Humanitas",
-        aura: "Humanity",
-        virtues: { v1: "Conscience", v2: "Self-Control" },
-        ethics: humanityBaseEthics,
-        hierarchyName: "Hierarchy of Sins Against the Soul",
-        hierarchy: {
-          10: { mw: "Selfish thoughts", r: "If it can be thought, it can be done." },
-          9:  { mw: "Minor selfish acts", r: "Putting oneself first lets the Beast in." },
-          8:  { mw: "Injury to another", r: "Accidental or not, there is still blood on your hands." },
-          7:  { mw: "Theft", r: "Only an animal takes without thought of consequence." },
-          6:  { mw: "Accidental violation of another", r: "Humanity is a shared condition, his suffering is your own." },
-          5:  { mw: "Wanton destruction", r: "Are you a person or an animal?" },
-          4:  { mw: "Impassioned violation of another", r: "Passion behind violence is the whispering of the Beast." },
-          3:  { mw: "Planned violation of another", r: "To be so cold is to reject the warmth of humanity." },
-          2:  { mw: "Casual violation of another", r: "Even wild animals know better." },
-          1:  { mw: "The most monstrous, vile acts", r: "Are you a person or a monster?" }
-        }
-      },
-      "The Path of Breath": {
-        altName: "Via Humanitas",
-        aura: "Humanity",
-        virtues: { v1: "Conscience", v2: "Self-Control" },
-        ethics: [...humanityBaseEthics, "- Not shouldering your cousin’s burden is as bad as burdening them in the first place.", "- Accepting that your nature is evil makes it true.", "- Isolation leaves you alone with the Beast, so that it may overpower you easier.", "- The company of Cainites is less preferable to the company of kine."],
-        hierarchyName: "Hierarchy of Sins Against Breath",
-        hierarchy: {
-          10: { mw: "Allowing yourself to think or act as a vampire", r: "" },
-          9:  { mw: "Minor selfish acts", r: "Putting oneself first lets the Beast in." },
-          8:  { mw: "Injury to another", r: "Accidental or not, there is still blood on your hands." },
-          7:  { mw: "Knowingly letting a human suffer", r: "" },
-          6:  { mw: "Accidental violation of another", r: "Humanity is a shared condition, his suffering is your own." },
-          5:  { mw: "Wanton destruction", r: "Are you a person or an animal?" },
-          4:  { mw: "Impassioned violation of another", r: "Passion behind violence is the whispering of the Beast." },
-          3:  { mw: "Planned violation of another", r: "To be so cold is to reject the warmth of humanity." },
-          2:  { mw: "Casual violation of another", r: "Even wild animals know better." },
-          1:  { mw: "Spending a night without human contact", r: "" }
-        }
-      },
-        "The Path of Community": {
-        altName: "Via Humanitas",
-        aura: "Humanity",
-        virtues: { v1: "Conscience", v2: "Self-Control" },
-        ethics: [...humanityBaseEthics, "- The needs of the many are equal to the needs of the Cainite.", "- Growth is vital to a community’s health and well-being.", "- A people who know who or what benefits them may rebel against it, so secrecy is best."],
-        hierarchyName: "Hierarchy of Sins Against Community",
-        hierarchy: {
-          10: { mw: "Selfish thoughts", r: "If it can be thought, it can be done." },
-          9:  { mw: "Minor selfish acts", r: "Putting oneself first lets the Beast in." },
-          8:  { mw: "Injury to another", r: "Accidental or not, there is still blood on your hands." },
-          7:  { mw: "Accidental destruction of public property", r: "" },
-          6:  { mw: "Accidental violation of another", r: "Humanity is a shared condition, his suffering is your own." },
-          5:  { mw: "Wanton destruction", r: "Are you a person or an animal?" },
-          4:  { mw: "Theft", r: "" },
-          3:  { mw: "Planned violation of another", r: "To be so cold is to reject the warmth of humanity." },
-          2:  { mw: "Casual violation of another", r: "Even wild animals know better." },
-          1:  { mw: "Genocide or any action that ends a community’s ability to grow and thrive", r: "" }
-        }
-      },
-      "The Path of Illumination": {
-        altName: "Via Humanitas",
-        aura: "Humanity",
-        virtues: { v1: "Conscience", v2: "Self-Control" },
-        ethics: [...humanityBaseEthics, "- They fear you because finding the truth means the end of their authority.", "- Rest once you have escaped the weakness of vampirism.", "- You have holiness inside of you, and it can balance the Beast."],
-        hierarchyName: "Hierarchy of Sins Against Illumination",
-        hierarchy: {
-          10: { mw: "Staying any place that is not furthering you along your journey", r: "" },
-          9:  { mw: "Minor selfish acts", r: "Putting oneself first lets the Beast in." },
-          8:  { mw: "Injury to another", r: "Accidental or not, there is still blood on your hands." },
-          7:  { mw: "Any act that will prevent a Cainite from following the journey you have begun", r: "" },
-          6:  { mw: "Accidental violation of another", r: "Humanity is a shared condition, his suffering is your own." },
-          5:  { mw: "Wanton destruction", r: "Are you a person or an animal?" },
-          4:  { mw: "Impassioned violation of another", r: "Passion behind violence is the whispering of the Beast." },
-          3:  { mw: "Planned violation of another", r: "To be so cold is to reject the warmth of humanity." },
-          2:  { mw: "Casual violation of another", r: "Even wild animals know better." },
-          1:  { mw: "Letting true darkness in, to squelch the light. Accepting Evil", r: "" }
-        }
-      },
-      "The Road of Kings": {
-        altName: "Via Regalis",
-        aura: "Command",
-        virtues: { v1: "Conviction", v2: "Self-Control" },
-        ethics: regalisBaseEthics,
-        hierarchyName: "Hierarchy of Sins Against Kingship",
-        hierarchy: {
-          10: { mw: "Forgoing your duty", r: "Those who do not maintain responsibilities often lose them." },
-          9:  { mw: "Treating a peer with disrespect", r: "Respect must be given to earn it from others." },
-          8:  { mw: "Placing personal desires over duty", r: "A leader must do what is best for the many, not the one." },
-          7:  { mw: "Treating an inferior as an equal", r: "Everyone should know their place, including you." },
-          6:  { mw: "Killing without purpose", r: "Displays of power should inspire fear or respect." },
-          5:  { mw: "Showing weakness in front of inferiors", r: "A leader must be strong at all times." },
-          4:  { mw: "Failing to answer a challenge to your honor", r: "Honor and reputation are everything." },
-          3:  { mw: "Treating your superior with disrespect", r: "Superiors must be given the respect they are due." },
-          2:  { mw: "Breaking your word or oath", r: "Your word is your honor. If you have no honor, you have no worth." },
-          1:  { mw: "Giving in to your Beast, such as frenzy", r: "If you cannot control yourself, how can you control others?" }
-        }
-      },
-      "The Path of Chivalry": {
-        altName: "Via Regalis",
-        aura: "Command",
-        virtues: { v1: "Conviction", v2: "Self-Control" },
-        ethics: [...regalisBaseEthics, "- Your honor and duty are the most important aspects of your life.", "- You are mandated to aid and protect your inferiors.", "- You stand for justice, and you should not let unjust acts go unpunished."],
-        hierarchyName: "Hierarchy of Sins Against Chivalry",
-        hierarchy: {
-          10: { mw: "Neglecting your duty for any reason", r: "Duty must come first." },
-          9:  { mw: "Dishonorable acts (deceit, murder, etc.)", r: "Your honor is the most important thing." },
-          8:  { mw: "Treating another with disrespect", r: "Respect must be given to earn it from others." },
-          7:  { mw: "Behaving in an unjust manner", r: "It is your duty to uphold justice." },
-          6:  { mw: "Failing to come to the aid of another", r: "It is your duty to protect the weak." },
-          5:  { mw: "Treating your superior with disrespect", r: "Superiors must be given the respect they are due." },
-          4:  { mw: "Placing personal desires over duty", r: "Selfish thoughts have no place in a Paladin’s heart." },
-          3:  { mw: "Failing to answer a challenge to your honor", r: "Honor and reputation are everything." },
-          2:  { mw: "Breaking your word", r: "Your word is your honor. If you have no honor, you have no worth." },
-          1:  { mw: "Breaking a sworn oath", r: "Oaths of fealty are what make civilized society." }
-        }
-      },
-      "The Path of Devaraja": {
-        altName: "Via Regalis",
-        aura: "Command",
-        virtues: { v1: "Conviction", v2: "Self-Control" },
-        ethics: [...regalisBaseEthics, "- You must act as a god would, smiting your enemies and granting succor to your followers.", "- You must give homage to the divine to gain its blessing.", "- Never turn away a follower. Worshippers come from all walks of life."],
-        hierarchyName: "Hierarchy of Sins Against Devaraja",
-        hierarchy: {
-          10: { mw: "Failing to recognize the divine", r: "Your power comes from the divine will." },
-          9:  { mw: "Forgoing your duty", r: "Those who do not maintain responsibilities often lose them." },
-          8:  { mw: "Treating another with disrespect", r: "Respect must be given to earn it from others." },
-          7:  { mw: "Treating an inferior as an equal", r: "You are a god; you must not forget this." },
-          6:  { mw: "Placing personal desires over duty", r: "A leader must do what is best for the many, not the one." },
-          5:  { mw: "Failing to seize power when the chance arises", r: "You must prove to the divine that you deserve its blessing." },
-          4:  { mw: "Failing to answer a challenge to your honor", r: "True gods smite their detractors." },
-          3:  { mw: "Killing without purpose", r: "It is your divine duty to protect your worshippers, not kill them." },
-          2:  { mw: "Breaking your word or oath", r: "Your word is your honor. If you have no honor, you have no worth." },
-          1:  { mw: "Giving into your Beast, such as frenzy", r: "If you cannot control yourself, how can you accept the divine?" }
-        }
-      },
-      "The Path of Daena": {
-        altName: "Via Regalis",
-        aura: "Command",
-        virtues: { v1: "Conviction", v2: "Self-Control" },
-        ethics: [...regalisBaseEthics, "- The law is supreme. Uphold it at all costs.", "- Your duty is your honor and your life. Never forsake it.", "- Always act with kindness, as good deeds will be repaid tenfold."],
-        hierarchyName: "Hierarchy of Sins Against Daena",
-        hierarchy: {
-          10: { mw: "Neglecting your duty for any reason", r: "Duty must come first." },
-          9:  { mw: "Breaking the law", r: "You must uphold the law at all costs." },
-          8:  { mw: "Treating another with disrespect", r: "Respect must be given to earn it from others." },
-          7:  { mw: "Behaving in an unjust manner", r: "It is your duty to uphold justice." },
-          6:  { mw: "Killing without purpose", r: "Displays of power should inspire fear or respect." },
-          5:  { mw: "Failing to come to the aid of another", r: "To gain power, you must first gather goodwill." },
-          4:  { mw: "Treating your superior with disrespect", r: "Superiors must be given the respect they are due." },
-          3:  { mw: "Failing to uphold the law", r: "It is your duty to uphold the law not matter the price." },
-          2:  { mw: "Breaking your word or oath", r: "Your word is your honor. If you have no honor, you have no worth." },
-          1:  { mw: "Giving into your Beast, such as frenzy", r: "If you cannot control yourself, how can you control others?" }
-        }
-      },
-      "The Road of Lilith": {
-        altName: "Derech Lilit",
-        aura: "Carved and bleeding",
-        virtues: { v1: "Conviction", v2: "Instinct" },
-        ethics: lilitBaseEthics,
-        hierarchyName: "Hierarchy of Sins Against Who You Are",
-        hierarchy: {
-          10: { mw: "Feeding immediately when hungry", r: "There is a lesson in every denial, and there is control in self-denial." },
-          9:  { mw: "Joining a system created by those with no wisdom", r: "Live outside their lies." },
-          8:  { mw: "Ignoring one of Lilith’s faces", r: "Wherever you go, the Dark Mother has left messages for you. Read their myths and show them where Lilith lives." },
-          7:  { mw: "Rejecting the suffering of others or dismissing it", r: "Teach whenever the opportunity presents itself, even if you think the lessons learned would be beneath you." },
-          6:  { mw: "Cruelty for its own sake", r: "As a teacher, you must craft your lessons. Petty abuses are beneath you. The pain you inflict must be divine." },
-          5:  { mw: "Stealing great learning and claiming it as your own", r: "If you did not discover the wisdom yourself, you have no rights claiming it or authority based on it." },
-          4:  { mw: "Destroying a thinking being", r: "They can neither learn from you nor teach you if they have been destroyed." },
-          3:  { mw: "Not seeking out the teachings of Lilith", r: "Turn over the leaf, split the wood, and find her secrets wherever they hide." },
-          2:  { mw: "Getting between someone and a valuable lesson", r: "Better to pull the stars from the heavens than to rob someone of moments of true gnosis." },
-          1:  { mw: "Shunning pain", r: "The harder it is, the more rewarding the growth." }
-        }
-      },
-      "The Path of Thorns": {
-        altName: "Derech Lilit",
-        aura: "Carved and bleeding",
-        virtues: { v1: "Conviction", v2: "Instinct" },
-        ethics: [...lilitBaseEthics, "- Wisdom alone does not suffice. Intelligence is also required.", "- Creation should be built on careful study. Raw creation is never as good as carefully crafted beauty or horror.", "- Do not seek students. They should come to you, destroyed and begging."],
-        hierarchyName: "Hierarchy of Sins Against Thorns",
-        hierarchy: {
-          10: { mw: "Feeding immediately when hungry", r: "There is a lesson in every denial, and there is control in self-denial." },
-          9:  { mw: "Joining any community of fools", r: "" },
-          8:  { mw: "Ignoring one of Lilith’s faces", r: "Wherever you go, the Dark Mother has left messages for you. Read their myths and show them where Lilith lives." },
-          7:  { mw: "Rejecting the suffering of others or dismissing it", r: "Teach whenever the opportunity presents itself, even if you think the lessons learned would be beneath you." },
-          6:  { mw: "Cruelty for its own sake", r: "As a teacher, you must craft your lessons. Petty abuses are beneath you. The pain you inflict must be divine." },
-          5:  { mw: "Accepting a student (formal or informal) the first time they come to you", r: "" },
-          4:  { mw: "Destroying a thinking being", r: "They can neither learn from you nor teach you if they have been destroyed." },
-          3:  { mw: "Not seeking out the teachings of Lilith", r: "Turn over the leaf, split the wood, and find her secrets wherever they hide." },
-          2:  { mw: "Putting the learning of another before your own", r: "" },
-          1:  { mw: "Shunning pain", r: "The harder it is, the more rewarding the growth." }
-        }
-      },
-      "The Path of Veils": {
-        altName: "Derech Lilit",
-        aura: "Carved and bleeding",
-        virtues: { v1: "Conviction", v2: "Instinct" },
-        ethics: [...lilitBaseEthics, "- The Children of Caine will be punished for what they did in the Garden.", "- Show no mercy for those too ignorant to know the true story of Caine and our Dark Mother.", "- Destroy those who disseminate the lie, but make all efforts to never be caught in the act. Burn their books of lies.", "- You may forgive those who draped veils across the faces of Lilith’s murdered children, as she forgives them."],
-        hierarchyName: "Hierarchy of Sins Against Veils",
-        hierarchy: {
-          10: { mw: "Feeding immediately when hungry", r: "There is a lesson in every denial, and there is control in self-denial." },
-          9:  { mw: "Accepting and abiding any law of Caine or God", r: "" },
-          8:  { mw: "Failing to destroy the works of Noddist-liars", r: "" },
-          7:  { mw: "Rejecting the suffering of others or dismissing it", r: "Teach whenever the opportunity presents itself, even if you think the lessons learned would be beneath you." },
-          6:  { mw: "Cruelty for its own sake", r: "As a teacher, you must craft your lessons. Petty abuses are beneath you. The pain you inflict must be divine." },
-          5:  { mw: "Stealing great learning and claiming it as your own", r: "If you did not discover the wisdom yourself, you have no rights claiming it or authority based on it." },
-          4:  { mw: "Snuffing the spark of a candle that desires to burn brighter", r: "" },
-          3:  { mw: "Not seeking out the teachings of Lilith", r: "Turn over the leaf, split the wood, and find her secrets wherever they hide." },
-          2:  { mw: "Getting between someone and a valuable lesson", r: "Better to pull the stars from the heavens than to rob someone of moments of true gnosis." },
-          1:  { mw: "Shunning pain", r: "The harder it is, the more rewarding the growth." }
-        }
-      },
-      "The Path of Making": {
-        altName: "Derech Lilit",
-        aura: "Carved and bleeding",
-        virtues: { v1: "Conviction", v2: "Instinct" },
-        ethics: [...lilitBaseEthics, "- Find and foster the greatest grandchildren of Lilith.", "- Teach them about the beauty of suffering she endured so that they might exist. Show them.", "- Make as she did. There is no difference between horrible and divine. Power and uniqueness as expressions of creative force is all that matters.", "- Destroying monsters and demons is no different from murdering infants and fawns, if not worse. Infants will only grow to be people. Monsters can become gods."],
-        hierarchyName: "Hierarchy of Sins Against Making",
-        hierarchy: {
-          10: { mw: "Rejecting the advances of demons with seed in hand", r: "" },
-          9:  { mw: "Joining a system created by those with no wisdom", r: "Live outside their lies." },
-          8:  { mw: "Ignoring one of Lilith’s faces", r: "Wherever you go, the Dark Mother has left messages for you. Read their myths and show them where Lilith lives." },
-          7:  { mw: "Abandoning a thing because it is ugly or frightening", r: "" },
-          6:  { mw: "Cruelty for its own sake", r: "As a teacher, you must craft your lessons. Petty abuses are beneath you. The pain you inflict must be divine." },
-          5:  { mw: "Not taking a secret of making and creating from savages who don’t know the divine purpose behind it", r: "" },
-          4:  { mw: "Destroying a thinking being", r: "They can neither learn from you nor teach you if they have been destroyed." },
-          3:  { mw: "Not seeking out the teachings of Lilith", r: "Turn over the leaf, split the wood, and find her secrets wherever they hide." },
-          2:  { mw: "Getting between someone and a valuable lesson", r: "Better to pull the stars from the heavens than to rob someone of moments of true gnosis." },
-          1:  { mw: "Rejecting the advances of angels with seed in hand", r: "" }
-        }
-      },
-      "The Road of Metamorphosis": {
-        altName: "Via Mutationis",
-        aura: "Inhumanity",
-        virtues: { v1: "Conviction", v2: "Instinct" },
-        ethics: [
-          "- Discovering knowledge for oneself is the truest, purest form of understanding and the key to Metamorphosis.",
-          "- Seek to understand life and death, for it is the cycle that bars transcendence.",
-          "- Indulge the Beast and deny it; like all things, it must be understood.",
-          "- Experiment endlessly, especially upon your own body, to reveal every secret at hand.",
-          "- Do not divorce yourself from the world, for it is what you seek to understand, but do not allow yourself to be dragged down by its entanglements."
-        ],
-        hierarchyName: "Hierarchy of Sins Against Transmogrification",
-        hierarchy: {
-          10: { mw: "Failing to ride out a frenzy", r: "While you can glean knowledge from the Beast, you must not allow your baser impulses to control you." },
-          9:  { mw: "Offering unsolicited knowledge to another", r: "Most are not on your path, but do not presume to take away their choice." },
-          8:  { mw: "Allowing pleasure or emotion to distract you", r: "Hedonism deters greater ends." },
-          7:  { mw: "Asking another for knowledge", r: "No one can teach you apotheosis. You must discover its secrets yourself." },
-          6:  { mw: "Denying yourself sustenance", r: "Hunger is the most basic distraction." },
-          5:  { mw: "Succumbing to conventional morality when knowledge could be gained", r: "Without transgressing, you will never find what is hidden from sight." },
-          4:  { mw: "Placing others above your quest for knowledge", r: "Those who wish to chain themselves to this world will hold you back as well." },
-          3:  { mw: "Failure to experiment due to compassion, discomfort, or personal risk", r: "We may flounder in the dark, and it may be unpleasant, but it is our only way forward." },
-          2:  { mw: "Loving another", r: "Love puts itself above all things, even Metamorphosis. Do not allow this." },
-          1:  { mw: "Neglecting to alter one’s own body", r: "If the forms we have were suited for ascension, we would already have ascended." }
-        }
-      },
-      "The Road of Sin": {
-        altName: "Via Peccati",
-        aura: "Temptation",
-        virtues: { v1: "Conviction", v2: "Instinct" },
-        ethics: peccatiBaseEthics,
-        hierarchyName: "Hierarchy of Sins Against Yourself",
-        hierarchy: {
-          10: { mw: "Acknowledging any authority over your own", r: "You are beyond submission." },
-          9:  { mw: "Failing to indulge a new desire", r: "No pleasure should be denied you." },
-          8:  { mw: "Failing to ride the wave of frenzy", r: "The Beast tires with exercise, strengthens with denial." },
-          7:  { mw: "Forfeiting long-term pleasures for short-term ones", r: "Do not exchange floods of desire for a draught." },
-          6:  { mw: "Putting the needs of others ahead of your own pleasure", r: "Your need outweighs everything else." },
-          5:  { mw: "Swearing an oath", r: "Be bound by none, least of all yourself." },
-          4:  { mw: "Refusing to act against those who attempt to bind you", r: "The truest chains are self-imposed, but false ones can bind just as well." },
-          3:  { mw: "Refusing to feed or kill when necessary", r: "No life is worth more than your own." },
-          2:  { mw: "Encouraging the tenets or virtues of another Road", r: "All other Roads lead to gilded cages and liberated Beasts." },
-          1:  { mw: "Refusing to act in your own best interests", r: "Only fools sacrifice themselves." }
-        }
-      },
-      "The Path of Pleasure": {
-        altName: "Via Peccati",
-        aura: "Temptation",
-        virtues: { v1: "Conviction", v2: "Instinct" },
-        ethics: [...peccatiBaseEthics, "- Tame the Beast with the pleasure it desires, for it does not think, but feel.", "- Shame and inhibition are blasphemies against the orgasmic sacrament.", "- Avoid things which bring you no pleasure, for the Beast grows restless without being fed."],
-        hierarchyName: "Hierarchy of Sins Against Pleasure",
-        hierarchy: {
-          10: { mw: "Being shamed by your actions", r: "Shame is disapproval in the eyes of others; your actions can only please yourself." },
-          9:  { mw: "Failing to indulge your desires", r: "Satiation keeps the Beast at bay." },
-          8:  { mw: "Failing to ride the wave of frenzy", r: "The red rages are but another pleasure to experience." },
-          7:  { mw: "Any display of modesty", r: "Modesty is morality imposed from without. Never submit to it." },
-          6:  { mw: "Putting the needs of others ahead of your own interests", r: "Your desires come before their need." },
-          5:  { mw: "Swearing an oath", r: "A wild heart must never be chained." },
-          4:  { mw: "Associating with those who bring you no pleasure", r: "The Beast rages when denied; never give license to its fury." },
-          3:  { mw: "Refusing to feed or kill when necessary", r: "These are your greatest and purest joys." },
-          2:  { mw: "Encouraging virtue or agents of virtue", r: "Why exert effort to aid those who would chain you?" },
-          1:  { mw: "Refusing to act in your own best interests", r: "Your desires are all that truly matters." }
-        }
-      },
-      "The Path of the Devil": {
-        altName: "Via Peccati",
-        aura: "Temptation",
-        virtues: { v1: "Conviction", v2: "Self-Control" },
-        ethics: [...peccatiBaseEthics, "- You are the master of yourself; authority comes from consent of the ruled, not from tyranny.", "- Free will is your ultimate weapon and your greatest treasure; never let it be taken from you.", "- Chains challenge the rights of the free by their mere existence; your existence is the answer to this challenge."],
-        hierarchyName: "Hierarchy of Sins Against Rebellion",
-        hierarchy: {
-          10: { mw: "Acknowledging the laws of God or Man", r: "Never give credence to those who would enslave others." },
-          9:  { mw: "Failing to indulge a new desire", r: "Passion is the fire of the soul." },
-          8:  { mw: "Failing to ride the wave of frenzy", r: "The Beast may only be understood after struggle." },
-          7:  { mw: "Refusing to aid a lost soul in need", r: "The weak cannot understand their nature, and must be taught by the strong." },
-          6:  { mw: "Refusing a pleasure that injures none", r: "Seeking to pleasure yourself is the fondest pursuit." },
-          5:  { mw: "Swearing an oath", r: "Forced servitude cannot be helped, and is to be pitied; self-enforced servitude is hideous, and is to be resisted." },
-          4:  { mw: "Refusing to act against those who choose to bind you", r: "Punish those who attempt to control you." },
-          3:  { mw: "Refusing to feed or kill when necessary", r: "Never feel shame for doing what must be done." },
-          2:  { mw: "Pursuing material gain at the expense of higher concerns", r: "Enrich your soul before you fill your coffers." },
-          1:  { mw: "Encouraging false virtue or agents of false virtue", r: "Constrictions of laws enslave the mind and strangle the soul." }
-        }
-      },
-      "The Path of Screams": {
-        altName: "Via Peccati",
-        aura: "Temptation",
-        virtues: { v1: "Conviction", v2: "Instinct" },
-        ethics: [...peccatiBaseEthics, "- You are Damned; the greatest pleasure is found in service of Hell.", "- Virtue is a great and grand lie, but the truth pleases both you and your masters.", "- Your Beast is as a great vibration, carried up from Hell; listen to its will and desires and find the voice of those you follow."],
-        hierarchyName: "Hierarchy of Sins Against Damnation",
-        hierarchy: {
-          10: { mw: "Acknowledging any laws but that of Hell", r: "Divinity and mundanity have no meaning for the Damned." },
-          9:  { mw: "Failing to indulge your desires", r: "Pleasure strengthens you, which strengthens your masters." },
-          8:  { mw: "Failing to ride the wave of frenzy", r: "The Beast is the clarion call of your soul." },
-          7:  { mw: "Refusing to feed or kill when necessary", r: "Beautiful is the blood that darkens the soil." },
-          6:  { mw: "Avoiding injury to others for any reason", r: "Blood spilled is your gift to the world, your greatest pleasure." },
-          5:  { mw: "Any display of mercy or pity", r: "Mercy is for the weak, and Damnation makes you strong." },
-          4:  { mw: "Failing to act on behalf of Hell", r: "You serve Hell, even when it does not serve you." },
-          3:  { mw: "Any altruistic behavior", r: "You owe others nothing." },
-          2:  { mw: "Acting against the minions of Hell", r: "We are all as drones in the hive of the Pit." },
-          1:  { mw: "Encouraging virtue or agents of virtue", r: "Nothing pure may withstand you, even the purity of Sin." }
-        }
-      },
-      "The Road of Bones": {
-        altName: "Via Ossium",
-        aura: "Silence",
-        virtues: { v1: "Conviction", v2: "Self-Control" },
-        ethics: [
-          "- Study the mysteries of life, death, and undeath.",
-          "- Explore the nature of the soul, but do not be enslaved by its passions.",
-          "- Protect knowledge from those would destroy or distort it."
-        ],
-        hierarchyName: "Hierarchy of Sins Against Knowledge",
-        hierarchy: {
-          10: { mw: "Refusing to share knowledge with a worthy recipient", r: "Scholarship is improved with informed review." },
-          9:  { mw: "Wanton destruction and cruelty", r: "Beasts and idiots will discover nothing but the stake." },
-          8:  { mw: "Refusing to kill when useful or necessary", r: "Let no mortal squeamishness impede your quest." },
-          7:  { mw: "Being swayed by emotion", r: "Study emotion as an expression of the soul, but do not let it guide your hand." },
-          6:  { mw: "Succumbing to frenzy", r: "A raging Beast is a poor observer." },
-          5:  { mw: "Pursuing power, prestige, or mortal attachments instead of knowledge", r: "These things are means to an end and nothing more." },
-          4:  { mw: "Allowing compassion or pity to influence you", r: "Affecting compassion may be useful to manipulate your enemies, but don’t let it enter your heart." },
-          3:  { mw: "Needlessly preventing a death", r: "All flesh is dust." },
-          2:  { mw: "Showing fear of death", r: "Be not afraid of the truth." },
-          1:  { mw: "Destroying irreplaceable sources of knowledge", r: "Destroying an artifact destroys an entire world." }
-        }
-      },
-      "The Road of Yasa": {
-        altName: "Via Yasaq",
-        aura: "Trust",
-        virtues: { v1: "Conviction", v2: "Self-Control" },
-        ethics: [
-          "- Honor your family as you would honor yourself.",
-          "- The family you choose is the strongest and most important family.",
-          "- Demand respect from others.",
-          "- Show respect to those who deserve it.",
-          "- Do not stain your honor with petty behavior or pride."
-        ],
-        hierarchyName: "Hierarchy of Sins Against the Yasa",
-        hierarchy: {
-          10: { mw: "Ignoring an insult", r: "You have earned the respect of others." },
-          9:  { mw: "Insulting another undeservedly", r: "You must show respect to those who have earned it." },
-          8:  { mw: "Lying to one who has proved themselves honest", r: "Honesty demands honesty." },
-          7:  { mw: "Abusing your herd", r: "The herd is not just for one." },
-          6:  { mw: "Showing mercy to one who has not submitted", r: "The weak must accept you as their master." },
-          5:  { mw: "Losing a battle due to pride", r: "Defeat your enemy now. Assuage your ego later." },
-          4:  { mw: "Harming family, anda, herd, or allies while in frenzy", r: "A warrior’s essential quality is discipline." },
-          3:  { mw: "Disobeying the order of your noyan", r: "Obedience is the foundation of honor." },
-          2:  { mw: "Betraying your family", r: "You will never know a stronger bond than that of blood." },
-          1:  { mw: "Betraying your Bloodbrothers", r: "The family of choice is the strongest." }
-        }
-      },
-      "The Road of Blood": {
-        altName: "",
-        aura: "Resolve",
-        virtues: { v1: "Conviction", v2: "Self-Control" },
-        ethics: [
-          "- The blood of Caine is a gift that must be earned.",
-          "- Purity, honor, and discipline are the hallmarks of a warrior.",
-          "- Do not act with haste — every action requires careful consideration.",
-          "- Allowing the Beast to take control is a sign of weakness and unfitness to retain Caine’s blood."
-        ],
-        hierarchyName: "Sins Against the Blood",
-        hierarchy: {
-          10: { mw: "Acting impulsively in any situation", r: "Discipline is strength." },
-          9:  { mw: "Allowing actions to be dictated by emotion", r: "Passion is the first stirring of the Beast." },
-          8:  { mw: "Succumbing to frenzy", r: "Our will must be unshakable." },
-          7:  { mw: "Failing to diablerize an unworthy vampire", r: "Return the blood of the unworthy to Haqim." },
-          6:  { mw: "Acting cowardly or dishonorably", r: "Our actions reflect on our father, Haqim." },
-          5:  { mw: "Allowing the unworthy to go unpunished", r: "We are the judges of the unliving." },
-          4:  { mw: "Showing weakness before the unworthy", r: "We represent Haqim in all things." },
-          3:  { mw: "Failing to honor an oath", r: "Our honor is what sets us apart." },
-          2:  { mw: "Submitting to the will of an unworthy prince or elder", r: "Nothing in this world may sway us from our sacred purpose." },
-          1:  { mw: "Becoming oath-bound to another Cainite", r: "We serve Haqim and no other." }
-        }
-      },
-      "The Road of the Abyss": {
-        altName: "",
-        aura: "Darkness",
-        virtues: { v1: "Conviction", v2: "Self-Control" },
-        ethics: [
-          "- Serve the Dark Master/Abyss/Oblivion",
-          "- Extend Darkness",
-          "- Reject Light"
-        ],
-        hierarchyName: "The Road of the Abyss",
-        hierarchy: {
-          10: { mw: "Showing fear of the dark", r: "Darkness has much to teach us about the Abyss." },
-          9:  { mw: "Failing to observe a manifestation of darkness", r: "Only through observation can one increase knowledge." },
-          8:  { mw: "Expressing reverence for creation", r: "Creation is a blight, a taint of the purity of the Abyss." },
-          7:  { mw: "Refusing to feed when hungry", r: "Hunger is a manifestation of the void." },
-          6:  { mw: "Refusing to kill when it is the most expedient path", r: "Everything returns to the Abyss in time." },
-          5:  { mw: "Giving in to frenzy", r: "In order to master the darkness, you must first master yourself." },
-          4:  { mw: "Refusing to share knowledge with another Abyss mystic", r: "Full understanding of the Abyss cannot be attained without the insight of others." },
-          3:  { mw: "Letting morality hinder study of the Abyss", r: "Morals are a light-born weakness. We are creatures of darkness." },
-          2:  { mw: "Needlessly avoiding the darkness", r: "We are creatures of darkness. To reject it is to reject yourself." },
-          1:  { mw: "Showing aversion to the Abyss", r: "You cannot master that which you fear." }
-        }
-      },
-      "The Road of Set": {
-        altName: "",
-        aura: "Proselytize",
-        virtues: { v1: "Conviction", v2: "Self-Control" },
-        ethics: [
-          "- Worship Set",
-          "- Restore the greatness of Set",
-          "- Spread the Word of Set",
-          "- Undermine Opposing Faiths"
-        ],
-        hierarchyName: "Hierarchy of Sins Against Set",
-        hierarchy: {
-          10: { mw: "Pursuing personal indulgence over the interests of the Path", r: "Dissolution is the pastime of the weak." },
-          9:  { mw: "Refusing to aid another follower of the Path", r: "We must work together if we are to eliminate our enemies." },
-          8:  { mw: "Failing to acquire leverage against enemies of the Road", r: "The unrighteous shall be destroyed and the weak converted." },
-          7:  { mw: "Refusing to spread the worship of Set", r: "Those who bear the blood of Set bear a sacred duty to spread his word." },
-          6:  { mw: "Failing to observe Setite rituals", r: "Only through our devotion do we earn Set’s favor." },
-          5:  { mw: "Failing to sow chaos among the enemies of the Road", r: "Let the ungodly be cast down." },
-          4:  { mw: "Failing to do whatever is needed to convert the pious of other faiths", r: "Where they lead, others will follow." },
-          3:  { mw: "Obstructing another Setite’s efforts", r: "We all work toward a common purpose." },
-          2:  { mw: "Refusing to aid in Set’s resurrection", r: "It is our sacred duty to restore our lord’s place in the world." },
-          1:  { mw: "Worshipping any god but Set", r: "Set is our progenitor and protector. There is no true god but Set." }
-        }
-      },
-      "The Path of Apep": {
-        altName: "",
-        aura: "Instant gratification",
-        virtues: { v1: "Conviction", v2: "Instinct" },
-        ethics: [
-          "- Embrace chaos",
-          "- Pursue instant, sinful gratification",
-          "- Who won? Set or Apep? Does it really matter?",
-          "- Worship something. Preferably something serpentine."
-        ],
-        hierarchyName: "Hierarchy of Sins Against Apep",
-        hierarchy: {
-          10: { mw: "Failing to indulge in pleasurable acts", r: "Chaos is the gift of Apep, our source of strength." },
-          9:  { mw: "Delaying carnal gratification", r: "Denial of one’s desires is a denial of one’s true self." },
-          8:  { mw: "Refusing an opportunity to corrupt a mortal", r: "Order prevents us from being who we truly are." },
-          7:  { mw: "Refusing an opportunity to corrupt a vampire", r: "We are the children of Apep. His gift must not be rejected." },
-          6:  { mw: "Refusing an opportunity to corrupt a holy figure", r: "Weakness must be cast aside." },
-          5:  { mw: "Failing to undermine the prevailing mortal environment", r: "Stagnation promotes weakness." },
-          4:  { mw: "Failing to undermine Cainite structures of power", r: "Times of strife help us discover our true strength." },
-          3:  { mw: "Placing another’s wishes above your own", r: "Civilization is a lie." },
-          2:  { mw: "Punishing an individual for indecent behavior", r: "Freedom is strength." },
-          1:  { mw: "Actively enforcing the rule of law", r: "Order and chaos are natural opposites." }
-        }
-      },
-      "The Road of Paradox": {
-        altName: "",
-        aura: "Confidence",
-        virtues: { v1: "Conviction", v2: "Self-Control" },
-        ethics: [
-          "- Follow the svadharma set before you. Do not let anyone take you from the one true path.",
-          "- Do not Embrace unless absolutely necessary, and then only from the jati.",
-          "- Assist others to determine and follow their svadharma.",
-          "- Destroy those who refuse to follow their svadharma; return them to samsara."
-        ],
-        hierarchyName: "Sins Against Paradox",
-        hierarchy: {
-          10: { mw: "Failing to accept death", r: "Your svadharma is only temporary, you must eventually return to the samsara." },
-          9:  { mw: "Embracing outside the jati", r: "Only Embrace those that will follow the Road of Paradox." },
-          8:  { mw: "Destroying another Asura", r: "Your fellows on this Road have a svadharma, do not stop them." },
-          7:  { mw: "Killing a mortal for sustenance", r: "Death prevents a person from fulfilling their svadharma in this part of the cycle." },
-          6:  { mw: "Failing to kill vampires on another Road", r: "Only by accepting the true path to moksha can a vampire atone. Otherwise, they are useless." },
-          5:  { mw: "Allowing personal affairs to interfere in your svadharma", r: "You must follow your sacred duty at all times." },
-          4:  { mw: "Failure to aid another’s svadharma", r: "This is your only purpose before returning to the cycle." },
-          3:  { mw: "Killing a mortal for any reason other than survival", r: "Preventing others from achieving their svadharma is anathema." },
-          2:  { mw: "Becoming blood bound", r: "You cannot destroy your regnant, which could prevent you from following your svadharma." },
-          1:  { mw: "Embracing needlessly out of personal desire", r: "You must allow others to continue their cycle, not remove them from it." }
-        }
-      },
-      "The Code of Samiel": {
-        altName: "",
-        aura: "Martyrdom",
-        virtues: { v1: "Conscience", v2: "Self-Control" },
-        ethics: [
-          "- It is the duty of the Warrior to bleed so that others might not.",
-          "- Evil is a font of corruption. Healers can salve the wound, but it must first be cleansed by fire.",
-          "- Aid must be offered to those in pain, and protection to those scourged by evil."
-        ],
-        hierarchyName: "Hierarchy of Sins Against Righteousness",
-        hierarchy: {
-          10: { mw: "Failing to punish corruption and sin", r: "Evil prospers in the unchallenged heart." },
-          9:  { mw: "Acting out of avarice or lust", r: "Honor must be stronger than steel." },
-          8:  { mw: "Bearing false witness", r: "Your sword is that of truth." },
-          7:  { mw: "Feeding from the innocent without permission", r: "As the Healers are bound, so shall we be." },
-          6:  { mw: "Failing to defend or aid a person in need", r: "A dead heart finds life in service to others." },
-          5:  { mw: "Failing to defend or aid a Healer in need", r: "The red right hand defends the left." },
-          4:  { mw: "Letting a worthy challenge go unanswered", r: "Be as the lion, not as the lamb." },
-          3:  { mw: "Failing to challenge a vampire with a low Road", r: "Their souls endanger Cainite and kine." },
-          2:  { mw: "Neglecting an opportunity to exact vengeance", r: "Let retribution be your pride and purview." },
-          1:  { mw: "Aiding demons, Baali, Setites, or other evils", r: "Offer the wicked no succor but salt and fire." }
-        }
-      },
-      "The Road of Angra Mainyu": {
-        altName: "",
-        aura: "Corruption",
-        virtues: { v1: "Conviction", v2: "Self-Control" },
-        ethics: [
-          "- Explore evil and corruption.",
-          "- Persuade others to do evil.",
-          "- There can be no good without evil.",
-          "- Explore evil to choose to be good."
-        ],
-        hierarchyName: "Hierarchy of Sins Against Angra Mainyo",
-        hierarchy: {
-          10: { mw: "Committing any act of kindness", r: "The vampire is a servant of Angra Mainyu, the bringer of evil." },
-          9:  { mw: "Delaying carnal gratification", r: "Denial of one’s desires is a denial of one’s true self." },
-          8:  { mw: "Refusing an opportunity to corrupt a mortal", r: "Order prevents us from being who we truly are." },
-          7:  { mw: "Refusing an opportunity to corrupt a vampire", r: "We are the children of Angra Mainyo. His gift must not be rejected." },
-          6:  { mw: "Refusing an opportunity to corrupt a holy figure", r: "Weakness must be cast aside." },
-          5:  { mw: "Failing to undermine the prevailing mortal environment", r: "Stagnation promotes weakness." },
-          4:  { mw: "Failing to undermine Cainite structures of power", r: "Times of strife help us discover our true strength." },
-          3:  { mw: "Placing another’s wishes above your own", r: "Civilization is a lie." },
-          2:  { mw: "Feeding on evil men", r: "The vampire must not harm other servants of Angra Mainyu." },
-          1:  { mw: "Fearing Frenzy", r: "Rage and Hunger are gifts from Angra Mainyu, and the vampire must embrace them." }
-        }
-      },
-      "The Road of Ahura Mazda": {
-        altName: "",
-        aura: "Goodness",
-        virtues: { v1: "Conviction", v2: "Self-Control" },
-        ethics: [
-          "- Remaining human is a requirement to escape soul-death.",
-          "- Humanity is a universal experience that all Cainites can understand.",
-          "- Violating the boundaries and well-being of another depletes the soul.",
-          "- We were all human, and that gives us value despite accidents of birth or upbringing.",
-          "- Thought and compassion separate us from the Beast.",
-          "- Do good deeds and think good thoughts; explore evil to choose to be good and return to Ahura Mazda's grace."
-        ],
-        hierarchyName: "Hierarchy of Sins Against Ahura Mazda",
-        hierarchy: {
-          10: { mw: "Fearing Final Death", r: "The vampire has worked her way back to Ahura Mazda. Heaven awaits when she dies." },
-          9:  { mw: "Minor selfish acts", r: "Putting oneself first lets the Beast in." },
-          8:  { mw: "Speaking evil words, speaking ill of others", r: "Words carry to the ear of Ahura Mazda." },
-          7:  { mw: "Theft", r: "Only an animal takes without thought of consequence." },
-          6:  { mw: "Accidental violation of another", r: "Humanity is a shared condition, his suffering is your own." },
-          5:  { mw: "Wanton destruction", r: "Are you a person or an animal?" },
-          4:  { mw: "Impassioned violation of another", r: "Passion behind violence is the whispering of the Beast." },
-          3:  { mw: "Planned violation of another", r: "To be so cold is to reject the warmth of humanity." },
-          2:  { mw: "Casual violation of another", r: "Even wild animals know better." },
-          1:  { mw: "Feeding on good men", r: "The vampire has chosen Ahura Mazda, and must protect the good and righteous." }
-        }
-      }
-    };
-
-    // Aligned V20DA Core Archetype Database
-    const archetypesDatabase = {
-      "Architect": {
-        description: "The Architect holds to a purpose greater than herself and is fulfilled when creating something of lasting value for others. She works to provide necessities to those around her.",
-        willpower: "Regain a point of Willpower whenever you establish something of importance or lasting value."
-      },
-      "Autocrat": {
-        description: "The Autocrat pursues power and control for its own sake.",
-        willpower: "Regain a point of Willpower when you exercise control over a group or organization."
-      },
-      "Beast": {
-        description: "The Beast only respects actual deeds and believes civilization is a trap set for the weak. What counts is personal achievement.",
-        willpower: "Regain a point of Willpower when you beat civilized competition through personal action."
-      },
-      "Bon Vivant": {
-        description: "The Bon Vivant lives life to the fullest, making use of every second.",
-        willpower: "Regain a point of Willpower when you truly enjoy yourself. At the Storyteller’s discretion, a particularly fabulous revel may yield multiple Willpower points."
-      },
-      "Bravo": {
-        description: "The Bravo believes that might makes right. Power matters, and while physical power is the best kind, any will do.",
-        willpower: "Regain a point of Willpower any time you achieve your agenda through physical or social brutishness or intimidation."
-      },
-      "Caregiver": {
-        description: "The Caregiver takes comfort in consoling others, and people often come to her with their problems.",
-        willpower: "Regain a point of Willpower whenever you successfully protect or nurture someone."
-      },
-      "Celebrant": {
-        description: "The Celebrant takes joy in her cause and indulges in her chosen passion as deeply as possible. She pursues it out of enthusiasm, not duty.",
-        willpower: "Regain a point of Willpower whenever you pursue your cause or convert another character to the same passion."
-      },
-      "Chameleon": {
-        description: "The Chameleon is independent and careful. He studies behavior and mannerisms to pass himself off as someone else later.",
-        willpower: "Regain a point of Willpower whenever you fool someone into thinking you’re someone else for your own benefit."
-      },
-      "Child": {
-        description: "The Child is immature in personality and temperament. She can care for herself if need be, but would rather have someone cater to her desires.",
-        willpower: "Regain a point of Willpower whenever you convince someone to help you with no gain to himself."
-      },
-      "Competitor": {
-        description: "The Competitor approaches every task and social interaction as a new challenge to meet and contest to win.",
-        willpower: "Regain a point of Willpower whenever you succeed in a dramatic situation. Especially difficult victories may allow you to regain multiple Willpower points at the Storyteller’s discretion."
-      },
-      "Conformist": {
-        description: "The Conformist is a follower, throwing in with the rest of the group and lending aid to the cause.",
-        willpower: "Regain a point of Willpower whenever the group or your supported leader achieves a goal due to your support."
-      },
-      "Conniver": {
-        description: "The Conniver finds the fast track to success and wealth through trickery and manipulation.",
-        willpower: "Regain a point of Willpower whenever you trick someone into doing something or convince them to help you against their best interests."
-      },
-      "Creep Show": {
-        description: "The Creep Show revels in shocking and disgusting those around her. It’s a facade to intimidate and control others, but others buy into it and think she’s the Devil incarnate.",
-        willpower: "Regain a point of Willpower whenever someone recoils from you in horror or reacts in fear."
-      },
-      "Curmudgeon": {
-        description: "The Curmudgeon is bitter and cynical, finding flaws in everything and seeing little humor in life or unlife. Fatalistic and pessimistic, he has very little esteem for others.",
-        willpower: "Regain a point of Willpower whenever someone takes a specific negative action, just like you said they would. You must predict this failure aloud."
-      },
-      "Dabbler": {
-        description: "The Dabbler is interested in everything but focuses on nothing. He flits from idea to idea without actually finishing anything.",
-        willpower: "Regain a point of Willpower whenever you find a new enthusiasm and drop your old one completely."
-      },
-      "Defender": {
-        description: "The Defender struggles to defend her chosen cause in the face of its enemies. It may be some fragile innovation or hope of future progress.",
-        willpower: "Regain a point of Willpower whenever you successfully defend your cause."
-      },
-      "Deviant": {
-        description: "The Deviant is a freak, ostracized from society by non-mainstream tastes or beliefs and feels the world stands against them.",
-        willpower: "Regain a point of Willpower any time you are able to flout social mores without retribution."
-      },
-      "Enigma": {
-        description: "The Enigma’s actions are bizarre, puzzling, and inexplicable. Her erratic actions suggest she’s eccentric, if not completely crazy.",
-        willpower: "Regain a point of Willpower whenever someone is perplexed by actions you take that later turn out to be a fruitful endeavor."
-      },
-      "Eye of the Storm": {
-        description: "The Eye of the Storm retains a calm appearance but chaos seems to follow him.",
-        willpower: "Regain a point of Willpower whenever a ruckus, riot, or less violent but chaotic phenomenon occurs around you."
-      },
-      "Fanatic": {
-        description: "The Fanatic has a purpose that consumes her existence. She may even feel guilty undertaking an object that deviates from the higher goal.",
-        willpower: "Regain a point of Willpower whenever you accomplish something directly relating to your cause."
-      },
-      "Gallant": {
-        description: "The Gallant is a flamboyant soul, always seeking attention in the company of others, if only to earn their adoration.",
-        willpower: "Regain a point of Willpower whenever you successfully impress another person."
-      },
-      "Guru": {
-        description: "The Guru’s enlightenment draws others to her. Her presence motivates others to engage in spiritual or ideological pursuits.",
-        willpower: "Regain a point of Willpower whenever your guidance moves a person to an enlightened action he normally would not have taken."
-      },
-      "Idealist": {
-        description: "The Idealist believes in some higher goal or morality and tries to reconcile his beliefs with the demands of vampiric existence, often acting contrary to his self-interest in doing so.",
-        willpower: "Regain a point of Willpower any time an action furthers your goals and brings your ideal closer to fruition."
-      },
-      "Jester": {
-        description: "The Jester sees the world as a veil of folly and deceit, and enlightens others through the subtle ways of humor.",
-        willpower: "Regain a point of Willpower whenever you raise the spirits of those in great misery, or when you undermine a bully or tyrant by making him the object of ridicule."
-      },
-      "Loner": {
-        description: "The Loner prefers her own company to that of others, and the feeling is always reciprocated.",
-        willpower: "Regain a point of Willpower when you accomplish something by yourself that still benefits the coterie as a whole in some way."
-      },
-      "Martyr": {
-        description: "The Martyr suffers for his cause, enduring her trials out of the belief that her discomfort will ultimately improve the world.",
-        willpower: "Regain a point of Willpower when you suffer some damage or loss of a definable resource for your ideals or another’s immediate gain."
-      },
-      "Masochist": {
-        description: "The Masochist exists to test her limits and gains satisfaction in humiliation, suffering, denial, and physical pain.",
-        willpower: "Regain a point of Willpower when your own suffering leads to some tangible gain for you, or whenever you experience pain in a unique way."
-      },
-      "Mercenary": {
-        description: "The Mercenary believes anything can be a commodity. Appearance and influence are everything when it comes to a sale, and no advantage is wasted.",
-        willpower: "Regain a point of Willpower whenever you make a successful sale of any commodity or service."
-      },
-      "Monster": {
-        description: "The Monster knows she is a creature of darkness and acts like it. Evil and suffering are tools. She doesn’t commit evil for evil’s sake but rather as a means to understand what she’s become.",
-        willpower: "Regain a point of Willpower whenever you commit a specific atrocity. Storytellers should be careful when rewarding this Archetype. A player who chooses violence as an atrocity shouldn’t regain Willpower every combat, but perhaps only when she needs to roll a degeneration check. Rewards should come as a result of the character challenging his own descent into the Beast."
-      },
-      "Pedagogue": {
-        description: "The Pedagogue knows it all and makes sure his message is heard – at length, if necessary.",
-        willpower: "Regain a point of Willpower whenever you see or learn of someone who has benefited from the wisdom you share with them."
-      },
-      "Penitent": {
-        description: "The Penitent atones for the grave sin she commits simply by being who she is and feels compelled to “make up” for inflicting herself on the world.",
-        willpower: "Regain a point of Willpower whenever you feel that you have achieved absolution for a given sin."
-      },
-      "Perfectionist": {
-        description: "The Perfectionist demands flawless execution from herself as well as others.",
-        willpower: "Regain a point of Willpower whenever you motivate another character to succeed as a result of your own shining example."
-      },
-      "Philosopher": {
-        description: "The Philosopher critically examines every situation looking for logical outcomes and patterns.",
-        willpower: "Regain a point of Willpower any time a logical, systematic approach to a problem helps you solve it, or information gathered logically is of use in another similar situation."
-      },
-      "Rebel": {
-        description: "The Rebel is a malcontent, never satisfied with the status quo or the system as it is. He does everything in his power to undermine authority.",
-        willpower: "Regain a point of Willpower whenever your actions adversely affect your chosen opposition."
-      },
-      "Rogue": {
-        description: "The Rogue only cares about one thing: herself. She is not necessarily a thug or bully; she simply has her own best interests in mind at all times.",
-        willpower: "Regain a point of Willpower whenever your self-centered disposition leads you to profit."
-      },
-      "Sadist": {
-        description: "The Sadist exists to inflict pain and suffering on others. Killing is too easy. She seeks the slowest, most painful means to push others to the ultimate limits.",
-        willpower: "Regain a point of Willpower whenever you inflict pain upon someone for no reason other than your own pleasure."
-      },
-      "Soldier": {
-        description: "The Soldier is not a blindly loyal follower. While she exists for orders, she does not adhere to them unquestioningly. More independent than a Conformist but too tied to the idea of command to be a Loner, the Soldier applies her own techniques to others’ goals and ambition lies within the established hierarchy and structure.",
-        willpower: "Regain a point of Willpower when you achieve your orders’ objectives."
-      },
-      "Survivor": {
-        description: "The Survivor always manages to pull through, no matter the odds or opposition. The Survivor’s utter refusal to accept defeat often makes the difference between success and failure.",
-        willpower: "Regain a point of Willpower whenever you survive a dangerous situation through sheer tenacity, or when your counsel causes someone else to persist in spite of opposition."
-      },
-      "Thrill-Seeker": {
-        description: "The Thrill-Seeker lives for the rush of danger and actively pursues hazardous and possibly deadly situations. He is not actively suicidal or self-destructive; he simply seeks the stimulation of risk.",
-        willpower: "Regain a point of Willpower any time you succeed at a dangerous task you have deliberately undertaken."
-      },
-      "Traditionalist": {
-        description: "The Traditionalist prefers to accomplish her goals with time-tested methods. The status quo is acceptable, even preferable to change.",
-        willpower: "Regain a point of Willpower any time the proven way turns out to be the best. Also, regain a point of Willpower any time you adhere to one of your previously espoused positions and it proves a wise course of action."
-      },
-      "Tyrant": {
-        description: "The Tyrant seeks to be in charge or guide a group, bringing order out of strife.",
-        willpower: "Regain a point of Willpower when you influence or aid a group in the completion of a difficult task."
-      },
-      "Visionary": {
-        description: "The Visionary tests accepted societal limits and seeks what few others have the courage to imagine. She encourages society to offer what it is capable of offering instead of what it actually does offer. She is responsible for bringing about progress and change.",
-        willpower: "Regain a point of Willpower each time you are able to convince others to have faith in your vision of the future."
-      }
-    };
-
-    // Strict V20DA Core Rulebook Discipline Database
-    const disciplineDatabase = {
-      "Abombwe": [
-        { level: 1, name: "Predator's Communion", desc: "Senses nearby predators (vampires, shapeshifters, predatory animals).", sys: "Spend 1 blood point. <strong>Roll Perception + Survival</strong> (difficulty 6)." },
-        { level: 2, name: "Invoking the Predator", desc: "Manifests physical aspects of predatory animals (claws, tails).", sys: "Spend 1 blood point, automatic. Exotic features require a <strong>Roll Intelligence + Survival</strong> (difficulty 7)." },
-        { level: 3, name: "Unseen Hibernation", desc: "Sinks the user's body into natural geological formations or trees.", sys: "Spend 1 blood point, automatic. Awakening prematurely requires a <strong>Roll Road</strong> (difficulty 6)." },
-        { level: 4, name: "Power from Darkness", desc: "Envelops the user in Abyssal darkness, granting combat enhancements.", sys: "This power costs two blood points and is automatic. One transformation may be active at a time, lasting for a scene, during which resisting Rotschreck is at +1 difficulty. Examples of use are listed below, but players and Storytellers are encouraged to come up with their own changes: Hands, Head, Torso, Legs, Throat." },
-        { level: 5, name: "Predator's Transformation", desc: "Physically transforms the vampire into a predatory animal they have slain.", sys: "The player spends one blood point and <strong>Roll Stamina + Survival</strong> (difficulty 7)." },
-        { level: 6, name: "Incarnate Darkness", desc: "The vampire becomes a writhing mass of pure shadow, gaining flight, earth-burrowing, or combat bonuses.", sys: "This power costs three blood points, but requires no roll, as the Laibon’s blood bursts from his skin and transforms him into roiling darkness." }
-      ],
-      "Abyss Mysticism": [
-        { level: "Sorcery", name: "Abyss Mysticism", desc: "A specialized branch of blood magic practiced by the Lasombra, drawing upon raw, unholy essence from the eternal abyss to manifest shadows, summon dark entities, and bridge the physical world with the void.", sys: "All Blood Sorcery Paths are activated by spending 1 blood point and rolling Willpower against the power's level +3, and Rituals are activated by rolling <strong>Intelligence + Occult</strong> against the Ritual's level +3, unless stated otherwise in the power's description." }
-      ],
-      "Animalism": [
-        { level: 1, name: "Whispers to the Wild", desc: "Establishes telepathic communication with an animal.", sys: "No roll is necessary to talk with an animal. However, the vampire must make eye contact to initiate Whispers to the Wild. Once she’s established the power, she does not need to maintain eye contact for the current scene." },
-        { level: 2, name: "Call the Wild", desc: "Summons local animals of a chosen species to the vampire's location.", sys: "Name a type of animal. This can be highly specific or general. <strong>Roll Charisma + Survival</strong> (difficulty 6)." },
-        { level: 3, name: "Song of Serenity", desc: "Dulls strong emotions in a target, suppressing frenzy or crushing a mortal's will.", sys: "<strong>Roll Manipulation + Intimidation</strong> if asserting dominance through fear, or <strong>Roll Manipulation + Empathy</strong> to soothe the victim into complacency. Both rolls are difficulty 7. This is an extended action, requiring successes equal to the victim’s Willpower dots." },
-        { level: 4, name: "Subsume the Spirit", desc: "Possesses the mind and physical body of a targeted animal.", sys: "<strong>Roll Manipulation + Animal Ken</strong> (difficulty 8)." },
-        { level: 5, name: "Unleash the Beast", desc: "Ejects the vampire's own Beast into another target, driving them into a violent frenzy.", sys: "The vampire must establish eye contact to eject her Beast. <strong>Roll Manipulation + Self-Control/Instinct</strong> (difficulty 8)." },
-        { level: 6, name: "Animal Succulence", desc: "Maximizes nourishment, allowing the user to thrive longer on animal blood.", sys: "No roll is needed; once learned, this power is always in effect. Each blood point taken from an animal effectively becomes two." },
-        { level: 6, name: "The Twin Souls", desc: "Establishes a permanent, shared sensory and mental bond with a touched animal.", sys: "The vampire touches the animal. <strong>Roll Perception + Animal Ken</strong> (difficulty 6). Maintaining the power requires one Willpower point per turn." },
-        { level: 6, name: "The Tongue of Beasts", desc: "Communicates with entire groups of animals without establishing eye contact.", sys: "No roll is required. The character can choose one group of animals with which to speak at any given time." }
-      ],
-      "Auspex": [
-        { level: 1, name: "Heightened Senses", desc: "Sharpens all five senses, doubling sight/hearing ranges.", sys: "This power costs nothing, is reflexive, and requires no rolls to use. When activated, any roll related to the sense’s use is decreased in difficulty by the character’s Auspex dots." },
-        { level: 2, name: "Read the Soul", desc: "Perceives and deciphers the color, patterns, and shifts in a target's aura.", sys: "The soul-gazer must actively and attentively observe her subject, allowing the sense of the soul to wash over her. At the moment she chooses to interpret the state of the soul, the character’s player <strong>Roll Perception + Empathy</strong> (difficulty 8)." },
-        { level: 3, name: "The Spirit's Touch", desc: "Reads psychic and emotional impressions left on touched physical objects.", sys: "<strong>Roll Perception + Empathy</strong> (difficulty varies by age and strength of impression)." },
-        { level: 4, name: "Invade the Mind", desc: "Probes deep thoughts or implants foreign ideas into a victim's mind.", sys: "<strong>Roll Intelligence + Subterfuge</strong> (difficulty equal to the victim's current Willpower points)." },
-        { level: 5, name: "Soul's Flight", desc: "Projects the vampire's soul into the astral plane, leaving the body in torpor.", sys: "The player spends a Willpower point and <strong>Roll Intelligence + Awareness</strong>." },
-        { level: 6, name: "Far Sense", desc: "Projects senses to a familiar location or person from afar, keeping the user aware of their actual body.", sys: "<strong>Roll Perception + Empathy</strong> (difficulty 6, describing the person she is trying to spy on)." },
-        { level: 6, name: "The Heart's Desire", desc: "Senses exactly what a social partner wishes to hear by reading subtle cues.", sys: "To activate The Heart’s Desire, the player spends a blood point and <strong>Roll Perception + Empathy</strong> (difficulty equal to the partner’s current Willpower points)." },
-        { level: 6, name: "Soul Bond", desc: "Binds the user's soul to a person, place, or thing, allowing them to project senses there at any time.", sys: "Spend a Willpower point to initiate Soul Bond. <strong>Roll Intelligence + Occult</strong> (difficulty 7 or the person’s current Willpower points, whichever is higher)." }
-      ],
-      "Bardo": [
-        { level: 1, name: "Restore Humanitas", desc: "Attempts to restore lost Humanity points without spending experience.", sys: "When the vampire loses a dot of Road of Humanity, he can attempt to regain it without spending experience points. <strong>Roll Conscience</strong> (difficulty equal to the level of Road of Humanity being regained)." },
-        { level: 2, name: "Banishing Sign of Thoth", desc: "Wards off targeted magical attacks and Disciplines.", sys: "The player spends a blood point and <strong>Roll Dexterity + Occult</strong> (difficulty 7)." },
-        { level: 3, name: "Gift of Apis", desc: "Allows the vampire to nourish themselves on animal blood as if it were human.", sys: "Animal blood is just as nourishing to the character as human blood." },
-        { level: 4, name: "Pillar of Osiris", desc: "Consecrates a haven to increase calm, lowering Discipline difficulties by three.", sys: "Creating the Pillar of Osiris requires a night-long ritual. The player spends a Willpower point and <strong>Roll Willpower</strong>." },
-        { level: 5, name: "Revelation", desc: "Projects cosmic, paralyzing truths into a target's mind.", sys: "The vampire speaks and his player spends a point of Willpower and <strong>Roll Manipulation + Occult</strong> (difficulty of the listener’s current Willpower)." },
-        { level: 6, name: "Boon of Anubis", desc: "Protects a mortal from being Embraced, restoring their life if drained.", sys: "Spend a point of Willpower and <strong>Roll Road of Humanity</strong>." }
-      ],
-      "Celerity": [
-        { level: 1, name: "Celerity 1", desc: "Grants +1 yard of movement, +1 Initiative, +1 Die on Dexterity Rolls.", sys: "Spend 1 blood point to negate multiple action penalties on up to 2 actions. +1 Attack possible. x2 yards." },
-        { level: 2, name: "Celerity 2", desc: "Grants +2 yards of movement, +2 Initiative, +2 Dice on Dexterity Rolls.", sys: "Spend 1 blood point to negate multiple action penalties on up to 3 actions. +1 Attack possible. x3 yards." },
-        { level: 3, name: "Celerity 3", desc: "Grants +3 yards of movement, +3 Initiative, +3 Dice on Dexterity Rolls.", sys: "Spend 1 blood point to negate multiple action penalties on up to 4 actions. +2 attacks possible. x4 yards." },
-        { level: 4, name: "Celerity 4", desc: "Grants +4 yards of movement, +4 Initiative, +4 Dice on Dexterity Rolls.", sys: "Spend 1 blood point to negate multiple action penalties on up to 5 actions. +2 attacks possible. x5 yards." },
-        { level: 5, name: "Celerity 5", desc: "Grants +5 yards of movement, +5 Initiative, +5 Dice on Dexterity Rolls.", sys: "Spend 1 blood point to negate multiple action penalties on up to 6 actions. +3 attacks possible. x6 yards." },
-        { level: 6, name: "Celerity 6", desc: "Grants +6 yards of movement, +6 Initiative, +6 Dice on Dexterity Rolls.", sys: "Spend 1 blood point to negate multiple action penalties on up to 7 actions. +3 attacks possible. x7 yards." },
-        { level: 6, name: "Momentum", desc: "Channels speed into an instant, devastating blow, adding knockback.", sys: "Spend 2 blood points reflexively. Celerity dots are added as extra dice on a single Strength-based roll." },
-        { level: 6, name: "Precision", desc: "Applies speed to manual tasks to perform exceptionally fine manipulation.", sys: "Spend 1 blood point. Adds Celerity dots as automatic successes to a single roll requiring fine dexterity." },
-        { level: 6, name: "Projectile", desc: "Channels speed into a thrown weapon, forcing it forward faster than a longbow.", sys: "Spend 1 blood point. Choose an amount of Celerity dots to subtract; if the throw hits, add that amount as automatic successes to the damage pool." }
-      ],
-      "Chimerstry": [
-        { level: 1, name: "Ignis Fatuus", desc: "Crafts simple, static illusions that affect a single sense.", sys: "The player spends one Willpower point, and creating the illusions takes the vampire’s action." },
-        { level: 2, name: "Chimaera", desc: "Crafts static, multi-sensory illusions.", sys: "The player spends one Willpower and one blood point to create the illusion." },
-        { level: 3, name: "Phantasm", desc: "Animates and moves existing Chimerstry illusions.", sys: "After creating an illusion with Ignis Fatuus or Chimaera, spend one blood point to make the illusion move." },
-        { level: 4, name: "Permanency", desc: "Extends the duration of an illusion indefinitely.", sys: "The player spends one blood point to make the illusion permanent until dismissed." },
-        { level: 5, name: "Horrid Reality", desc: "Inflicts single-target illusions so real they deal actual, unsoakable damage.", sys: "A Horrid Reality illusion costs two Willpower points to create and must target an individual. <strong>Roll Manipulation + Subterfuge</strong> (difficulty the victim’s Perception + Self-Control/Instinct)." },
-        { level: 6, name: "Fatuus Mastery", desc: "Negates Willpower/blood costs for lower-level Chimerstry powers.", sys: "Fatuus Mastery negates the Willpower and blood cost for using the first three levels of Chimerstry." },
-        { level: 6, name: "Shared Nightmare", desc: "Inflicts a Horrid Reality illusion on an entire crowd of targets simultaneously.", sys: "To use this power, the player must spend two Willpower points plus one blood point per target. <strong>Roll Manipulation + Subterfuge</strong> once, with a difficulty rating of the target’s <strong>Perception + Self-Control/Instinct</strong>." }
-      ],
-      "Clan Sorcery": [
-        { level: "Sorcery", name: "Clan Sorcery", desc: "Evocative, insular magical practices specific to individual clans and bloodlines (such as *Akhu*, *Dur-An-Ki*, or *Sadhana*).", sys: "All Blood Sorcery Paths are activated by spending 1 blood point and rolling Willpower against the power's level +3, and Rituals are activated by rolling <strong>Intelligence + Occult</strong> against the Ritual's level +3, unless stated otherwise in the power's description." }
-      ],
-      "Daimonion": [
-        { level: 1, name: "Sense the Sin", desc: "Discovers the target's underlying moral flaws and weaknesses.", sys: "<strong>Roll Perception + Empathy</strong> against living or undead beings; the difficulty is equal to the subject's <strong>Self-Control + 4</strong> or <strong>Instinct + 4</strong>." },
-        { level: 2, name: "Fear of the Void", desc: "Amplifies a target's internal trauma, driving them into a state of panic or catatonia.", sys: "The Baali must first successfully use Sense the Sin then mock the target's insecurities or fears. A successful <strong>Roll Wits + Intimidation</strong> (difficulty of the subject's <strong>Courage + 4</strong>)." },
-        { level: 3, name: "Tormented Essence", desc: "Hurls a projectile of pure infernal suffering at an enemy.", sys: "Spend a blood point per level of aggravated damage to inflict. The player <strong>Roll Dexterity + Occult</strong> (difficulty 6) to hit." },
-        { level: 4, name: "Psychomachia", desc: "Forces a victim's vice to manifest as a physical, hostile apparition they must battle.", sys: "After successfully using Sense the Sin, the vampire forces the target to <strong>Roll Virtue</strong> (difficulty of the Baali's Willpower) using their lowest Virtue." },
-        { level: 5, name: "Condemnation", desc: "Places a powerful, long-term curse upon a victim.", sys: "<strong>Roll Intelligence + Occult</strong> (difficulty equal to the subject's Willpower)." },
-        { level: 6, name: "Hell-Born Investiture", desc: "Grants demonic physical traits, such as flight or fire immunity.", sys: "The most typical manifestation of this power incorporates immunity to the damaging effects of fire." },
-        { level: 6, name: "Lure Diabolik", desc: "Speaks the dark truths of the void to strip Road dots from a target, lowering their defenses against the Baali.", sys: "The Baali must speak the dark truths of the void to their victim in the language of Hell. Spend a point of Willpower and <strong>Roll Manipulation + Empathy</strong> at a difficulty equal to the victim's current Willpower." }
-      ],
-      "Dark Thaumaturgy": [
-        { level: "Sorcery", name: "Dark Thaumaturgy", desc: "A corrupted, highly illicit discipline of blood sorcery fueled by pacts with demons, spirits, and the dark entities of the Outer Dark, offering terrifying destructive power at the cost of the user's soul.", sys: "All Blood Sorcery Paths are activated by spending 1 blood point and rolling Willpower against the power's level +3, and Rituals are activated by rolling <strong>Intelligence + Occult</strong> against the Ritual's level +3, unless stated otherwise in the power's description." }
-      ],
-      "Dementation": [
-        { level: 1, name: "Passion", desc: "Stirs, inflames, or blunts a victim's current emotions.", sys: "<strong>Roll Charisma + Empathy</strong> vs target's <strong>Humanity</strong> or <strong>Path</strong> (as difficulty)." },
-        { level: 2, name: "The Haunting", desc: "Floods the target's senses with hallucinations that they cannot ignore.", sys: "Spend 1 blood point and <strong>Roll Manipulation + Empathy</strong> vs target's <strong>Perception + Self-Control</strong> or <strong>Perception + Instinct</strong> (as difficulty)." },
-        { level: 3, name: "Eyes of Chaos", desc: "Scrutinizes complex patterns, layout arrays, or social networks to divine hidden truths.", sys: "<strong>Roll Perception + Enigmas</strong> (difficulty varies based on available information)." },
-        { level: 4, name: "Fire Voice", desc: "Induces a Rotschreck-like fear of fire in a target or crowd.", sys: "<strong>Roll Manipulation + Empathy</strong> (difficulty 7). Each success adds another victim." },
-        { level: 5, name: "Shedding the Mask", desc: "Overwhelms a victim's mind with raw, unmitigated madness.", sys: "The player spends a blood point and <strong>Roll Manipulation + Empathy</strong> (difficulty of his vic tim’s Perception + Self-Control/Instinct)." },
-        { level: 6, name: "The Call", desc: "Sends a general pulse or telepathic message over the Madness Network.", sys: "To Call, a Malkavian (and only a Malkavian) names another Malkavian of equal or lesser Generation, then <strong>Roll Perception + Empathy</strong> (difficulty 6)." },
-        { level: 6, name: "Stain the Soul", desc: "Permanently inflicts a chosen Derangement upon a target's soul.", sys: "The player spends a Willpower point and <strong>Roll Manipulation + Empathy</strong> at a difficulty equal to the victim’s current Willpower points." }
-      ],
-      "Dominate": [
-        { level: 1, name: "Command", desc: "Forces a victim to obey a single, spoken word.", sys: "Eye contact required. <strong>Roll Manipulation + Intimidation</strong> vs target's current Willpower points (as difficulty)." },
-        { level: 2, name: "Subjugation", desc: "Encodes a complex command directly into the victim's subconscious.", sys: "Spend concentration time and <strong>Roll Manipulation + Leadership</strong> vs target's current Willpower points (as difficulty)." },
-        { level: 3, name: "The Forgetful Mind", desc: "Erases, alters, or reconstructs a target's memories.", sys: "<strong>Roll Wits + Subterfuge</strong> vs target's current Willpower points (as difficulty)." },
-        { level: 4, name: "Conditioning", desc: "Strips the victim's individual personality, locking them into a compliant puppet.", sys: "As an extended action, <strong>Roll Charisma + Leadership</strong>. Total successes needed is 5 * target's <strong>Self-Control</strong> or <strong>Instinct</strong>." },
-        { level: 5, name: "Possession", desc: "Supplants the vampire's consciousness into a mortal body.", sys: "<strong>Roll Charisma + Intimidation</strong> vs target's <strong>Roll Willpower</strong> (both at difficulty 7) in a clash of wills." },
-        { level: 6, name: "Chain the Psyche", desc: "Wracks disobedient thralled subjects with crippling physical pain.", sys: "Spend 1 blood point. <strong>Roll Manipulation + Intimidation</strong> vs target's <strong>Stamina + Empathy</strong> (as difficulty)." },
-        { level: 6, name: "Obedience", desc: "Allows the use of all Dominate powers via skin-to-skin touch instead of eye contact.", sys: "Passive upgrade, no roll required." },
-        { level: 6, name: "Loyalty", desc: "Permanently protects controlled thralls, making it harder for other vampires to co-opt them.", sys: "Passive. Increases the difficulty of any hostile attempt to command or control the thrall by 3." }
-      ],
-      "Flight": [
-        { level: 1, name: "Glide", desc: "Gargoyle glides safely, but cannot fly upward.", sys: "No roll, passive. Carrying over 2 lbs causes them to fall." },
-        { level: 2, name: "Basic Flight", desc: "Can fly up to 30 mph/45 kmh.", sys: "No roll for straight flight. Maneuvers require a <strong>Roll Dexterity + Athletics</strong>." },
-        { level: 3, name: "Agile Flight", desc: "Fly up to 45 mph/60 kmh with full dodging ability.", sys: "Only requires rolls for difficult maneuvers (difficulty 5)." },
-        { level: 4, name: "Swift Flight", desc: "Fly up to 60 mph/90 kmh; carry up to 100 lbs.", sys: "No roll. Subject to Strength limits." },
-        { level: 5, name: "Masterful Flight", desc: "Fly up to 75 mph/120 kmh; carry up to 200 lbs.", sys: "No roll. Subject to Strength limits." },
-        { level: 6, name: "Wind Sovereign", desc: "Fly at hurricane-force speeds, carrying massive loads with no maneuver penalties.", sys: "No roll required. Allows carrying up to 300 lbs and speeds of 100 mph." }
-      ],
-      "Fortitude": [
-        { level: 1, name: "Fortitude 1", desc: "Supernatural toughness to resist and absorb physical trauma.", sys: "Spend 1 blood point to automatically succeed at 1 soak die. Cannot be used against fire or sunlight." },
-        { level: 2, name: "Fortitude 2", desc: "Supernatural toughness to resist and absorb physical trauma.", sys: "Spend 1 blood point to automatically succeed at 2 soak dice. Cannot be used against fire or sunlight." },
-        { level: 3, name: "Fortitude 3", desc: "Supernatural toughness to resist and absorb physical trauma.", sys: "Spend 1 blood point to automatically succeed at 3 soak dice. Cannot be used against fire or sunlight." },
-        { level: 4, name: "Fortitude 4", desc: "Supernatural toughness to resist and absorb physical trauma.", sys: "Spend 1 blood point to automatically succeed at 4 soak dice. Cannot be used against fire or sunlight." },
-        { level: 5, name: "Fortitude 5", desc: "Supernatural toughness to resist and absorb physical trauma.", sys: "Spend 1 blood point to automatically succeed at 5 soak dice. Cannot be used against fire or sunlight." },
-        { level: 6, name: "Fortitude 6", desc: "Supernatural toughness to resist and absorb physical trauma.", sys: "Paint blood on target's forehead. Spend 1 blood and 1 Willpower. <strong>Roll Stamina + Survival</strong> (difficulty 8)." },
-        { level: 6, name: "The Knight's Bane", desc: "Hardens skin like wrought iron, shattering incoming weapons.", sys: "Spend 2 blood points. If your soak roll reduces damage to zero, the attacking weapon is destroyed." }
-      ],
-      "Koldunic Sorcery": [
-        { level: "Sorcery", name: "Koldunic Sorcery", desc: "The ancient Tzimisce art of landscape sorcery, drawing upon direct communion with the elements, rivers, and chthonic spirits of the Carpathian territory.", sys: "To cast Koldunic Sorcery, the Koldun must offer 1 blood point to the land and roll <strong>Attribute + Occult</strong> against the power's level +4 (or +2 if the power is the Koldun's primary Kraina)." }
-      ],
-      "Mytherceria": [
-        { level: 1, name: "Folderol", desc: "Detects deliberate lies spoken by others.", sys: "No roll or blood cost required; takes 1 turn to activate." },
-        { level: 2, name: "Fae Sight", desc: "Detects faeries and fae-touched magic.", sys: "Passive, no roll required." },
-        { level: 3, name: "Aura Absorption", desc: "Absorbs emotional and sensory impressions from objects.", sys: "<strong>Roll Perception + Empathy</strong>. Difficulty based on the age of the impression." },
-        { level: 4, name: "Changeling Ward", desc: "Inscribes a ward that disorients and beggars anyone who views it.", sys: "<strong>Roll Intelligence + Legerdemain</strong> vs difficulty 7 (inanimate) or target's <strong>Willpower + 2</strong> (people)." },
-        { level: 5, name: "The Riddle Phantastique", desc: "Ensnars a victim's mind in an obsessive, mentally damaging loop.", sys: "<strong>Roll Manipulation + Occult</strong> vs target's current Willpower points (as difficulty)." },
-        { level: 6, name: "Steal the Mind", desc: "Steals and reads a target's thoughts, memories, and skills.", sys: "<strong>Roll Perception + Subterfuge</strong> vs target's current Willpower points (as difficulty)." }
-      ],
-      "Necromancy": [
-        { level: "Sorcery", name: "Necromancy", desc: "The extensive study and manipulation of the forces of death, the Shroud, and the restless dead, enabling physical entry to the Underworld or the binding of souls.", sys: "All Blood Sorcery Paths are activated by spending 1 blood point and rolling Willpower against the power's level +3, and Rituals are activated by rolling <strong>Intelligence + Occult</strong> against the Ritual's level +3, unless stated otherwise in the power's description." }
-      ],
-      "Obfuscate": [
-        { level: 1, name: "Silence of Death", desc: "Generates a zone of complete, unyielding silence in a 7-meter radius.", sys: "Passive, no roll required. Spending 2 blood points lets the silence linger in a room." },
-        { level: 2, name: "Unseen Presence", desc: "Allows the vampire to move about completely unseen and unheard.", sys: "No roll required to activate. Direct interactions or blunders trigger a <strong>Roll Wits + Stealth</strong> (difficulty 5-9)." },
-        { level: 3, name: "Mask of a Thousand Faces", desc: "Overwrites the victim's perception to project a completely different face.", sys: "<strong>Roll Manipulation + Performance</strong> (difficulty 7)." },
-        { level: 4, name: "Vanish from the Mind's Eye", desc: "Disappears instantly from sight, even when standing directly in front of others.", sys: "<strong>Roll Intelligence + Stealth</strong> vs the target's <strong>Wits + Alertness</strong> (as difficulty)." },
-        { level: 5, name: "Cloak the Gathering", desc: "Extends any active Obfuscate power to companions.", sys: "No roll required. Extends power to 1 additional person per dot of Stealth the user possesses." },
-        { level: 6, name: "Mask the Devil", desc: "Concurrently masks the user's presence, aura, and Beast.", sys: "Passive, no roll required." }
-      ],
-      "Obtenebration": [
-        { level: 1, name: "Shadow Play", desc: "Controls ambient shadows to bolster Intimidation and Stealth.", sys: "Spend 1 blood point. Adds 1 die to Intimidation/Stealth. Mortals must pass a <strong>Roll Courage</strong> (difficulty 7)." },
-        { level: 2, name: "Nocturne", desc: "Summons a cloud of impenetrable darkness that smothers sight, sound, and life.", sys: "<strong>Roll Manipulation + Occult</strong> (difficulty 7)." },
-        { level: 3, name: "Arms of Ahriman", desc: "Manifests physical shadow tentacles that can attack and grapple.", sys: "<strong>Roll Manipulation + Occult</strong> (difficulty 7)." },
-        { level: 4, name: "Nightshades", desc: "Crafts lifelike images and silhouettes out of darkness.", sys: "<strong>Roll Wits + Occult</strong> (difficulty 7)." },
-        { level: 5, name: "Tenebrous Avatar", desc: "Transforms the vampire's body into a fluid shadow form.", sys: "Spend 3 blood points, takes 3 turns." },
-        { level: 6, name: "The Darkness Within", desc: "Envelops a target in Abyssal shadow, draining blood and causing terror.", sys: "Spend 1 blood point and <strong>Roll Willpower</strong> (difficulty 6). Engulfed target loses 2 blood per turn. Targets touched must succeed on a <strong>Roll Stamina</strong> (difficulty 6) each turn they remain in contact with the cloud." },
-        { level: 6, name: "Walk the Abyss", desc: "Steps into any nearby shadow and instantly emerges from another shadow in line of sight.", sys: "<strong>Roll Intelligence + Stealth</strong> (travel) or <strong>Roll Intelligence + Brawl</strong> (grasping objects) at difficulty 7." }
-      ],
-      "Ogham": [
-        { level: 1, name: "Consecration of Esus", desc: "Awakens plant life to act in her defense; roots and grass entangle feet, and trees creak and stir.", sys: "Requires a mortal sacrifice and an oak tree. <strong>Roll Dexterity + Occult</strong> (difficulty 5)." },
-        { level: 2, name: "Woad of Teutates", desc: "Invokes war runes to protect the vampire from wound penalties and boost attacks.", sys: "Requires a mortal warrior. <strong>Roll Stamina + Occult</strong> (difficulty 6)." },
-        { level: 3, name: "Mallacht of the Cyoeraeth", desc: "Etches a target's name on a victim to inflict a devastating, sickening curse.", sys: "Requires a companion of the target. <strong>Roll Charisma + Occult</strong> (difficulty 7)." },
-        { level: 4, name: "Woad of Taranis", desc: "Grants complete immunity to Rotschreck and allows the user to soak fire and sunlight.", sys: "Requires burning a victim in a Wicker Man. <strong>Roll Stamina + Occult</strong> (difficulty 8)." },
-        { level: 5, name: "Thirst of Donn", desc: "Drains the spiritual energy of the land, turning an area barren.", sys: "Requires a mortal sacrifice. <strong>Roll Strength + Occult</strong> (difficulty 9)." }
-      ],
-      "Potence": [
-        { level: 1, name: "Potence 1", desc: "Supernatural physical strength allowing immense feats of force.", sys: "Spend 1 blood point for 1 automatic success on Strength Rolls." },
-        { level: 2, name: "Potence 2", desc: "Supernatural physical strength allowing immense feats of force.", sys: "Spend 1 blood point for 2 automatic successes on Strength Rolls." },
-        { level: 3, name: "Potence 3", desc: "Supernatural physical strength allowing immense feats of force.", sys: "Spend 1 blood point for 3 automatic successes on Strength Rolls." },
-        { level: 4, name: "Potence 4", desc: "Supernatural physical strength allowing immense feats of force.", sys: "Spend 1 blood point for 4 automatic successes on Strength Rolls." },
-        { level: 5, name: "Potence 5", desc: "Supernatural physical strength allowing immense feats of force.", sys: "Spend 1 blood point for 5 automatic successes on Strength Rolls." },
-        { level: 6, name: "Potence 6", desc: "Supernatural physical strength allowing immense feats of force.", sys: "Spend 1 blood point for 6 automatic successes on Strength Rolls." },
-        { level: 6, name: "Crush", desc: "Refines muscle output to instantly destroy physical shields, weapons, or items.", sys: "Spend 2 blood points. A successful physical strike automatically destroys the targeted item." }
-      ],
-      "Presence": [
-        { level: 1, name: "Awe", desc: "Captures the complete attention of everyone in the immediate vicinity.", sys: "The player spends a blood point and chooses what impression she wants to make. <strong>Roll Charisma + Performance</strong> (difficulty 7)." },
-        { level: 2, name: "Dread Gaze", desc: "Projects predatory terror to paralyze or drive targets away.", sys: "<strong>Roll Charisma + Intimidation</strong> (difficulty equal to the victim's <strong>Wits + Courage</strong>)." },
-        { level: 3, name: "Entrancement", desc: "Binds a target into absolute, loving service.", sys: "The player spends a blood point and <strong>Roll Appearance + Empathy</strong> (difficulty equal to the target's current Willpower points)." },
-        { level: 4, name: "Summon", desc: "Calls any individual the vampire has met to travel immediately to their side.", sys: "The player spends a blood point and <strong>Roll Charisma + Subterfuge</strong>. The base difficulty is 5; this increases to difficulty 7 if the vampire only met the subject briefly." },
-        { level: 5, name: "Majesty", desc: "Projects an aura of absolute, respect-inducing authority.", sys: "No roll is required on the part of the vampire, but she must spend a Willpower point. A subject must pass a <strong>Roll Courage</strong> (difficulty equal to the vampire's <strong>Charisma + Intimidation</strong>, to a maximum of 9)." },
-        { level: 6, name: "Kingmaker", desc: "Projects social grace to boost another character's Social pools.", sys: "Spend 1 blood point and <strong>Roll Manipulation + Empathy</strong> (difficulty 7)." },
-        { level: 6, name: "Love", desc: "Artificially simulates the emotional bonds of a full blood oath.", sys: "Spend 1 blood point. <strong>Roll Charisma + Subterfuge</strong> (difficulty equal to the target's current Willpower points)." },
-        { level: 6, name: "Paralyzing Glance", desc: "Freezes an individual in pure, whimpering, catatonic terror.", sys: "Make eye contact. <strong>Roll Manipulation + Intimidation</strong> (difficulty equal to the target's current Willpower points)." },
-        { level: 6, name: "Spark of Rage", desc: "Starts fights and causes vampires to frenzy.", sys: "Spend 1 blood point and <strong>Roll Manipulation + Subterfuge</strong> (difficulty 8)." }
-      ],
-      "Protean": [
-        { level: 1, name: "Eyes of the Beast", desc: "Eyes glow red, allowing perfect sight in pitch darkness.", sys: "No roll is necessary. The vampire simply wills herself to see in the darkness." },
-        { level: 2, name: "Feral Weapons", desc: "Claws erupt from fingertips, dealing aggravated damage.", sys: "The player spends a blood point to grow weapons that do <strong>Strength + 1</strong> aggravated damage." },
-        { level: 3, name: "Earth Meld", desc: "Sinks the user's body into the soil to sleep in complete safety.", sys: "To enter the soil, the vampire spends a turn joining her flesh with the dirt. Her player spends a blood point and at the end of the turn she is gone." },
-        { level: 4, name: "Shape of the Beast", desc: "Transforms the vampire's body into a bat or a grey wolf.", sys: "Changing forms takes three full turns and costs a blood point." },
-        { level: 5, name: "Lurking Mists", desc: "Transforms the body into an insubstantial, floating mist.", sys: "No roll is needed; expending a blood point activates this power." },
-        { level: 6, name: "Adaptation", desc: "Body rapidly shifts to ignore extreme environmental hazards (falls, temperatures).", sys: "Spend 1 blood point, automatic." },
-        { level: 6, name: "Earth Control", desc: "Glides through natural soil and rock as if it were water.", sys: "No roll required. Moves at half normal walking speed." },
-        { level: 6, name: "Ephemeral Slumber", desc: "Allows the user to sleep in mist form during the day.", sys: "Spend 1 Willpower point while activating Lurking Mists." },
-        { level: 6, name: "Flesh of Marble", desc: "Hardens the body's skin into stone-like density.", sys: "Spend 3 blood points, reflexive. Reduces damage dice pools by half." },
-        { level: 6, name: "Loki's Gift", desc: "Assumes the form of the last thing she fed upon, be it human, Cainite, or animal.", sys: "After a vampire drinks from a victim, she may assume the victim’s form. The transformation costs two blood points and takes two turns to complete." },
-        { level: 6, name: "Reversion to the True Form", desc: "The vampire prevents shapeshifters from shifting.", sys: "Touch the victim and spend 1 Willpower point. <strong>Roll Manipulation + Animal Ken</strong> (difficult of target's Willpower)." }
-      ],
-      "Quietus Cruscitus": [
-        { level: 1, name: "Blood Essence", desc: "Calcifies a victim's heart into a glass-like flask preserving their soul.", sys: "Exsanguinate the victim, touch them, and calcify their heart. <strong>Roll Wits + Subterfuge</strong> or an extended <strong>Roll Willpower</strong> (difficulty 9)." },
-        { level: 2, name: "Scorpion's Touch", desc: "Transmutes blood into a contact poison that drains target's Stamina.", sys: "The player spends the number of blood points it wants to convert to poison. <strong>Roll Willpower</strong> (difficulty 6)." },
-        { level: 3, name: "Dagon's Call", desc: "Internally bursts a target's blood vessels from afar.", sys: "The character's blood must be in the target's bloodstream for at least an hour. Spend a Willpower Point and <strong>Roll Perception + Awareness</strong> (difficulty equal to the vampire's current proximity or time elapsed)." },
-        { level: 4, name: "Baal's Caress", desc: "Converts blood into an acidic, weapon-coating toxin dealing aggravated damage.", sys: "The player spends the number of blood points it wants to convert to poison. <strong>Roll Willpower</strong> (difficulty 6). Weapons coated in venom cause aggravated damage." },
-        { level: 5, name: "Quicken the Mortal's Blood", desc: "Doubles the efficiency of blood points harvested from feeding.", sys: "Double the effectiveness of drinking mortal blood. <strong>Roll Stamina + Occult</strong> (difficulty 6)." },
-        { level: 6, name: "Taste of Death", desc: "Concentrates blood into a highly corrosive, melting, tar-like blood sap.", sys: "Spend 2 blood points. <strong>Roll Willpower</strong> (difficulty 7)." }
-      ],
-      "Quietus Hematus": [
-        { level: 1, name: "Blood Tempering", desc: "Infuses items with blood to prevent environmental decay.", sys: "Spend 1 blood point per size. <strong>Roll Intelligence + Crafts</strong> (difficulty 6)." },
-        { level: 2, name: "Truth of Blood", desc: "Uses target's blood in a goblet to divine the exact truth behind spoken words.", sys: "Spend 1 Willpower point. <strong>Roll Perception + Subterfuge</strong> (difficulty equal to the target's Willpower)." },
-        { level: 3, name: "Cleansed in Blood", desc: "Purges supernatural taints from another target's soul.", sys: "Spend 1 Willpower point. <strong>Roll Willpower</strong> vs difficulty of the targeting power + 4." },
-        { level: 4, name: "Ripples of the Heart", desc: "Imprints a specific emotion onto blood to manipulate those who ingest it.", sys: "Spend 1 blood point. <strong>Roll Charisma + Empathy</strong> (difficulty 7)." },
-        { level: 5, name: "Blood Sweat", desc: "Forces a victim's blood to pour forth as sweat, leaving them weakened.", sys: "Touch target's fresh blood. Spend 1 Willpower and <strong>Roll Manipulation + Intimidation</strong> vs target's current Willpower points (as difficulty)." },
-        { level: 6, name: "Blood Awakening", desc: "Scans the memories stored inside recently ingested blood.", sys: "Drink 1 blood point. <strong>Roll Perception + Empathy</strong> (difficulty 7)." }
-      ],
-      "Serpentis": [
-        { level: 1, name: "Enchanting Gaze", desc: "Entrances a target, reducing Social difficulties.", sys: "No roll is required. While active, the Setite enjoys a -1 difficulty to all Social actions due to her alluring feature." },
-        { level: 2, name: "Typhonic Maw", desc: "Distends the jaw and tongue to bite without grapple and siphon blood.", sys: "Spend a blood point to reflexively activate Typhonic Maw." },
-        { level: 3, name: "Serpent's Flesh", desc: "Makes skin leathery and malleable, allowing easy escape from grapples.", sys: "Spend a blood point to change reflexively. Serpent's Flesh reduces soak difficulties to 5." },
-        { level: 4, name: "Typhonic Avatar", desc: "Shapeshifts into a massive jackal-beast or hybrid serpent-form.", sys: "Spend a blood point. The transformation takes three turns." },
-        { level: 5, name: "Mother of Monsters", desc: "Births small, loyal typhonic beasts from the user's flesh.", sys: "Spend one or more blood points and mark a health level off your character's sheet." },
-        { level: 6, name: "Echidna's Venom", desc: "Fangs secrete deadly adders' venom, paralyzing mortals and dealing lethal damage.", sys: "Spend 1 blood point, automatic." }
-      ],
-      "Spiritus": [
-        { level: 1, name: "Aid from Spirits", desc: "Rouses the spirit of an object to make it perform significantly better.", sys: "The character touches an item, and the player spends a blood point and <strong>Roll Manipulation + Occult</strong> (difficulty 6)." },
-        { level: 2, name: "Summon Spirit Beasts", desc: "Summons a corporeal animal-spirit to serve and fight.", sys: "The player spends one blood point and <strong>Roll Charisma + Animal Ken</strong> (difficulty 7)." },
-        { level: 3, name: "Aspect of the Beast", desc: "Temporarily draws animal traits (eyes, scent, speed) into the user.", sys: "The player spends a blood point and <strong>Roll Manipulation + Occult</strong> (difficulty 7)." },
-        { level: 4, name: "Beastly Hunger", desc: "Consumes a spirit to instantly replenish the user's Willpower.", sys: "The player <strong>Roll Manipulation + Intimidation</strong> (difficulty 8)." },
-        { level: 5, name: "The Wild Beast", desc: "Transforms the body into a lithe, monstrous cat-form.", sys: "The change does not require a roll, but the player must spend two blood points." },
-        { level: 6, name: "The Spirit Beast", desc: "Permanently merges the vampire's body with an indigenous spirit animal, granting access to spirit realms.", sys: "Spend 1 blood point and 1 Willpower point." }
-      ],
-      "Temporis": [
-        { level: 1, name: "Hourglass of the Mind", desc: "Innate, perfect clock and time sense.", sys: "This Discipline duplicates the Celestial At-tunement Merit." },
-        { level: 2, name: "Locked Contemplation", desc: "Freezes the user's mind in a present turn, or places others in a trance.", sys: "The primary effect of this power may be activated reflexively. The player spends one Willpower point and <strong>Roll Wits + Alertness</strong> (difficulty 6)." },
-        { level: 3, name: "Leaden Movement", desc: "Greatly slows the speed and damage of a moving target.", sys: "This power may be activated reflexively. The player spends a blood point and <strong>Roll Intelligence + Occult</strong> (difficulty target's speed - Temporis dots)." },
-        { level: 4, name: "Patience of the Norns", desc: "Suspends multiple targets or objects in a frozen stasis.", sys: "Aside from the following exceptions, this power otherwise works according to the rules for Leaden Movement. To slow multiple targets, the player spends a blood point and a Willpower point." },
-        { level: 5, name: "Clotho's Gift", desc: "Drastically accelerates the user's speed, granting multiple full actions.", sys: "The player spends three blood points and <strong>Roll Intelligence + Occult</strong> (difficulty 7)." },
-        { level: 6, name: "Kiss of Lachesis", desc: "Ages or de-ages targets by decades or centuries with a touch.", sys: "Touch target. Spend 2 blood points and <strong>Roll Manipulation + Occult</strong> vs 4 + target's Stamina." }
-      ],
-      "Thaumaturgy": [
-        { level: "Sorcery", name: "Thaumaturgy", desc: "The highly structured, Hermetic discipline of blood magic developed by the Tremere, utilizing predictable Paths and meticulously researched Rituals.", sys: "All Blood Sorcery Paths are activated by spending 1 blood point and rolling Willpower against the power's level +3, and Rituals are activated by rolling <strong>Intelligence + Occult</strong> against the Ritual's level +3, unless stated otherwise in the power's description." }
-      ],
-      "Valeren - Healer": [
-        { level: 1, name: "Sense Vitality", desc: "Instantly reads a target's health markers.", sys: "The player makes a <strong>Roll Perception + Empathy</strong> or <strong>Roll Medicine</strong> (difficulty 7)." },
-        { level: 2, name: "Gift of Sleep", desc: "Blocks physical pain, or puts a living creature into deep sleep.", sys: "If used on the willing, the power requires a touch and a <strong>Roll Willpower</strong> (difficulty 6) to block the subject's pain." },
-        { level: 3, name: "Healer's Touch", desc: "Restores wounds or purges infectious diseases through physical contact.", sys: "Touch the target. The target's wounds may be healed by the expenditure of blood points." },
-        { level: 4, name: "Shepherd's Watch", desc: "Erects an invisible protective barrier in a 10-foot radius.", sys: "The Salubri spends two Willpower points to erect a force barrier. Contested Willpower Rolls to enter barrier is <strong>Roll Willpower</strong> (difficulty 8)." },
-        { level: 5, name: "Unburden the Bestial Soul", desc: "Draws out and repairs a target's soul, restoring lost virtues.", sys: "The character spends two Willpower points and <strong>Roll Stamina + Empathy</strong> (difficulty of 10 minus the subject's Road rating)." },
-        { level: 6, name: "Father's Judgment", desc: "Renders a portion of the target's blood pool clotted and unusable.", sys: "Spend 1 Willpower point. <strong>Roll Manipulation + Medicine</strong> or <strong>Roll Empathy</strong> (difficulty 7) vs target's <strong>Roll Willpower</strong> (difficulty 9)." }
-      ],
-      "Valeren - Warrior": [
-        { level: 1, name: "Sense Death", desc: "Analyzes a target's soak rating and current blood pool.", sys: "The player makes a <strong>Roll Perception + Empathy</strong> or <strong>Roll Medicine</strong> (difficulty 7)." },
-        { level: 2, name: "Morphean Blow", desc: "Dulls wound penalties or pacifies aggressive combatants.", sys: "The power requires a touch and a <strong>Roll Willpower</strong> (difficulty 6) to block the subject's pain or put aggressors to sleep." },
-        { level: 3, name: "Burning Touch", desc: "Inflicts agonizing, distracting physical pain on a target.", sys: "Grasp the target (<strong>Roll Dexterity + Brawl</strong>). Each blood point spent reduces the target's dice pool by 2 for as long as they are grasped and one turn after." },
-        { level: 4, name: "Armor of Caine's Fury", desc: "Envelops the user in a protective web of blinding red light.", sys: "The player spends one blood point and <strong>Roll Stamina + Melee</strong> (difficulty 7)." },
-        { level: 5, name: "Ending the Watch", desc: "Painlessly euthanizes a dying mortal and absorbs their soul.", sys: "The Salubri spends a Willpower point and lays a hand over a valid target's heart to peacefully kill them." },
-        { level: 6, name: "Samiel's Vengeance", desc: "Guarantees a physical melee attack hits with unblockable, maximum successes.", sys: "Spend 3 blood points. Automatically hit as if all Dexterity + Melee successes were rolled." }
-      ],
-      "Valeren - Watcher": [
-        { level: 1, name: "Sense Cycle", desc: "Senses omens and the cycle of life entire.", sys: "Spend one Willpower point and Roll Perception + Enigmas or Roll Empathy (difficulty 7). Each success allows asking the Storyteller one question." },
-        { level: 2, name: "Peaceful Touch", desc: "Calms the bloodlust of a hostile target through touch.", sys: "The Watcher spends a blood point and a Willpower point, and touches a foe hostile to him." },
-        { level: 3, name: "Pariah's Caress", desc: "Charges blood to redirect local hostility and suspicion onto a victim.", sys: "Spends a blood point and touch the victim then <strong>Roll Manipulation + Empathy</strong> (difficulty 7)." },
-        { level: 4, name: "Peacemaker", desc: "Erects an aura of peace in a room, mitigating combat and temper.", sys: "The player spends two Willpower points to erect the Peacemaker aura, which must be inside a chamber no larger than a ballroom." },
-        { level: 5, name: "Soul's Breath", desc: "Siphons blood and Willpower from a target's breath.", sys: "The Watcher must be facing a victim within speaking distance. <strong>Roll Intelligence + Occult</strong> (difficulty 6)." },
-        { level: 6, name: "Safe Passage", desc: "Passively inhibits anyone attempting to hunt or track the user.", sys: "Safe Passage is always “on,” though the Watcher may release the effect if she wishes. All attempts to hunt or track the Salubri with hostile intent suffer a -2 penalty." }
-      ],
-      "Vicissitude": [
-        { level: 1, name: "Malleable Visage", desc: "Cosmically alters the vampire's own skin, fat, and muscle.", sys: "The player must spend one blood point for each desired change and <strong>Roll Intelligence + Body Crafts</strong> (difficulty 6)." },
-        { level: 2, name: "Transmogrify the Mortal Clay", desc: "Sculpt and alter the physical appearance of a grappled subject.", sys: "Spend a blood point, grapple or otherwise subdue the intended subject. <strong>Roll Dexterity + Body Crafts</strong>." },
-        { level: 3, name: "Rend the Osseous Frame", desc: "Manipulates, shifts, or weapons a target's bone structure.", sys: "Spend a blood point, grapple or otherwise subdue the intended subject. <strong>Roll Strength + Body Crafts</strong>." },
-        { level: 4, name: "Awaken the Zulo Shape", desc: "Transforms into an 8-foot-tall monstrous zulo form.", sys: "By spending two blood points, the Tzimisce awakens the zulo shape." },
-        { level: 5, name: "The Body Impolitic", desc: "Severs a physical limb and imbues it with independent life to act as a servant.", sys: "By infusing an extremity with blood, the Tzimisce gives it awareness and a life of its own." },
-        { level: 6, name: "Chiropteran Marauder", desc: "Advanced zulo form with bat-like wings, allowing flight up to 25 mph.", sys: "Spend 3 blood points. Grow wings; claws deal Strength + 2 aggravated damage." }
-      ]
-    };
-
-    // V20DA Sourcebook-Aligned Clan Database
-    const clanDatabase = {
-      "Assamite (Sorceror Caste)": {
-        disciplines: ["Clan Sorcery", "Auspex", "Celerity"],
-        weakness: "Sorcerers have a difficult time hiding their arcane nature. All mystical attempts to determine magic use on or around the character are made at a -2 difficulty and are considered two levels higher for the purposes of opposed powers and rolls."
-      },
-      "Assamite (Vizier Caste)": {
-        disciplines: ["Auspex", "Presence", "Quietus Hematus"],
-        weakness: "Assamite viziers are rigorous to a fault. Each character has an obsession with her highest intellectual or creative Ability, which acts as a derangement. While the derangement is active, the character’s aura glows in a way as to provide hints to the vizier’s true Nature, as well as the object of her obsession, visible to Auspex users. Additionally, Assamites darken with age. This is a slow process. But over the centuries, Assamite skin blackens to a matte onyx."
-      },
-      "Assamite (Warrior Caste)": {
-        disciplines: ["Celerity", "Obfuscate", "Quietus Cruscitus"],
-        weakness: "Warriors are marked with their tradition of diablerie. Warrior Assamites always confirm as positive for diablerie whenever scrutinized with supernatural powers, even if the character has never tasted the blood of another Cainite."
-      },
-      "Brujah": {
-        disciplines: ["Celerity", "Potence", "Presence"],
-        weakness: "The passion that inspires the Brujah from night to night can send them into fits of rage if left unchecked. The difficulties of rolls to resist or guide frenzy are two higher than normal. Additionally, a Brujah may never spend Willpower to avoid frenzy. However, they may spend a point of Willpower to end a frenzy that has already begun."
-      },
-      "Cappadocians": {
-        disciplines: ["Auspex", "Fortitude", "Necromancy"],
-        weakness: "The Cappadocian affinity for death is marked indelibly on the visage of its clan members. All Cappadocians appear ashy and corpselike, and are unable to affect the appearance of life like other vampires by spending vitae. This condition becomes more pronounced as the Necromancer ages, with the eldest Cappadocians appearing as mummified corpses. This grim visage presents the Cappadocian with a +2 difficulty on any Social rolls that would be hindered by a corpselike appearance."
-      },
-      "Followers of Set": {
-        disciplines: ["Obfuscate", "Presence", "Serpentis"],
-        weakness: "The enmity between Set and Horus, sun god and son of Set’s hated brother Osiris, is eternal. The Followers of Set carry Horus’ curse more heavily than other vampires and take twice the amount of aggravated damage from any exposure to sunlight than members of other clans."
-      },
-      "Gangrel": {
-        disciplines: ["Animalism", "Fortitude", "Protean"],
-        weakness: "When a Gangrel frenzies, her Beast rises to the surface, and the wildness in her blood finds purchase in her flesh and in her mind. She may develop a small physical or mental animal trait that suits either local vampire mythology, or a predatory or scavenging animal in the region. Examples include overgrown eyebrows, patches of fur, or an hour of torpor after feeding. The net result is that the trait should give them a +1 difficulty penalty and one automatic failure on some relevant dice pool. The trait and the penalty remain until the player accepts the automatic failure."
-      },
-      "Lasombra": {
-        disciplines: ["Dominate", "Obtenebration", "Potence"],
-        weakness: "Lasombra cannot be seen in any sort of reflective surface, which makes it difficult to conceal their supernatural nature from mortals. Additionally, members of the Clan of Shadows cannot abide the presence of bright light; they take an additional level of aggravated damage from any exposure to sunlight."
-      },
-      "Malkavians": {
-        disciplines: ["Auspex", "Dementation", "Obfuscate"],
-        weakness: "Malkav’s children each suffer from an imbalance of the humors that’ll never truly fade. At character creation, choose one derangement. This derangement can never be cured, and a Malkavian may only use Willpower to ignore it for a turn at a time. Even powerful gifts of the blood such as Valeren may only push it aside for a night. After such an effort, however, the derangement comes back in full force. For a week thereafter, the Malkavian cannot use Willpower to resist her derangement at all."
-      },
-      "Nosferatu": {
-        disciplines: ["Animalism", "Obfuscate", "Potence"],
-        weakness: "All Nosferatu wear the blood’s corruption on their face. As a result, all Nosferatu start with zero dots in Appearance, and this cannot be raised. Because of this, they automatically fail any first impression roll (except to intimidate) and have difficulty with many social interactions."
-      },
-      "Ravnos": {
-        disciplines: ["Animalism", "Chimerstry", "Fortitude"],
-        weakness: "While the Ravnos are masters of changing the reality around them, they have a harder time changing their own fundamental reality. All Ravnos have a key personality trait, chosen at character creation, which they are incapable of resisting if the opportunity to express itself presents itself. This can be some kind of virtuous act, such as defending the weak, or something more sinister, such as taking advantage of someone in a lesser position. Often the trait is tied to the jati the Ravnos belongs to. When presented with the opportunity to indulge in her virtue or vice, she does so unless the player succeeds on a Self-Control or Instinct roll (difficulty 6)."
-      },
-      "Toreador": {
-        disciplines: ["Auspex", "Celerity", "Presence"],
-        weakness: "The Toreador has the shortest attention span of all Cainites. Once struck by beauty, it’s as if Cupid’s dart pierced them. If they encounter beauty (Storyteller and player work together to determine appropriate triggers), they must roll Self-Control or Instinct (difficulty 5). If they fail, the daydream of their senses continues until the scene concludes or object departs."
-      },
-      "Tremere": {
-        disciplines: ["Auspex", "Dominate", "Thaumaturgy"],
-        weakness: "The Tremere’s rush to exploit the powers of vampiric blood comes with its own disadvantages: they are particularly vulnerable to blood bonds when they drink the blood of other Damned. The first draught of blood that a Tremere consumes counts as two for the purposes of establishing a bond, meaning that the next drink will complete it."
-      },
-      "Tzimisce": {
-        disciplines: ["Animalism", "Auspex", "Vicissitude"],
-        weakness: "Tzimisce draw their mandate to rule from the very land itself, but this comes with a price. A Tzimisce must rest with at least two handfuls of native soil — that is, soil from a place of importance to them, usually their home or their grave. For each day of rest without it, halve all dice pools (round down), cumulatively, until the pool reaches one die. A full day of proper rest with her native soil will restore the dice pools to their normal value."
-      },
-      "Ventrue": {
-        disciplines: ["Dominate", "Fortitude", "Presence"],
-        weakness: "Rarefied taste has its cost, as the Ventrue are restricted to one particular type of mortal (merchants, French, Catholics, small children). This choice severely limits their feeding pool. They can consume mortal blood outside of this selected preference, but it does not forestall the Beast or provide nourishment."
-      },
-      "Ahrimanes": {
-        disciplines: ["Animalism", "Potence", "Spiritus"],
-        weakness: "An Ahrimane’s blood resists the ties of bondage. She can create neither blood bonds nor ghouls."
-      },
-      "Anda": {
-        disciplines: ["Animalism", "Fortitude", "Protean"],
-        weakness: "The Anda suffer from a kind of loneliness that comes with being cut off from the vast majority of their people, and most especially, from the warm waking face of Tengri. For one hour after sunset, and for the last hour before sunrise, their dice pools are limited by their Road rating as if they were acting during the day."
-      },
-      "Baali": {
-        disciplines: ["Daimonion", "Presence", "Obfuscate"],
-        weakness: "The Torment in the blood of Caine recoils from religious symbols, and the Baali are particularly vulnerable. Unless those religious symbols have lain abandoned for half a century, any individual brandishing a religious symbol at a Devil is considered to have a True Faith rating one higher than their actual rating."
-      },
-      "Bonsam": {
-        disciplines: ["Abombwe", "Obfuscate", "Potence"],
-        weakness: "Possessed by a darkness before time, a Bonsam inspires primordial terror in mortals. Mortals who fail at a Courage roll (difficulty 7) when seeing a Bonsam in his true form either flee in terror or gather up weapons to kill the monster, depending on the size of the mortal group and the Nature of its leader. This fear can be overcome however, and a mortal who has succeeded at this check need not roll again upon meeting the same Bonsam (or at Storyteller’s discretion, any Bonsam)."
-      },
-      "Children of Osiris": {
-        disciplines: ["Bardo"],
-        weakness: "Original clan’s weakness. In addition, the initiation rite to enter the sect renders a new applicant’s blood inert and he is no longer able to Embrace."
-      },
-      "Danava": {
-        disciplines: ["Dominate", "Fortitude", "Thaumaturgy"],
-        weakness: "Like their cousins to the west, the Danava have particularly refined palates when it comes to those they choose as prey, but animals such as cows or pigs are taboo in the extreme. Danava receive no sustenance from animal blood. Members of the bloodline first ritually offer their victims to their gods as a matter of course, but such observances need not be strict or long lasting. Without a ritual of at least thirty seconds, blood offers half sustenance."
-      },
-      "Gargoyles": {
-        disciplines: ["Flight", "Fortitude", "Potence"],
-        weakness: "Gargoyles are social creatures, while an individual may operate singly without impairment, should a Gargoyle ever truly find herself alone in the world — without master, mate, childer, or friend — her dice pools are halved until the condition is rectified. Working in conjunction with a complete stranger can alleviate these penalties on a scene-by-scene basis, but only a mutually acknowledged relationship can restore the Gargoyle fully. Additionally, Gargoyles are particularly susceptible to mind control and domination; their Willpower is always considered two less when resisting such powers."
-      },
-      "Giovani": {
-        disciplines: ["Auspex", "Fortitude", "Necromancy"],
-        weakness: "Like other members of the Cappadocian clan, the Giovani have an ashen quality to their skin which makes humans eerily aware of their otherness. The few bloodline members closest to Augustus himself are perfectly able to appear as if blood was still pumping through their veins, but their Kiss is excruciatingly painful. Some believe the horrors he saw as a mortal man carried through his blood, but this weakness doesn’t seem to have a clear pattern or cause."
-      },
-      "Impundulu": {
-        disciplines: ["Necromancy", "Fortitude", "Presence"],
-        weakness: "An Impundulu only gains sustenance from the Bomkazi. As the witches are independently powerful and their relationship with the Impundulu is voluntary, the Impundulu does well to treat any Bomkazi as an equal ally as opposed to a retainer, with all the complications this might entail."
-      },
-      "Kiasyd": {
-        disciplines: ["Mytherceria"],
-        weakness: "Due to her mark of the fae, the difficulty of rolls to recognize the Kiasyd as otherworldly decrease by one (more if her mark is particularly obvious). Additionally, her fae heritage makes the Kiasyd vulnerable to cold iron. Not only do weapons made from cold iron inflict aggravated damage to her, but such damage triggers an immediate roll to avoid either frenzy or Rötschreck as befitting her Nature."
-      },
-      "Lamiae": {
-        disciplines: ["Fortitude", "Necromancy", "Potence"],
-        weakness: "The Lamiae are not touched by death in the way that the Cappadocians are. No, the Lilin say, they are blessed by that great and terrible Mother that lies beyond death. Her merciless and terrible love brings ruin to those who are weak enough to not withstand it. The bite of the Lamiae brings the Seed of Lilith, a wasting plague that rot away the members of a still-living body until eventually killing mortal victims. The plague causes one lethal damage per night (with a nightly Stamina roll, difficulty 7 to resist) for a fortnight. Any Cainite that consumes Lamia blood will also be carriers of the disease until all Lamia blood is purged from their bodies."
-      },
-      "Lhiannan": {
-        disciplines: ["Animalism", "Presence", "Ogham"],
-        weakness: "The rumors surrounding the Lhiannan and their desperation likely formed from their inherent weakness. Every Lhiannan, from the moment of the Embrace, feels the shard of spirit within her. The sire feels the weakness as she shares her own spirit with her newly-made childe. When a Lhiannan Embraces, her Generation raises by one at the conclusion of the Embrace. For example, if a Ninth Generation Lhiannan Embraces a childe, her blood becomes Tenth Generation blood. The newly-Embraced childe also carries Tenth Generation blood. The sire becomes a generational sibling with her new childe. The eldest known Lhiannan wonder how the bloodline propagated in spite of this flaw, but if any have the answer, they’re not sharing. Lhiannan draw strength from nature, and their power diminishes within urban areas. For each week a Lhiannan spends outside of the wild, her dice pools are reduced by one. These penalties are cumulative, but can never reduce a dice pool lower than her unmodified Stamina. The Lhiannan must sleep a full day in the wilds to remove all the penalties upon waking."
-      },
-      "Nagaraja": {
-        disciplines: ["Auspex", "Dominate", "Necromancy"],
-        weakness: "As the preta of myth, the Flesh-Eaters must consume fresh raw meat to maintain their strength, marking them as untouchable and precluding sustenance without murder. This meat must come from living humans or fresh corpses. They suffer from the Ragged Bite and Flesh Eater Flaws with no recompense. Nagaraja teeth come in sharp rows, and can’t be retracted, but inflict +2 dice of damage in combat when biting."
-      },
-      "Niktuku": {
-        disciplines: ["Auspex", "Celerity", "Potence"],
-        weakness: "The Hungry suffer from an inability to gain sustenance from kine blood. For every three blood points they drain, they gain only one to their system. Cainite vitae nourishes them normally. Additionally, age is difficult and transforming on the bloodline. For every hundred years since their Embrace, the Hungry lose a point from their Appearance Attribute. That dot does not vanish; instead, it moves to any one Physical Attribute that can bear the increase. They grow slowly but decidedly bent, twisted, and deadly, slowly aging grotesques that blame the Nosferatu for their condition."
-      },
-      "Ramanga": {
-        disciplines: ["Obtenebration", "Obfuscate", "Presence"],
-        weakness: "A Ramanga’s use of Presence and Aizina (Obtenebration), when impacting others, is at +1 difficulty normally. However, if she has a physical piece of the victim, this penalty is negated."
-      },
-      "Salubri (Healer Caste)": {
-        disciplines: ["Auspex", "Presence", "Valeren - Healer"],
-        weakness: "If a Salubri learns but one dot of Valeren, he manifests the Discipline’s signature third eye. Salubri Healers must succeed on a Willpower roll (difficulty 6) if they attempt to feed on the unwilling; if they fail, they must find a willing vessel or suffer a two-die penalty on all rolls for the remainder of the night. Victims enthralled by Presence count as willing vessels."
-      },
-      "Salubri (Warrior Caste)": {
-        disciplines: ["Auspex", "Fortitude", "Valeren - Warrior"],
-        weakness: "If a Salubri learns but one dot of Valeren, she manifests the Discipline’s signature third eye. Salubri Warriors must test their strength and establish martial dominance; they must succeed on a Willpower roll (difficulty 6) if they attempt to feed on someone whom they have not vanquished in a fight, or suffer a two-die penalty on all rolls for the rest of the night. This may be defined as a duel to the death, or a simple brawl to Incapacitated. A few Warrior Herds comprise of companions who’ve been beaten down in the training yard."
-      },
-      "Salubri (Watcher Caste)": {
-        disciplines: ["Auspex", "Obfuscate", "Valeren"],
-        weakness: "If a Salubri learns but one dot of Valeren, they manifest the Discipline’s signature third eye. Ironically, Watchers can be remarkably short-sighted, having a tendency to fixate on their preferred small details and ignore the larger conceptual picture. Watchers must choose a field of study narrow enough for a Knowledge specialty, such as the Ten Thousand Demons, a specific mortal culture, or the esoterics of Necromancy. Watchers must succeed on a Willpower roll (difficulty 6) to pass up an opportunity (as defined by the Storyteller) to acquire or study knowledge of their field, or lose two dice from all pools for the remainder of the night."
-      },
-      "True Brujah": {
-        disciplines: ["Potence", "Presence", "Temporis"],
-        weakness: "True Brujah become dispassionate soon after their Embrace (if they weren’t already) and this only gets worse as the years take their toll. The difficulty of all Conscience and Conviction rolls are increased by two (maximum 9). Purchasing ratings in Conscience, Conviction, and Roads cost double the normal experience costs."
-      }
-    };
-
     /* --- PARENT DISCIPLINE FILTERING ENGINE FOR PATHS --- */
 
     function setParentFilter(btnEl, disciplineName) {
       const isAlreadyActive = btnEl.classList.contains('active');
       
-      // Un-highlight all filter buttons
       document.querySelectorAll('.path-filter-btn').forEach(btn => btn.classList.remove('active'));
 
       if (isAlreadyActive) {
@@ -4004,7 +2630,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
         let optionsHTML = `<option value="" disabled ${!currentVal ? 'selected' : ''}>Select Path...</option>`;
         optionsHTML += `<option value="custom" ${currentVal === 'custom' ? 'selected' : ''}>Custom...</option>`;
 
-        // If current value is custom or a value not in the filtered list, ensure option persists
         if (currentVal && currentVal !== 'custom' && !allPaths.includes(currentVal)) {
           optionsHTML += `<option value="${currentVal}" selected>${currentVal}</option>`;
         }
@@ -4140,7 +2765,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
 
       if (activePaths.length === 0) return;
 
-      // Sort alphabetically by Path Name
       activePaths.sort((a, b) => a.name.localeCompare(b.name));
 
       activePaths.forEach(item => {
@@ -4158,7 +2782,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
         cardWrapper.style.boxSizing = "border-box";
         cardWrapper.id = `path-card-${item.name.replace(/\s+/g, '-')}`;
 
-        // Header container with click-to-minimize chevron
         const headerEl = document.createElement('div');
         headerEl.style.display = "flex";
         headerEl.style.justifyContent = "space-between";
@@ -4179,7 +2802,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
         chevronEl.style.fontSize = "1.1rem";
         chevronEl.style.color = "var(--accent-red)";
         chevronEl.style.fontWeight = "bold";
-        chevronEl.innerHTML = isCollapsed ? "&#9660;" : "&#9650;"; // Toggle arrow
+        chevronEl.innerHTML = isCollapsed ? "&#9660;" : "&#9650;";
 
         headerEl.appendChild(titleEl);
         headerEl.appendChild(chevronEl);
@@ -4232,7 +2855,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
       });
     }
 
-    // Dynamically populates and renders active Page 1 Disciplines in the Grimoire Tab
     function renderGrimoireDisciplines() {
       const container = document.getElementById('dynamic-grimoire-disciplines');
       if (!container) return;
@@ -4254,7 +2876,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
         return;
       }
 
-      // Sort alphabetically by Discipline Name
       activeDisciplines.sort((a, b) => a.name.localeCompare(b.name));
 
       activeDisciplines.forEach(item => {
@@ -4271,7 +2892,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
         discWrapper.style.borderRadius = "0 4px 4px 0";
         discWrapper.id = `grimoire-entry-${item.name.replace(/\s+/g, '-')}`;
 
-        // Header container with click-to-minimize chevron
         const headerEl = document.createElement('div');
         headerEl.style.display = "flex";
         headerEl.style.justifyContent = "space-between";
@@ -4293,7 +2913,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
         chevronEl.style.transition = "transform 0.2s";
         chevronEl.style.color = "var(--accent-red)";
         chevronEl.style.fontWeight = "bold";
-        chevronEl.innerHTML = isCollapsed ? "&#9660;" : "&#9650;"; // Toggle arrow
+        chevronEl.innerHTML = isCollapsed ? "&#9660;" : "&#9650;";
 
         headerEl.appendChild(titleEl);
         headerEl.appendChild(chevronEl);
@@ -4316,7 +2936,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
             </div>
           `;
         } else {
-          // Robust Level Filtering
           const displayLevels = entry.filter(lvl => {
             return typeof lvl.level === 'number' && lvl.level <= item.dots;
           });
@@ -4338,7 +2957,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
       });
     }
 
-    // Dynamically populates and renders active Page 1 Backgrounds on Page 4
     function renderPage4Backgrounds() {
       const container = document.getElementById('dynamic-page4-backgrounds');
       if (!container) return;
@@ -4362,7 +2980,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
         return;
       }
 
-      // Sort alphabetically by Background Name
       activeBackgrounds.sort((a, b) => a.localeCompare(b));
 
       activeBackgrounds.forEach(bgName => {
@@ -4381,7 +2998,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
         cardWrapper.style.boxSizing = "border-box";
         cardWrapper.id = `background-card-${bgName.replace(/\s+/g, '-')}`;
 
-        // Header container with click-to-minimize chevron/triangle
         const headerEl = document.createElement('div');
         headerEl.style.display = "flex";
         headerEl.style.justifyContent = "space-between";
@@ -4403,7 +3019,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
         chevronEl.style.transition = "transform 0.2s";
         chevronEl.style.color = "var(--accent-red)";
         chevronEl.style.fontWeight = "bold";
-        chevronEl.innerHTML = isCollapsed ? "&#9660;" : "&#9650;"; // Toggle arrow
+        chevronEl.innerHTML = isCollapsed ? "&#9660;" : "&#9650;";
 
         headerEl.appendChild(titleEl);
         headerEl.appendChild(chevronEl);
@@ -4438,7 +3054,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
       });
     }
 
-    // Toggle Rituals section collapse/expand
     function toggleRitualsSection(headerEl) {
       const list = document.getElementById('rituals-list');
       const triangle = headerEl.querySelector('.rituals-toggle-triangle');
@@ -4453,7 +3068,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
       }
     }
 
-    // Interactive smooth scroll navigation to Page 2 Grimoire entry
     function navigateToDiscipline(name) {
       switchTab('tab-page-2');
       const targetId = `grimoire-entry-${name.replace(/\s+/g, '-')}`;
@@ -4461,7 +3075,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
         const el = document.getElementById(targetId);
         if (el) {
           el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          // Highlight flash to guide the player's eye
           el.style.transition = 'background-color 0.5s';
           el.style.backgroundColor = 'rgba(124, 11, 11, 0.15)';
           setTimeout(() => {
@@ -4471,7 +3084,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
       }, 100);
     }
 
-    // Interactive smooth scroll navigation to Page 4 Background entry
     function navigateToBackground(name) {
       switchTab('tab-page-4');
       const targetId = `background-card-${name.replace(/\s+/g, '-')}`;
@@ -4479,7 +3091,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
         const el = document.getElementById(targetId);
         if (el) {
           el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          // Highlight flash to guide the player's eye
           el.style.transition = 'background-color 0.5s';
           el.style.backgroundColor = 'rgba(124, 11, 11, 0.15)';
           setTimeout(() => {
@@ -4529,7 +3140,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
       localStorage.setItem('v20_da_characters_index', JSON.stringify(list));
     }
 
-    /* --- OPTIMIZED FAST LOCAL-FIRST DASHBOARD & EDITOR --- */
+    /* --- DASHBOARD RENDER & ACTIONS --- */
 
     function renderDashboardGrid(list) {
       const listContainer = document.getElementById('character-list');
@@ -4552,23 +3163,26 @@ Nothing in this agreement limits our liability to you in the event of death or p
             <p style="font-size: 0.75rem; color: #8c7e6e; margin-top: 8px;">Saved: ${new Date(meta.lastSaved).toLocaleDateString()}</p>
           </div>
           <div class="char-card-actions">
-            <button class="btn btn-small" onclick="checkNpcAccess('${meta.id}', function() { openEditor('${meta.id}'); })">Edit</button>
-            <button class="btn btn-secondary btn-small" onclick="checkNpcAccess('${meta.id}', function() { cloneCharacter('${meta.id}'); })">Clone</button>
-            <button class="btn btn-secondary btn-small" onclick="checkNpcAccess('${meta.id}', function() { triggerManualExport('${meta.id}'); })">Export</button>
-            <button class="btn btn-danger btn-small" onclick="checkNpcAccess('${meta.id}', function() { deleteCharacter('${meta.id}'); })">Delete</button>
-            <button class="btn btn-small btn-npc ${meta.isNpc ? 'active' : ''}" onclick="toggleNpc('${meta.id}')">NPC</button>
+            <div style="display: flex; gap: 6px;">
+              <button class="btn btn-secondary btn-small" style="flex: 1;" onclick="openViewOnly('${meta.id}')">View</button>
+              <button class="btn btn-small" style="flex: 1;" onclick="checkNpcAccess('${meta.id}', function() { openEditor('${meta.id}', false); })">Edit</button>
+              <button class="btn btn-small btn-npc ${meta.isNpc ? 'active' : ''}" style="flex: 1;" onclick="toggleNpc('${meta.id}')">NPC</button>
+            </div>
+            <div style="display: flex; gap: 6px;">
+              <button class="btn btn-secondary btn-small" style="flex: 1;" onclick="checkNpcAccess('${meta.id}', function() { triggerManualExport('${meta.id}'); })">Export</button>
+              <button class="btn btn-secondary btn-small" style="flex: 1;" onclick="checkNpcAccess('${meta.id}', function() { cloneCharacter('${meta.id}'); })">Clone</button>
+              <button class="btn btn-danger btn-small" style="flex: 1;" onclick="checkNpcAccess('${meta.id}', function() { deleteCharacter('${meta.id}'); })">Delete</button>
+            </div>
           </div>
         `;
         listContainer.appendChild(card);
       });
     }
 
-      async function renderDashboard() {
-      // 1. Render local index immediately (0ms)
+    async function renderDashboard() {
       const localList = getLocalIndex();
       renderDashboardGrid(localList);
 
-      // 2. Fetch cloud index in background if connected
       if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
         try {
           const response = await fetch(API_URL);
@@ -4577,7 +3191,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
             const deletedIds = new Set(JSON.parse(localStorage.getItem('v20_da_deleted_ids') || '[]'));
             const localMap = new Map(getLocalIndex().map(item => [item.id, item]));
 
-            // Merge cloud list with local list, prioritizing local NPC status and password
             const mergedList = cloudList
               .filter(item => !deletedIds.has(item.id))
               .map(cloudItem => {
@@ -4620,7 +3233,13 @@ Nothing in this agreement limits our liability to you in the event of death or p
       }
     }
 
-      async function toggleNpc(id) {
+    function openViewOnly(id) {
+      checkNpcAccess(id, function() {
+        openEditor(id, true);
+      });
+    }
+
+    async function toggleNpc(id) {
       let charData = null;
       try {
         charData = JSON.parse(localStorage.getItem(id));
@@ -4630,12 +3249,12 @@ Nothing in this agreement limits our liability to you in the event of death or p
 
       if (!charData.isNpc) {
         const password = prompt("Enter a password to set this character as an NPC:");
-        if (password === null) return; // Canceled
+        if (password === null) return;
         charData.isNpc = true;
         charData.npcPassword = password;
       } else {
         const input = prompt("Enter the NPC Password to unlock:");
-        if (input === null) return; // Canceled
+        if (input === null) return;
         if (input !== (charData.npcPassword || "")) {
           alert("Incorrect NPC Password.");
           return;
@@ -4644,7 +3263,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
         charData.npcPassword = "";
       }
 
-      // 1. Save locally instantly
       localStorage.setItem(id, JSON.stringify(charData));
       saveLocalIndex(
         id, 
@@ -4655,10 +3273,8 @@ Nothing in this agreement limits our liability to you in the event of death or p
         charData.npcPassword
       );
 
-      // 2. Render local screen immediately
       renderDashboardGrid(getLocalIndex());
 
-      // 3. Sync NPC status to Google Sheets in background
       if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
         fetch(API_URL, {
           method: "POST",
@@ -4667,7 +3283,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
       }
     }
 
-      async function createNewCharacter() {
+    function createNewCharacter() {
       const charId = 'char_' + Date.now();
       const initialSheet = {
         id: charId,
@@ -4721,17 +3337,14 @@ Nothing in this agreement limits our liability to you in the event of death or p
         haven: { location: '', desc: '' },
         narrative: { prelude: '', goals: '' },
         desc: { age: '', apparent: '', dob: '', rip: '', hair: '', eyes: '', race: '', nationality: '', height: '', weight: '', sex: '' },
-        vis: { coterie: '', sketch: '', image: '' }
+        vis: { coterie: '', sketch: '', image: '', imageName: '' }
       };
 
-      // 1. Save locally instantly
       localStorage.setItem(charId, JSON.stringify(initialSheet));
       saveLocalIndex(charId, initialSheet.meta.name, initialSheet.meta.clan, '', false, '');
 
-      // 2. Open editor INSTANTLY (0ms latency)
-      openEditor(charId);
+      openEditor(charId, false);
 
-      // 3. Sync to Google Sheets in background without blocking UI
       if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
         fetch(API_URL, {
           method: "POST",
@@ -4740,11 +3353,26 @@ Nothing in this agreement limits our liability to you in the event of death or p
       }
     }
 
-      async function openEditor(id) {
+    function openEditor(id, isReadOnly = false) {
       activeCharacterId = id;
+      window.isReadOnlyMode = isReadOnly;
       setSaveStatus('Loading draft...');
 
-      // 1. Load local draft INSTANTLY
+      const editorView = document.getElementById('editor-view');
+      const readonlyIndicator = document.getElementById('sheet-readonly-indicator');
+
+      if (isReadOnly) {
+        editorView.classList.add('view-only');
+        if (readonlyIndicator) readonlyIndicator.style.display = 'inline-block';
+      } else {
+        editorView.classList.remove('view-only');
+        if (readonlyIndicator) readonlyIndicator.style.display = 'none';
+      }
+
+      document.getElementById('dashboard-view').classList.remove('active');
+      editorView.classList.add('active');
+      switchTab('tab-page-1');
+
       let localData = null;
       try {
         localData = JSON.parse(localStorage.getItem(id));
@@ -4752,39 +3380,40 @@ Nothing in this agreement limits our liability to you in the event of death or p
 
       if (localData) {
         loadSheetIntoDOM(localData);
-        document.getElementById('dashboard-view').classList.remove('active');
-        document.getElementById('editor-view').classList.add('active');
-        switchTab('tab-page-1');
-        setSaveStatus('Draft Loaded (Local)');
+        setSaveStatus(isReadOnly ? 'Read Only View' : 'Draft Loaded (Local)');
       }
 
       if (API_URL.includes("YOUR_DEPLOYED_URL_HERE")) return;
 
-      // 2. Silently fetch cloud updates in background without locking UI
-      try {
-        const response = await fetch(`${API_URL}?id=${id}`);
-        const cloudData = await response.json();
-        if (cloudData && cloudData.id) {
-          localStorage.setItem(id, JSON.stringify(cloudData));
-          if (activeCharacterId === id) {
-            loadSheetIntoDOM(cloudData);
-            setSaveStatus('Synced with Cloud');
+      fetch(`${API_URL}?id=${id}`)
+        .then(res => res.json())
+        .then(cloudData => {
+          if (cloudData && cloudData.id) {
+            localStorage.setItem(id, JSON.stringify(cloudData));
+            if (activeCharacterId === id) {
+              loadSheetIntoDOM(cloudData);
+              setSaveStatus(isReadOnly ? 'Read Only View' : 'Synced with Cloud');
+            }
           }
-        }
-      } catch (err) {
-        if (!localData) setSaveStatus('Offline Mode');
-      }
+        })
+        .catch(() => {
+          if (!localData) setSaveStatus('Offline Mode');
+        });
     }
 
-    async function closeEditor() {
+    function closeEditor() {
       if (saveTimeout) {
         clearTimeout(saveTimeout);
-        await saveCurrentCharacter();
+        if (!window.isReadOnlyMode) {
+          saveCurrentCharacter();
+        }
       }
       activeCharacterId = null;
+      window.isReadOnlyMode = false;
       document.getElementById('editor-view').classList.remove('active');
+      document.getElementById('editor-view').classList.remove('view-only');
       document.getElementById('dashboard-view').classList.add('active');
-      await renderDashboard();
+      renderDashboard();
     }
 
     async function cloneCharacter(id) {
@@ -4820,26 +3449,22 @@ Nothing in this agreement limits our liability to you in the event of death or p
         }
       }
 
-      await renderDashboard();
+      renderDashboard();
     }
 
-      async function deleteCharacter(id) {
+    async function deleteCharacter(id) {
       if (!confirm("Are you sure you want to permanently delete this character?")) return;
 
-      // 1. Record deletion locally so cloud fetches don't resurrect it
       const deletedIds = JSON.parse(localStorage.getItem('v20_da_deleted_ids') || '[]');
       if (!deletedIds.includes(id)) deletedIds.push(id);
       localStorage.setItem('v20_da_deleted_ids', JSON.stringify(deletedIds));
 
-      // 2. Delete character data and index locally
       localStorage.removeItem(id);
       const updatedList = getLocalIndex().filter(item => item.id !== id);
       localStorage.setItem('v20_da_characters_index', JSON.stringify(updatedList));
 
-      // 3. Update dashboard immediately
       renderDashboardGrid(updatedList);
 
-      // 4. Send deletion request to Google Sheets in background
       if (!API_URL.includes("YOUR_DEPLOYED_URL_HERE")) {
         try {
           await fetch(API_URL, {
@@ -4868,7 +3493,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
       const max = parseInt(container.getAttribute('data-max')) || 6;
       const min = parseInt(container.getAttribute('data-min')) || 0;
       
-      // Safe parsing to prevent NaN properties
       let currentVal = parseInt(container.getAttribute('data-value'));
       if (isNaN(currentVal)) {
         currentVal = parseInt(container.getAttribute('data-default')) || min;
@@ -4885,6 +3509,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
     }
 
     function handleDotClick(container, clickedIndex) {
+      if (window.isReadOnlyMode) return;
       const min = parseInt(container.getAttribute('data-min')) || 0;
       let currentVal = parseInt(container.getAttribute('data-value')) || 0;
 
@@ -4896,11 +3521,10 @@ Nothing in this agreement limits our liability to you in the event of death or p
 
       container.setAttribute('data-value', currentVal);
       renderDots(container);
-      renderGrimoireDisciplines(); // Instantly synchronize Grimoire description updates
-      renderGrimoirePaths();       // Instantly synchronize Grimoire Path Cards updates
-      renderPage4Backgrounds();    // Instantly synchronize Page 4 Background updates
+      renderGrimoireDisciplines();
+      renderGrimoirePaths();
+      renderPage4Backgrounds();
       
-      // Dynamic updates
       if (container.getAttribute('data-id') === 'willpower-perm') {
         updateWillpowerTempPool(currentVal);
       }
@@ -4909,12 +3533,10 @@ Nothing in this agreement limits our liability to you in the event of death or p
     }
 
     function buildTempPools() {
-      // Initialize willpower temp pool with default or actual willpower-perm value (defaults to 0 or 1)
       const wpPermEl = document.querySelector('[data-id="willpower-perm"]');
       const wpVal = wpPermEl ? parseInt(wpPermEl.getAttribute('data-value')) || 0 : 0;
       updateWillpowerTempPool(wpVal);
 
-      // Initialize blood pool capacity based on current generation selection
       updateBloodPoolCapacity();
     }
 
@@ -4922,7 +3544,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
       const wpPool = document.getElementById('willpower-temp-pool');
       if (!wpPool) return;
       
-      // Cache currently checked states to preserve them
       const states = [];
       wpPool.querySelectorAll('input[type="checkbox"]').forEach(cb => {
         states.push(cb.checked);
@@ -4966,7 +3587,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
         bpSpendLimitLabel.textContent = spendLimitText;
       }
 
-      // Cache currently checked states to preserve them
       const states = [];
       bpPool.querySelectorAll('input[type="checkbox"]').forEach(cb => {
         states.push(cb.checked);
@@ -5174,7 +3794,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
 
       const selectedVal = selectEl.value;
 
-      // 1. Clear fields
       const auraEl = document.getElementById('aura-bearing');
       if (auraEl) auraEl.value = '';
 
@@ -5198,7 +3817,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
         if (ratEl) ratEl.value = '';
       }
 
-      // 2. Populate fields if selecting a valid profile in roadsDatabase
       if (selectedVal && roadsDatabase[selectedVal]) {
         const data = roadsDatabase[selectedVal];
 
@@ -5235,10 +3853,15 @@ Nothing in this agreement limits our liability to you in the event of death or p
 
     /* --- PORTRAIT HANDLERS --- */
 
+    let isUploadingImage = false;
     function handleImageUpload(event) {
+      if (isUploadingImage) return;
       const file = event.target.files[0];
       if (!file) return;
-      
+
+      isUploadingImage = true;
+      window.activeImageName = file.name || '';
+
       const reader = new FileReader();
       reader.onload = function(e) {
         const base64Data = e.target.result;
@@ -5250,13 +3873,20 @@ Nothing in this agreement limits our liability to you in the event of death or p
         const delBtn = document.getElementById('vis-image-delete');
         if (delBtn) delBtn.style.display = 'inline-block';
         
+        event.target.value = '';
+        isUploadingImage = false;
         queueAutoSave();
+      };
+      reader.onerror = function() {
+        isUploadingImage = false;
+        event.target.value = '';
       };
       reader.readAsDataURL(file);
     }
 
     function deleteCharacterImage() {
       if (!confirm("Are you sure you want to delete this portrait?")) return;
+      window.activeImageName = '';
       const imgPreview = document.getElementById('vis-image-preview');
       if (imgPreview) {
         imgPreview.src = '';
@@ -5401,8 +4031,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
       queueAutoSave();
     }
 
-    /* --- Custom Discipline Popup & Link Overlays --- */
-
     function updateDisciplineOverlay(selectEl) {
       const container = selectEl.closest('.discipline-select-container');
       if (!container) return;
@@ -5457,8 +4085,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
       renderGrimoireDisciplines();
       queueAutoSave();
     }
-
-    /* --- Custom Background Popup & Link Overlays --- */
 
     function updateBackgroundOverlay(selectEl) {
       const container = selectEl.closest('.background-select-container');
@@ -5637,10 +4263,10 @@ Nothing in this agreement limits our liability to you in the event of death or p
       queueAutoSave();
     }
 
-/* --- AUTO-EXPANDING TEXTAREAS & ROAD HEIGHT SYNCHRONIZATION --- */
+    /* --- AUTO-EXPANDING TEXTAREAS & ROAD HEIGHT SYNCHRONIZATION --- */
 
     function autoExpandTextarea(ta) {
-      if (!ta || ta.offsetParent === null) return; // Skip hidden textareas to prevent inaccurate 0px calculations
+      if (!ta || ta.offsetParent === null) return;
       
       const compStyle = window.getComputedStyle(ta);
       const minH = parseFloat(compStyle.minHeight) || 40;
@@ -5685,7 +4311,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
 
     function autoResizeAllTextareas() {
       document.querySelectorAll('textarea').forEach(ta => {
-        // Skip road hierarchy textareas as they are synced in trios
         if (ta.id && ta.id.startsWith('road-') && (ta.id.includes('rating-num') || ta.id.includes('wrongdoing') || ta.id.includes('rationale'))) {
           return;
         }
@@ -5707,7 +4332,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
       const activeBtn = document.getElementById(btnId);
       if (activeBtn) activeBtn.classList.add('active');
 
-      // Recalculate heights for newly visible textareas on this page
       setTimeout(() => {
         autoResizeAllTextareas();
       }, 15);
@@ -5729,7 +4353,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
     let activeNpcPassword = '';
 
     function queueAutoSave() {
-      if (isLoadingSheet) return; 
+      if (isLoadingSheet || window.isReadOnlyMode) return; 
       setSaveStatus('Saving changes...');
       if (saveTimeout) clearTimeout(saveTimeout);
       saveTimeout = setTimeout(saveCurrentCharacter, 1000);
@@ -5741,7 +4365,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
     }
 
     async function saveCurrentCharacter() {
-      if (!activeCharacterId) return;
+      if (!activeCharacterId || window.isReadOnlyMode) return;
 
       const data = compileSheetData();
       
@@ -5903,7 +4527,8 @@ Nothing in this agreement limits our liability to you in the event of death or p
         vis: {
           coterie: document.getElementById('vis-coterie').value,
           sketch: document.getElementById('vis-sketch').value,
-          image: (imgSrc && (imgSrc.startsWith('data:image') || imgSrc.startsWith('http'))) ? imgSrc : ''
+          image: (imgSrc && (imgSrc.startsWith('data:image') || imgSrc.startsWith('http'))) ? imgSrc : '',
+          imageName: window.activeImageName || ''
         }
       };
 
@@ -6058,7 +4683,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
       document.getElementById('specialties-skills').value = data.specialties_skills || '';
       document.getElementById('specialties-knowledges').value = data.specialties_knowledges || '';
 
-      // Clan Dropdown loading
       const clanSelect = document.getElementById('char-clan');
       if (clanSelect) {
         const metaClan = meta.clan || '';
@@ -6081,7 +4705,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
         }
       }
 
-      // Generation Dropdown loading
       const genSelect = document.getElementById('char-generation');
       if (genSelect) {
         const metaGen = meta.generation || '';
@@ -6115,7 +4738,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
         }
       }
 
-      // Nature Dropdown loading
       const natureSelect = document.getElementById('char-nature');
       if (natureSelect) {
         const metaNature = meta.nature || '';
@@ -6138,7 +4760,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
         }
       }
 
-      // Demeanor Dropdown loading
       const demeanorSelect = document.getElementById('char-demeanor');
       if (demeanorSelect) {
         const metaDemeanor = meta.demeanor || '';
@@ -6163,7 +4784,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
 
       updateBloodPoolCapacity();
 
-      // Attributes
       const attributesList = ['strength', 'dexterity', 'stamina', 'charisma', 'manipulation', 'appearance', 'perception', 'intelligence', 'wits'];
       attributesList.forEach(id => {
         const el = document.querySelector(`[data-id="${id}"]`);
@@ -6174,7 +4794,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
         }
       });
 
-      // Abilities
       const abilitiesList = [
         'alertness', 'athletics', 'awareness', 'brawl', 'empathy', 'expression', 'intimidation', 'leadership', 'legerdemain', 'subterfuge',
         'animal_ken', 'archery', 'commerce', 'crafts', 'etiquette', 'melee', 'performance', 'ride', 'stealth', 'survival',
@@ -6208,7 +4827,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
         });
       }
 
-      // Virtues
       const virtues = data.virtues || {};
       document.getElementById('virtue-1-type').value = virtues.virtue_1_type || 'Conscience';
       const v1 = document.querySelector('[data-id="virtue_1"]');
@@ -6230,7 +4848,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
         renderDots(v3);
       }
 
-      // Disciplines & Backgrounds
       const discList = document.getElementById('disciplines-list');
       if (discList) discList.innerHTML = '';
       if (data.disciplines && data.disciplines.length > 0) {
@@ -6247,7 +4864,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
         addDynamicRow('backgrounds-list', 'background');
       }
 
-      // Page 3 Lists
       const meritsList = document.getElementById('merits-list');
       if (meritsList) meritsList.innerHTML = '';
       if (data.merits) data.merits.forEach(m => addCustomRow('merits-list', 'merit', m.name, m.type, m.val, m.desc || ''));
@@ -6260,7 +4876,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
       if (otList) otList.innerHTML = '';
       if (data.otherTraits) data.otherTraits.forEach(t => addOtherTraitRow('other-traits-list', t.name, t.val));
 
-      // Page 2 Grimoire Lists
       const ritList = document.getElementById('rituals-list');
       if (ritList) ritList.innerHTML = '';
       if (data.rituals) data.rituals.forEach(r => addRitualRow('rituals-list', r.name, r.level, r.desc || ''));
@@ -6280,7 +4895,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
       if (derList) derList.innerHTML = '';
       if (data.derangements) data.derangements.forEach(d => addDerangementRow('derangements-list', d.name));
 
-      // Page 3 Combat Attacks
       const combatBody = document.querySelector('#combat-attacks-table tbody');
       if (combatBody) {
         combatBody.innerHTML = '';
@@ -6289,7 +4903,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
         }
       }
 
-      // Mechanics
       const mechanics = data.mechanics || {};
       const rNameSelect = document.getElementById('road-name');
       if (rNameSelect) {
@@ -6356,7 +4969,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
         });
       }
 
-      // Road of Enlightenment Loading
       const roadEnlight = data.road_enlightenment || {};
       if (document.getElementById('road-alt-name')) {
         document.getElementById('road-alt-name').value = roadEnlight.altName || '';
@@ -6391,7 +5003,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
         }
       }
 
-      // Health Loading
       if (data.health) {
         const healthKeys = [
           'bruised-b', 'bruised-l', 'bruised-a',
@@ -6419,7 +5030,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
       const cWeakness = document.getElementById('clan-weakness');
       if (cWeakness) cWeakness.value = data.clan_weakness || '';
 
-      // Armor
       const armor = data.armor || {};
       const aClass = document.getElementById('armor-class');
       if (aClass) aClass.value = armor.class || '';
@@ -6430,7 +5040,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
       const aDesc = document.getElementById('armor-desc');
       if (aDesc) aDesc.value = armor.desc || '';
 
-      // Exp
       const exp = data.exp || {};
       const eTotal = document.getElementById('exp-total');
       if (eTotal) eTotal.value = exp.total || '';
@@ -6439,7 +5048,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
       const eSpentOn = document.getElementById('exp-spent-on');
       if (eSpentOn) eSpentOn.value = exp.spentOn || '';
 
-      // Page 4 Expanded Backgrounds
       const bgExpanded = data.backgrounds_expanded || {};
       const bgAllies = document.getElementById('bg-allies');
       if (bgAllies) bgAllies.value = bgExpanded.allies || '';
@@ -6460,7 +5068,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
       const bgOther = document.getElementById('bg-other');
       if (bgOther) bgOther.value = bgExpanded.other || '';
 
-      // Possessions
       const possessions = data.possessions || {};
       const pGear = document.getElementById('poss-gear');
       if (pGear) pGear.value = possessions.gear || '';
@@ -6471,14 +5078,12 @@ Nothing in this agreement limits our liability to you in the event of death or p
       const pTrans = document.getElementById('poss-trans');
       if (pTrans) pTrans.value = possessions.trans || '';
 
-      // Haven
       const haven = data.haven || {};
       const hLoc = document.getElementById('haven-location');
       if (hLoc) hLoc.value = haven.location || '';
       const hDesc = document.getElementById('haven-desc');
       if (hDesc) hDesc.value = haven.desc || '';
 
-      // Page 5 History & Description
       const narrative = data.narrative || {};
       const nPrelude = document.getElementById('narrative-prelude');
       if (nPrelude) nPrelude.value = narrative.prelude || '';
@@ -6510,6 +5115,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
       if (dSex) dSex.value = desc.sex || '';
 
       const vis = data.vis || {};
+      window.activeImageName = vis.imageName || '';
       const vCoterie = document.getElementById('vis-coterie');
       if (vCoterie) vCoterie.value = vis.coterie || '';
       const vSketch = document.getElementById('vis-sketch');
@@ -6534,7 +5140,6 @@ Nothing in this agreement limits our liability to you in the event of death or p
       renderGrimoirePaths();
       renderPage4Backgrounds();
 
-      // Auto-expand all textareas for loaded character data
       setTimeout(autoResizeAllTextareas, 20);
     }
 
@@ -6580,7 +5185,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
             }
           }
 
-          await renderDashboard();
+          renderDashboard();
           alert("Character imported successfully.");
         } catch (err) {
           alert("Could not parse file.");
@@ -6591,27 +5196,23 @@ Nothing in this agreement limits our liability to you in the event of death or p
       event.target.value = '';
     }
 
-/* --- PRINTABILITY FUNCTION --- */
+    /* --- PRINTABILITY FUNCTION --- */
 
     function printCharacterSheet() {
-      // 1. Synchronize all dynamic cards and lists across all 5 pages
       renderGrimoireDisciplines();
       renderGrimoirePaths();
       renderPage4Backgrounds();
 
-      // 2. Temporarily apply print-mode class and unhide all tabs
       document.body.classList.add('print-mode');
       const tabs = document.querySelectorAll('.tab-content');
       tabs.forEach(tab => tab.style.display = 'block');
 
-      // 3. Auto-expand every textarea based on reduced print font sizing
       document.querySelectorAll('textarea').forEach(ta => {
         ta.style.overflow = 'hidden';
         const compStyle = window.getComputedStyle(ta);
         const minH = parseFloat(compStyle.minHeight) || 36;
         ta.style.height = 'auto';
         
-        // Use a dedicated 28px buffer for Custom Path boxes to handle heavy 2-column line wrapping
         let printBuffer = (ta.value && ta.value.trim() !== '') ? 12 : 0;
         if (ta.classList.contains('custom-path-desc') || ta.classList.contains('custom-path-powers')) {
           printBuffer = (ta.value && ta.value.trim() !== '') ? 28 : 0;
@@ -6621,21 +5222,16 @@ Nothing in this agreement limits our liability to you in the event of death or p
         ta.style.height = targetH + 'px';
       });
 
-      // 4. Synchronize Road row heights
       syncRoadEnlightenmentHeights(true);
 
-      // 5. Reset inline display overrides
       tabs.forEach(tab => tab.style.display = '');
 
-      // 6. Trigger native browser print dialog
       window.print();
 
-      // 7. Cleanup print mode class and restore screen heights
       document.body.classList.remove('print-mode');
       setTimeout(autoResizeAllTextareas, 100);
     }
 
-    // Global listener for live textarea auto-expansion as the user types
     document.addEventListener('input', function(e) {
       if (e.target && e.target.tagName.toLowerCase() === 'textarea') {
         if (e.target.id && e.target.id.startsWith('road-') && (e.target.id.includes('rating-num') || e.target.id.includes('wrongdoing') || e.target.id.includes('rationale'))) {
