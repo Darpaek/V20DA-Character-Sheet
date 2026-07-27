@@ -2332,7 +2332,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
       }
     };
 
-    // Official Sourcebook Backgrounds Database
+    // Backgrounds Database
     const backgroundsDatabase = {
       "Allies": {
         description: "Allies are mortals who support you willingly, without coercion. They are not always available to offer assistance; they have their own concerns as well, but they could provide indirect access to their own Backgrounds such as Contacts, Influence, or Resources.",
@@ -2456,6 +2456,268 @@ Nothing in this agreement limits our liability to you in the event of death or p
       }
     };
 
+// Clan & Bloodline Database
+    const clanDatabase = {
+      "Assamite (Warrior Caste)": { disciplines: ["Celerity", "Obfuscate", "Quietus Cruscitus"], weakness: "Due to a curse from the Tremere, Assamite Warriors take 1 unsoakable lethal damage for every point of vampire blood consumed." },
+      "Assamite (Vizier Caste)": { disciplines: ["Auspex", "Celerity", "Quietus Cruscitus"], weakness: "Focused obsessively on a specific intellectual or artistic skill; +1 difficulty to rolls when forced away from their focus." },
+      "Assamite (Sorceror Caste)": { disciplines: ["Auspex", "Celerity", "Dur-An-Ki"], weakness: "Sorcerers' aura glows brightly under Auspex, revealing their magical nature immediately." },
+      "Brujah": { disciplines: ["Celerity", "Potence", "Presence"], weakness: "Fierce passions drive the Brujah. Increase the difficulty of all rolls to resist frenzy or Rötschreck by +2 (max difficulty 10)." },
+      "Cappadocians": { disciplines: ["Auspex", "Fortitude", "Necromancy"], weakness: "The Cappadocian affinity for death makes them appear ashy and corpselike; +2 difficulty on Social rolls where corpselike looks hinder." },
+      "Followers of Set": { disciplines: ["Obfuscate", "Presence", "Serpentis"], weakness: "Setites carry Horus' curse and take double damage from exposure to sunlight." },
+      "Gangrel": { disciplines: ["Animalism", "Fortitude", "Protean"], weakness: "Every frenzy leaves a permanent bestial physical feature on the Gangrel, reducing Social dice pools or appearance." },
+      "Lasombra": { disciplines: ["Dominate", "Obtenebration", "Potence"], weakness: "Lasombra cast no reflection in mirrors or reflective surfaces, and take +1 extra damage from sunlight." },
+      "Malkavians": { disciplines: ["Auspex", "Dementation", "Obfuscate"], weakness: "All Malkavians possess an incurable Derangement chosen at character creation that can only be suppressed temporarily with Willpower." },
+      "Nosferatu": { disciplines: ["Animalism", "Obfuscate", "Potence"], weakness: "All Nosferatu start with Appearance 0 and fail first impression Social rolls automatically." },
+      "Ravnos": { disciplines: ["Animalism", "Chimerstry", "Fortitude"], weakness: "All Ravnos possess a vice or compulsion (e.g. larceny, lying) they must indulge unless they pass a Self-Control/Instinct check (diff 6)." },
+      "Toreador": { disciplines: ["Auspex", "Celerity", "Presence"], weakness: "Enraptured by beauty; Toreador must roll Self-Control (diff 6) when witnessing beautiful things or become paralyzed in trance." },
+      "Tremere": { disciplines: ["Auspex", "Dominate", "Thaumaturgy"], weakness: "All Tremere are bound one step closer to the Council of Seven through blood oath rites upon Embrace." },
+      "Tzimisce": { disciplines: ["Animalism", "Auspex", "Vicissitude"], weakness: "Must sleep with two handfuls of soil from their native homeland; failing to do so halves all dice pools daily." },
+      "Ventrue": { disciplines: ["Dominate", "Fortitude", "Presence"], weakness: "Exclusive feeding requirements; Ventrue can only feed from a specific subset of mortal prey (e.g. noble blood, virgins)." }
+    };
+
+    // Official Archetypes (Nature / Demeanor) Database
+    const archetypesDatabase = {
+      "Architect": { willpower: "Regain Willpower when you establish or build something of lasting value.", description: "The Architect strives to build a legacy or system that outlasts their unlife." },
+      "Autocrat": { willpower: "Regain Willpower when you achieve total control over a major situation or group.", description: "The Autocrat seeks authority, leadership, and control over those around them." },
+      "Beast": { willpower: "Regain Willpower when you satisfy a primal urge without regard for societal rules.", description: "Driven by raw instinct and survival, the Beast rejects delicate civilization." },
+      "Bon Vivant": { willpower: "Regain Willpower when you truly enjoy yourself in a grand revel or indulgence.", description: "Seeks carnal and sensory pleasure above all else." },
+      "Bravo": { willpower: "Regain Willpower when you bully or intimidate someone into backing down.", description: "Uses force, threats, and physical dominance to achieve goals." },
+      "Caregiver": { willpower: "Regain Willpower when you successfully protect or comfort someone in need.", description: "Takes comfort in consoling and aiding others." },
+      "Celebrant": { willpower: "Regain Willpower when you devote yourself fully to your passion or cause.", description: "Finds joy in passionate devotion to a belief, deity, or artistic pursuit." },
+      "Chameleon": { willpower: "Regain Willpower when you completely fool someone into believing you are someone else.", description: "Blends seamlessly into any environment, taking on whatever role is necessary." },
+      "Child": { willpower: "Regain Willpower when you convince someone to nurture or care for you.", description: "Immature and reliant on others to cater to their desires." },
+      "Competitor": { willpower: "Regain Willpower when you win a clear contest against overwhelming odds.", description: "Views life as an endless series of challenges to be won." },
+      "Conformist": { willpower: "Regain Willpower when your group succeeds by following the leader's plan.", description: "Prefers to follow established authority rather than take command." },
+      "Conniver": { willpower: "Regain Willpower when you trick someone into aiding your best interests.", description: "Manipulates others to do the hard work for them." },
+      "Curmudgeon": { willpower: "Regain Willpower when someone proves your cynical expectations correct.", description: "Cynical and expecting the worst from everyone." },
+      "Defender": { willpower: "Regain Willpower when you protect something sacred to you against threats.", description: "Devoted to guarding a person, place, or institution." },
+      "Deviant": { willpower: "Regain Willpower when you flout social norms to the shock of onlookers.", description: "Rejects conventional moral standards and societal expectations." },
+      "Enigma": { willpower: "Regain Willpower when you solve a complex mystery or act inexplicably to others.", description: "Mysterious, secretive, and difficult to comprehend." },
+      "Fanatic": { willpower: "Regain Willpower when you accomplish a goal directly advancing your cause.", description: "Consumed by a single overwhelming cause or belief system." },
+      "Gallant": { willpower: "Regain Willpower when you dazzle an audience or win admiration through style.", description: "Flamboyant, seeking attention and praise." },
+      "Guru": { willpower: "Regain Willpower when someone seeks your guidance and follows your path.", description: "Spiritual or intellectual mentor who guides others." },
+      "Idealist": { willpower: "Regain Willpower when an action based on your ideals succeeds.", description: "Visionary who believes in higher moral principles." },
+      "Jester": { willpower: "Regain Willpower when you ease tension or reveal truth through humor.", description: "Uses comedy and satire to navigate dark times." },
+      "Loner": { willpower: "Regain Willpower when you accomplish a goal entirely on your own.", description: "Prefers isolation and independence over group reliance." },
+      "Martyr": { willpower: "Regain Willpower when you suffer or sacrifice yourself for another's benefit.", description: "Willingly endures hardship so others don't have to." },
+      "Monster": { willpower: "Regain Willpower when you commit a terrifying act demonstrating vampiric superiority.", description: "Embraces the monstrosity of the Curse of Caine." },
+      "Pedagogue": { willpower: "Regain Willpower when someone learns an important lesson from your instruction.", description: "Enjoys teaching and sharing knowledge with others." },
+      "Penitent": { willpower: "Regain Willpower when you successfully atone for a major sin or flaw.", description: "Seeks redemption for past wrongs." },
+      "Perfectionist": { willpower: "Regain Willpower when you execute a plan or skill flawlessly.", description: "Demands absolute perfection from self and others." },
+      "Rebel": { willpower: "Regain Willpower when you successfully defy established authority.", description: "Rejects tyranny and authority figures." },
+      "Rogue": { willpower: "Regain Willpower when your self-centered actions lead directly to profit.", description: "Selfish opportunist out for personal gain." },
+      "Survivor": { willpower: "Regain Willpower when you survive a deadly situation through sheer tenacity.", description: "Will do whatever it takes to survive another night." },
+      "Tyrant": { willpower: "Regain Willpower when you break someone's spirit and force total obedience.", description: "Demands total submission from all subordinates." },
+      "Visionary": { willpower: "Regain Willpower when you inspire society to change toward a new vision.", description: "Seeks to remake the world according to grand ideas." }
+    };
+
+    // Road & Path Database
+    const roadsDatabase = {
+      "The Road of Humanity": {
+        altName: "Via Humanitas",
+        aura: "Humanity",
+        virtues: { v1: "Conscience", v2: "Self-Control" },
+        hierarchyName: "Hierarchy of Sins Against the Soul",
+        ethics: ["- Remaining human is a requirement to escape soul-death.", "- Humanity is a universal experience.", "- Violating others depletes the soul.", "- Thought and compassion separate us from the Beast."],
+        hierarchy: {
+          10: { mw: "Selfish thoughts", r: "If it can be thought, it can be done." },
+          9: { mw: "Minor selfish acts", r: "Putting oneself first lets the Beast in." },
+          8: { mw: "Injury to another", r: "Accidental or not, there is still blood on your hands." },
+          7: { mw: "Theft", r: "Only an animal takes without thought." },
+          6: { mw: "Accidental violation of another", r: "Humanity is a shared condition." },
+          5: { mw: "Wanton destruction", r: "Are you a person or an animal?" },
+          4: { mw: "Impassioned violation of another", r: "Passion behind violence is the Beast." },
+          3: { mw: "Planned violation of another", r: "Rejecting the warmth of humanity." },
+          2: { mw: "Casual violation of another", r: "Even wild animals know better." },
+          1: { mw: "The most monstrous, vile acts", r: "Are you a person or a monster?" }
+        }
+      },
+      "The Road of Kings": {
+        altName: "Via Regalis",
+        aura: "Majesty",
+        virtues: { v1: "Conviction", v2: "Self-Control" },
+        hierarchyName: "Hierarchy of Sins Against Kingship",
+        ethics: ["- Command with authority and rule justly.", "- Do not submit to another without noble cause.", "- Honor your word and sworn oaths.", "- Duty to the crown supersedes personal desire."],
+        hierarchy: {
+          10: { mw: "Showing weakness in public", r: "A king must always appear steadfast." },
+          9: { mw: "Failing to punish a subordinate's transgression", r: "Law requires firm enforcement." },
+          8: { mw: "Treating a peer insolently", r: "Nobility demands mutual respect." },
+          7: { mw: "Breaking an oath", r: "A ruler's word is law." },
+          6: { mw: "Failing to protect subjects", r: "Rulership brings protection responsibilities." },
+          5: { mw: "Allowing personal passion to rule judgment", r: "Emotion clouds kingly authority." },
+          4: { mw: "Submitting to an inferior", r: "Upending natural hierarchy." },
+          3: { mw: "Cowardice in battle or court", r: "A king must lead from the front." },
+          2: { mw: "Refusing to rule when commanded", r: "Abdication is treason to Caine." },
+          1: { mw: "Failing to act like a king", r: "Accepting servitude willingly." }
+        }
+      },
+      "The Road of the Beast": {
+        altName: "Via Bestiae",
+        aura: "Ferocity",
+        virtues: { v1: "Conviction", v2: "Instinct" },
+        hierarchyName: "Hierarchy of Sins Against the Beast",
+        ethics: ["- The Beast is a natural part of vampirism.", "- Hunt when hungry, kill when threatened.", "- Do not torture or kill needlessly.", "- Live in harmony with your natural instincts."],
+        hierarchy: {
+          10: { mw: "Showing mercy out of guilt", r: "Guilt is a human weakness." },
+          9: { mw: "Failing to hunt when hungry", r: "Denying your predatory nature." },
+          8: { mw: "Killing without necessity", r: "A predator only kills for survival." },
+          7: { mw: "Refusing to fight for territory", r: "Animals defend their domain." },
+          6: { mw: "Allowing yourself to be caged or bound", r: "Freedom is the Beast's right." },
+          5: { mw: "Torturing prey", r: "Predators dispatch prey cleanly." },
+          4: { mw: "Submitting to another's Beast", r: "Dominance must be earned." },
+          3: { mw: "Failing to embrace your physical form", r: "Denying your undead physiology." },
+          2: { mw: "Living in artificial human luxury", r: "Softness dulls the predator's edge." },
+          1: { mw: "Refusing to hunt or feed", r: "Starving the Beast." }
+        }
+      },
+      "The Road of Paradox": {
+        altName: "Via Paradoxi",
+        aura: "Confidence",
+        virtues: { v1: "Conviction", v2: "Self-Control" },
+        hierarchyName: "Hierarchy of Sins Against Paradox",
+        ethics: ["- Follow the svadharma set before you.", "- Assist others to determine and follow their svadharma.", "- Destroy those who refuse to follow their true path."],
+        hierarchy: {
+          10: { mw: "Failing to accept death", r: "Your duty is temporary before returning to samsara." },
+          9: { mw: "Embracing outside the jati", r: "Only Embrace those who follow the Road." },
+          8: { mw: "Destroying another Asura", r: "Fellows on this Road have their own svadharma." },
+          7: { mw: "Killing a mortal for sustenance", r: "Death prevents fulfilling their svadharma." },
+          6: { mw: "Failing to kill vampires on another Road", r: "Vampires must accept true atonement." },
+          5: { mw: "Allowing personal affairs to interfere", r: "Duty supersedes personal desires." },
+          4: { mw: "Failure to aid another’s svadharma", r: "Assisting others is your sacred goal." },
+          3: { mw: "Killing a mortal for non-survival reasons", r: "Preventing cosmic cycles." },
+          2: { mw: "Becoming blood bound", r: "Prevents following your true svadharma." },
+          1: { mw: "Embracing needlessly out of desire", r: "Removing others from their cycle." }
+        }
+      },
+      "The Path of Apep": {
+        altName: "Via Serpentis",
+        aura: "Chaos / Gratification",
+        virtues: { v1: "Conviction", v2: "Instinct" },
+        hierarchyName: "Hierarchy of Sins Against Apep",
+        ethics: ["- Embrace chaos and destruction.", "- Pursue instant, carnal gratification.", "- Undermine structures of authority."],
+        hierarchy: {
+          10: { mw: "Failing to indulge in pleasurable acts", r: "Chaos and pleasure give us strength." },
+          9: { mw: "Delaying carnal gratification", r: "Denial is a denial of self." },
+          8: { mw: "Refusing an opportunity to corrupt a mortal", r: "Order keeps mortals weak." },
+          7: { mw: "Refusing an opportunity to corrupt a vampire", r: "Spread Apep's gift." },
+          6: { mw: "Refusing an opportunity to corrupt a holy figure", r: "Spiritual order must fall." },
+          5: { mw: "Failing to undermine mortal society", r: "Stagnation breeds weakness." },
+          4: { mw: "Failing to undermine Cainite hierarchies", r: "Strife helps us find strength." },
+          3: { mw: "Placing another’s wishes above your own", r: "Civilization is a lie." },
+          2: { mw: "Punishing an individual for indecent behavior", r: "Freedom is true power." },
+          1: { mw: "Actively enforcing the rule of law", r: "Order is the enemy of chaos." }
+        }
+      }
+    };
+
+    // Discipline Database
+    const disciplineDatabase = {
+      "Animalism": [
+        { level: 1, name: "Feral Speech", desc: "Commune telepathically or vocally with beasts.", sys: "Roll Manipulation + Animal Ken (diff 6)." },
+        { level: 2, name: "Beckoning", desc: "Summon animals of a specific species.", sys: "Roll Charisma + Survival (diff 6)." },
+        { level: 3, name: "Quell the Beast", desc: "Soothe an animal or mortal, or strip a vampire of Willpower/frenzy.", sys: "Roll Manipulation + Intimidation (diff 7)." },
+        { level: 4, name: "Subsume the Spirit", desc: "Possess an animal's body directly.", sys: "Roll Manipulation + Animal Ken (diff 7)." },
+        { level: 5, name: "Drawing Out the Beast", desc: "Transfer your frenzy into another creature.", sys: "Roll Manipulation + Self-Control/Instinct (diff 8)." }
+      ],
+      "Auspex": [
+        { level: 1, name: "Heightened Senses", desc: "Sharpen all physical senses twofold.", sys: "Perception rolls benefit from difficulty reduction." },
+        { level: 2, name: "Aura Sight", desc: "Perceive the emotional aura surrounding targets.", sys: "Roll Perception + Empathy (diff 8)." },
+        { level: 3, name: "The Touch's Spirit", desc: "Read psychic impressions left on inanimate objects.", sys: "Roll Perception + Empathy (diff 5-8)." },
+        { level: 4, name: "Telepathy", desc: "Read minds and project thoughts into others.", sys: "Roll Perception + Subterfuge vs target Willpower." },
+        { level: 5, name: "Psychic Projection", desc: "Project your soul out of your body into astral form.", sys: "Spend 1 Willpower, roll Perception + Occult (diff 7)." }
+      ],
+      "Celerity": [
+        { level: 1, name: "Celerity 1", desc: "Spend 1 Blood Point for 1 extra physical action during the turn.", sys: "Spend 1 Blood Point per extra action." },
+        { level: 2, name: "Celerity 2", desc: "Spend 1 Blood Point for 2 extra physical actions.", sys: "Spend 1 Blood Point per turn." },
+        { level: 3, name: "Celerity 3", desc: "Spend 1 Blood Point for 3 extra physical actions.", sys: "Spend 1 Blood Point per turn." },
+        { level: 4, name: "Celerity 4", desc: "Spend 1 Blood Point for 4 extra physical actions.", sys: "Spend 1 Blood Point per turn." },
+        { level: 5, name: "Celerity 5", desc: "Spend 1 Blood Point for 5 extra physical actions.", sys: "Spend 1 Blood Point per turn." }
+      ],
+      "Chimerstry": [
+        { level: 1, name: "Ignis Fatuus", desc: "Create static illusions affecting one sense.", sys: "Spend 1 Willpower, roll Perception + Subterfuge (diff 6)." },
+        { level: 2, name: "Fata Morgana", desc: "Create illusions affecting all physical senses.", sys: "Spend 1 Willpower + 1 Blood Point." },
+        { level: 3, name: "Apparition", desc: "Imbue illusions with motion and movement.", sys: "Spend 1 Blood Point, roll Perception + Subterfuge." },
+        { level: 4, name: "Permanency", desc: "Make created illusions persist indefinitely.", sys: "Spend 1 Blood Point." },
+        { level: 5, name: "Horrid Reality", desc: "Create lethal illusions that inflict actual physical harm on target's mind.", sys: "Spend 1 Willpower, roll Manipulation + Subterfuge vs target Willpower." },
+        { level: 6, name: "Mass Reality", desc: "Project Horrid Reality illusions to affect multiple targets simultaneously.", sys: "Spend 2 Willpower Points, roll Manipulation + Subterfuge (diff 7)." }
+      ],
+      "Dementation": [
+        { level: 1, name: "Passion", desc: "Stir up or suppress a victim's emotions.", sys: "Roll Charisma + Empathy vs target Willpower." },
+        { level: 2, name: "The Haunting", desc: "Project terrifying sensory visions into target's mind.", sys: "Roll Manipulation + Subterfuge (diff target Wits + Alertness)." },
+        { level: 3, name: "Eyes of Chaos", desc: "Divine secret patterns and hidden truths in madness.", sys: "Roll Perception + Scrutiny/Occult (diff 7)." },
+        { level: 4, name: "Voice of Madness", desc: "Drive surrounding targets into instant frenzy.", sys: "Spend 1 Blood, roll Manipulation + Empathy (diff 7)." },
+        { level: 5, name: "Total Insanity", desc: "Inflict multiple severe derangements on a single victim.", sys: "Roll Manipulation + Intimidation vs target Willpower." }
+      ],
+      "Dominate": [
+        { level: 1, name: "Command", desc: "Issue a one-word command that must be obeyed.", sys: "Roll Manipulation + Intimidation vs target Willpower." },
+        { level: 2, name: "Mesmerize", desc: "Plant complex hypnotic suggestions in target's mind.", sys: "Roll Manipulation + Leadership vs target Willpower." },
+        { level: 3, name: "Forgetful Mind", desc: "Rewrite or erase target's memories.", sys: "Roll Wits + Subterfuge vs target Willpower." },
+        { level: 4, name: "Conditioning", desc: "Enslave target mind to obey only your commands indefinitely.", sys: "Extended Charisma + Leadership roll." },
+        { level: 5, name: "Possession", desc: "Take total physical control of a mortal body.", sys: "Roll Charisma + Intimidation vs target Willpower." }
+      ],
+      "Fortitude": [
+        { level: 1, name: "Fortitude 1", desc: "Adds automatic dice to soak all forms of damage, including aggravated.", sys: "Adds +1 die to soak pool." },
+        { level: 2, name: "Fortitude 2", desc: "Adds automatic dice to soak all forms of damage.", sys: "Adds +2 dice to soak pool." },
+        { level: 3, name: "Fortitude 3", desc: "Adds automatic dice to soak all forms of damage.", sys: "Adds +3 dice to soak pool." },
+        { level: 4, name: "Fortitude 4", desc: "Adds automatic dice to soak all forms of damage.", sys: "Adds +4 dice to soak pool." },
+        { level: 5, name: "Fortitude 5", desc: "Adds automatic dice to soak all forms of damage.", sys: "Adds +5 dice to soak pool." }
+      ],
+      "Obfuscate": [
+        { level: 1, name: "Cloak of Shadows", desc: "Conceal self in shadows while remaining completely stationary.", sys: "Automatic success while unobserved and still." },
+        { level: 2, name: "Unseen Presence", desc: "Move invisibly through crowds and rooms without detection.", sys: "Passively active unless drawing attention to self." },
+        { level: 3, name: "Mask of a Thousand Faces", desc: "Project an illusionary face and appearance onto yourself.", sys: "Roll Manipulation + Performance (diff 7)." },
+        { level: 4, name: "Vanish from the Mind's Eye", desc: "Disappear from plain sight in front of active onlookers.", sys: "Roll Charisma + Stealth vs highest target Perception + Alertness." },
+        { level: 5, name: "Cloak the Gathering", desc: "Extend Obfuscate powers to cover companions near you.", sys: "Affects 1 additional person per success." }
+      ],
+      "Obtenebration": [
+        { level: 1, name: "Shadow Play", desc: "Manipulate darkness and shadows to distort sight and light.", sys: "Spend 1 Blood Point, roll Manipulation + Occult (diff 6)." },
+        { level: 2, name: "Shroud of Night", desc: "Summon an opaque cloud of pitch-black abyss shadow.", sys: "Roll Manipulation + Occult (diff 7)." },
+        { level: 3, name: "Arms of the Abyss", desc: "Grow writhing shadow tentacles from walls/floors to grapple foes.", sys: "Spend 1 Blood Point, roll Manipulation + Occult (diff 7)." },
+        { level: 4, name: "Black Metamorphosis", desc: "Merge body with shadow form, growing tentacles and darkness features.", sys: "Spend 2 Blood Points, roll Attribute + Occult." },
+        { level: 5, name: "Tenebrous Form", desc: "Transform physically into a fluid, living shadow patch.", sys: "Spend 3 Blood Points." }
+      ],
+      "Potence": [
+        { level: 1, name: "Potence 1", desc: "Adds automatic successes to Strength rolls and damage.", sys: "Adds +1 automatic success." },
+        { level: 2, name: "Potence 2", desc: "Adds automatic successes to Strength rolls and damage.", sys: "Adds +2 automatic successes." },
+        { level: 3, name: "Potence 3", desc: "Adds automatic successes to Strength rolls and damage.", sys: "Adds +3 automatic successes." },
+        { level: 4, name: "Potence 4", desc: "Adds automatic successes to Strength rolls and damage.", sys: "Adds +4 automatic successes." },
+        { level: 5, name: "Potence 5", desc: "Adds automatic successes to Strength rolls and damage.", sys: "Adds +5 automatic successes." }
+      ],
+      "Presence": [
+        { level: 1, name: "Awe", desc: "Attract and mesmerize everyone in your vicinity.", sys: "Roll Charisma + Performance (diff 7)." },
+        { level: 2, name: "Dread Gaze", desc: "Expose your vampiric horror to paralyze target in terror.", sys: "Roll Charisma + Intimidation vs target Courage." },
+        { level: 3, name: "Entrancement", desc: "Inspire passionate devotion and loyalty in a target.", sys: "Roll Appearance + Subterfuge vs target Willpower." },
+        { level: 4, name: "Summon", desc: "Call a target you have met to travel to your location immediately.", sys: "Roll Charisma + Leadership vs target Willpower." },
+        { level: 5, name: "Majesty", desc: "Project an aura of divine majesty preventing anyone from attacking you.", sys: "Target must spend Willpower and roll Courage (diff 8) to act against you." }
+      ],
+      "Protean": [
+        { level: 1, name: "Gleam of the Red Eyes", desc: "Grant night vision and glowing red eyes.", sys: "Free action. Perception rolls in dark suffer no penalty." },
+        { level: 2, name: "Feral Claws", desc: "Grow razor-sharp claws dealing aggravated damage.", sys: "Spend 1 Blood Point. Claws deal Strength + 1 aggravated damage." },
+        { level: 3, name: "Earth Meld", desc: "Blend into living soil to sleep safely through the day.", sys: "Spend 1 Blood Point. Burrows beneath bare earth." },
+        { level: 4, name: "Shadow of the Beast", desc: "Shapechange into a wolf or bat.", sys: "Spend 1 Blood Point." },
+        { level: 5, name: "Mist Form", desc: "Transform physically into a swirling cloud of red mist.", sys: "Spend 1 Blood Point." }
+      ],
+      "Serpentis": [
+        { level: 1, name: "Eyes of the Serpent", desc: "Paralyze a victim with your hypnotic serpentine gaze.", sys: "Roll Manipulation + Subterfuge vs target Willpower." },
+        { level: 2, name: "Tongue of the Asp", desc: "Extend a long split tongue to bite and siphon blood.", sys: "Spend 1 Blood Point. Tongue deals lethal damage and siphons vitae." },
+        { level: 3, name: "Skin of the Adder", desc: "Mottles skin into scaly reptile armor, boosting defense.", sys: "Spend 1 Blood Point. Boosts soak and flexibility." },
+        { level: 4, name: "Form of the Cobra", desc: "Transform physically into a giant cobra monster.", sys: "Spend 1 Blood Point." },
+        { level: 5, name: "Heart of Darkness", desc: "Remove your heart and hide it in a jar to become immune to staking.", sys: "Requires ritual ceremony." }
+      ],
+      "Thaumaturgy": [
+        { level: "Sorcery", name: "Blood Magic Discipline", desc: "Enables casting Hermetic blood magic paths and rituals.", sys: "Requires Willpower roll vs Path Power Level + 3." }
+      ],
+      "Necromancy": [
+        { level: "Sorcery", name: "Death Magic Discipline", desc: "Enables communicating with, controlling, and raising the dead.", sys: "Standard Necromancy activation rolls." }
+      ],
+      "Dur-An-Ki": [
+        { level: "Sorcery", name: "Middle Eastern Blood Sorcery", desc: "Enables casting ancient Persian and Mesopotamian blood spells.", sys: "Requires Willpower or Attribute + Occult rolls." }
+      ],
+      "Koldunic Sorcery": [
+        { level: "Sorcery", name: "Carpathian Elemental Magic", desc: "Channels elemental krainas and spirits of the soil/water.", sys: "Requires Raw Attribute + Occult rolls." }
+      ]
+    };
+    
     /* Safe database fallbacks to eliminate ReferenceError crashes */
     const safeDisciplineDB = (typeof disciplineDatabase !== 'undefined') ? disciplineDatabase : {};
     const safeClanDB = (typeof clanDatabase !== 'undefined') ? clanDatabase : {};
@@ -2738,7 +3000,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
       activeDisciplines.sort((a, b) => a.name.localeCompare(b.name));
 
       activeDisciplines.forEach(item => {
-        const entry = safeDisciplineDB[item.name];
+        const entry = disciplineDatabase[item.name];
         if (!entry) return;
 
         const isCollapsed = !!collapsedDisciplines[item.name];
@@ -3536,7 +3798,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
       }
 
       if (val) {
-        const entry = safeClanDB[val];
+        const entry = clanDatabase[val];
         if (entry) {
           const weaknessTxt = document.getElementById('clan-weakness');
           if (weaknessTxt) {
@@ -3544,6 +3806,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
           }
           const list = document.getElementById('disciplines-list');
           if (list && entry.disciplines) {
+            list.innerHTML = '';
             entry.disciplines.forEach(discName => {
               addDynamicRow('disciplines-list', 'discipline', discName, 0);
             });
@@ -3588,7 +3851,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
       }
 
       if (val) {
-        const entry = safeArchetypesDB[val];
+        const entry = archetypesDatabase[val];
         if (entry) {
           if (notesLeft) {
             notesLeft.value = entry.willpower || '';
@@ -3632,7 +3895,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
       }
 
       if (val) {
-        const entry = safeArchetypesDB[val];
+        const entry = archetypesDatabase[val];
         if (entry) {
           if (notesRight) {
             notesRight.value = entry.description || '';
@@ -3695,8 +3958,8 @@ Nothing in this agreement limits our liability to you in the event of death or p
         if (ratEl) ratEl.value = '';
       }
 
-      if (selectedVal && safeRoadsDB[selectedVal]) {
-        const data = safeRoadsDB[selectedVal];
+      if (selectedVal && roadsDatabase[selectedVal]) {
+        const data = roadsDatabase[selectedVal];
 
         if (altNameEl) altNameEl.value = data.altName || '';
         if (ethicsEl) ethicsEl.value = data.ethics ? data.ethics.join('\n') : '';
