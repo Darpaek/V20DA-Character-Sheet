@@ -49,13 +49,13 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 180px; /* Increased header height by 150% */
+      height: 180px;
     }
 
     header img.header-logo {
       height: 100%;
       width: auto;
-      object-fit: contain; /* Fits image height while preserving aspect ratio */
+      object-fit: contain;
     }
 
     /* Views */
@@ -504,7 +504,7 @@
       font-size: 0.9rem;
       padding: 8px;
       resize: vertical;
-      min-height: 60px; /* Reduced to 3 lines height */
+      min-height: 60px;
       color: var(--text-dark);
     }
 
@@ -567,7 +567,7 @@
       background: rgba(255,255,255,0.3);
     }
 
-    /* Dropdown customization for perfect readability */
+    /* Dropdown customization */
     .discipline-select-container select option,
     .background-select-container select option,
     .path-select-container select option,
@@ -701,15 +701,12 @@
       color: #ffffff;
     }
 
-    /* Uniform compact font for all text boxes on screen */
     textarea {
       font-size: 0.82rem !important;
       line-height: 1.3 !important;
     }
 
-    /* ==========================================
-       READ-ONLY (VIEW MODE) STYLES
-       ========================================== */
+    /* READ-ONLY STYLES */
     .view-only input,
     .view-only select,
     .view-only textarea {
@@ -744,17 +741,13 @@
       display: none !important;
     }
 
-/* ==========================================
-       PRINTABILITY STYLESHEET
-       ========================================== */
-    /* Class applied temporarily during print prep so JS measures scrollHeight using print font sizes */
+    /* PRINT STYLES */
     body.print-mode textarea {
       font-size: 0.8rem !important;
       line-height: 1.3 !important;
       overflow: hidden !important;
     }
 
-    /* Targeted compact print formatting for dense Custom Path text boxes */
     body.print-mode .custom-path-desc,
     body.print-mode .custom-path-powers {
       font-size: 0.78rem !important;
@@ -762,7 +755,6 @@
     }
 
     @media print {
-      /* 1. Hide interface controls & interactive overlays */
       header,
       .dashboard-footer,
       .sheet-header-nav,
@@ -787,7 +779,6 @@
         display: none !important;
       }
 
-      /* Hide interactive chevron arrows inside card headers */
       #dynamic-grimoire-disciplines span,
       #dynamic-grimoire-paths span,
       #dynamic-page4-backgrounds span {
@@ -798,10 +789,9 @@
       .custom-path-powers {
         font-size: 0.78rem !important;
         line-height: 1.28 !important;
-        box-sizing: content-box !important; /* Prevents border padding from eating inner height */
+        box-sizing: content-box !important;
       }
 
-      /* 2. Page & Margin setup */
       @page {
         size: A4 portrait;
         margin: 15mm 12mm 15mm 12mm;
@@ -832,7 +822,6 @@
         color: #000000 !important;
       }
 
-      /* 3. Show all 5 tabs concurrently */
       .view {
         display: block !important;
       }
@@ -851,7 +840,6 @@
         margin-bottom: 20px !important;
       }
 
-      /* Force Tabs 2-5 to start cleanly on a fresh printed page */
       #tab-page-2,
       #tab-page-3,
       #tab-page-4,
@@ -861,7 +849,6 @@
         padding-top: 10px !important;
       }
 
-      /* 4. Prevent elements from being cut in half across pages */
       .trait,
       .info-group,
       .char-card,
@@ -887,7 +874,6 @@
         page-break-inside: avoid !important;
       }
 
-      /* 5. Text Field, Input & Dynamic Textarea Formatting */
       input[type="text"],
       input[type="number"],
       select {
@@ -904,7 +890,7 @@
         display: block !important;
         width: 100% !important;
         box-sizing: border-box !important;
-        overflow: hidden !important; /* Eliminates all print scrollbars */
+        overflow: hidden !important;
         resize: none !important;
         background: transparent !important;
         border: 1px solid #8c7e6e !important;
@@ -916,7 +902,6 @@
         line-height: 1.3 !important;
       }
 
-      /* 6. Preserve Dot Ratings and Checkboxes */
       .dot {
         border: 1px solid #7c0b0b !important;
         -webkit-print-color-adjust: exact !important;
@@ -935,7 +920,6 @@
         accent-color: #7c0b0b !important;
       }
     }
-    
   </style>
 </head>
 <body>
@@ -1174,7 +1158,6 @@
             <div class="info-group"><label>Chronicle</label><input type="text" id="char-chronicle" oninput="queueAutoSave()"></div>
           </div>
 
-          <!-- Two side-by-side empty notes boxes with neat vertical whitespace -->
           <div class="two-col-grid" style="margin-top: 10px; margin-bottom: 25px; gap: 20px;">
             <div class="column">
               <textarea id="meta-notes-left" rows="3" style="width: 100%; box-sizing: border-box; font-family: inherit; font-size: 0.9rem; padding: 6px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-color); resize: vertical;" oninput="queueAutoSave()"></textarea>
@@ -1209,7 +1192,6 @@
           <h2>Abilities</h2>
           <div class="three-col-grid">
             <div class="column">
-              <!-- Right-aligned + Add button on talents header -->
               <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 3px; margin-bottom: 10px;">
                 <span style="text-transform: uppercase; letter-spacing: 1px; color: var(--accent-red); font-size: 0.95rem; font-weight: bold;">Talents</span>
                 <button type="button" class="btn btn-secondary btn-small" onclick="addCustomAbilityRow('custom-talents-list', 'talent'); return false;">+ Add</button>
@@ -1225,16 +1207,13 @@
               <div class="trait" data-id="legerdemain" data-min="0" data-max="6" data-default="0"><label>Legerdemain</label><div class="dots-container"></div></div>
               <div class="trait" data-id="subterfuge" data-min="0" data-max="6" data-default="0"><label>Subterfuge</label><div class="dots-container"></div></div>
               
-              <!-- Custom Abilities placeholder -->
               <div id="custom-talents-list"></div>
 
-              <!-- Specialties subheader & text box -->
               <div style="text-align: center; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; color: #5a5045; margin-top: 15px; margin-bottom: 4px;">Specialties</div>
               <textarea id="specialties-talents" rows="3" style="width: 100%; box-sizing: border-box; font-family: inherit; font-size: 0.9rem; padding: 6px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-color); resize: vertical; margin-bottom: 15px;" oninput="queueAutoSave()"></textarea>
             </div>
             
             <div class="column">
-              <!-- Right-aligned + Add button on skills header -->
               <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 3px; margin-bottom: 10px;">
                 <span style="text-transform: uppercase; letter-spacing: 1px; color: var(--accent-red); font-size: 0.95rem; font-weight: bold;">Skills</span>
                 <button type="button" class="btn btn-secondary btn-small" onclick="addCustomAbilityRow('custom-skills-list', 'skill'); return false;">+ Add</button>
@@ -1250,16 +1229,13 @@
               <div class="trait" data-id="stealth" data-min="0" data-max="6" data-default="0"><label>Stealth</label><div class="dots-container"></div></div>
               <div class="trait" data-id="survival" data-min="0" data-max="6" data-default="0"><label>Survival</label><div class="dots-container"></div></div>
               
-              <!-- Custom Abilities placeholder -->
               <div id="custom-skills-list"></div>
 
-              <!-- Specialties subheader & text box -->
               <div style="text-align: center; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; color: #5a5045; margin-top: 15px; margin-bottom: 4px;">Specialties</div>
               <textarea id="specialties-skills" rows="3" style="width: 100%; box-sizing: border-box; font-family: inherit; font-size: 0.9rem; padding: 6px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-color); resize: vertical; margin-bottom: 15px;" oninput="queueAutoSave()"></textarea>
             </div>
             
             <div class="column">
-              <!-- Right-aligned + Add button on knowledges header -->
               <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 3px; margin-bottom: 10px;">
                 <span style="text-transform: uppercase; letter-spacing: 1px; color: var(--accent-red); font-size: 0.95rem; font-weight: bold;">Knowledges</span>
                 <button type="button" class="btn btn-secondary btn-small" onclick="addCustomAbilityRow('custom-knowledges-list', 'knowledge'); return false;">+ Add</button>
@@ -1275,10 +1251,8 @@
               <div class="trait" data-id="seneschal" data-min="0" data-max="6" data-default="0"><label>Seneschal</label><div class="dots-container"></div></div>
               <div class="trait" data-id="theology" data-min="0" data-max="6" data-default="0"><label>Theology</label><div class="dots-container"></div></div>
               
-              <!-- Custom Abilities placeholder -->
               <div id="custom-knowledges-list"></div>
 
-              <!-- Specialties subheader & text box -->
               <div style="text-align: center; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; color: #5a5045; margin-top: 15px; margin-bottom: 4px;">Specialties</div>
               <textarea id="specialties-knowledges" rows="3" style="width: 100%; box-sizing: border-box; font-family: inherit; font-size: 0.9rem; padding: 6px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-color); resize: vertical; margin-bottom: 15px;" oninput="queueAutoSave()"></textarea>
             </div>
@@ -1427,19 +1401,16 @@
           <!-- Road of Enlightenment Section -->
           <h2>Road of Enlightenment</h2>
           <div class="road-enlightenment-grid">
-            <!-- Row 1: Column 1 Alternative Name -->
             <div class="text-area-group" style="margin-top: 0;">
               <label>Alternative Name</label>
               <textarea id="road-alt-name" rows="1" style="resize: none; height: 1.8rem; min-height: 1.8rem; line-height: 1.2; padding: 3px 8px; box-sizing: border-box;" oninput="queueAutoSave()"></textarea>
             </div>
 
-            <!-- Row 1: Columns 2-4 Spanning Text Box -->
             <div class="text-area-group" style="margin-top: 0; grid-column: 2 / 5;">
               <label style="visibility: hidden;">&nbsp;</label>
               <textarea id="road-alt-name-extra" rows="1" style="resize: none; height: 1.8rem; min-height: 1.8rem; line-height: 1.2; padding: 3px 8px; box-sizing: border-box;" oninput="queueAutoSave()"></textarea>
             </div>
 
-            <!-- Row 2: Column 1 Ethics -->
             <div class="column">
               <div class="text-area-group" style="margin-top: 0;">
                 <label>Ethics</label>
@@ -1447,7 +1418,6 @@
               </div>
             </div>
 
-            <!-- Row 2: Column 2 (Rating 10-1) -->
             <div class="column" style="display: flex; flex-direction: column;">
               <div class="text-area-group" style="margin-top: 0;">
                 <label style="visibility: hidden;">&nbsp;</label>
@@ -1464,7 +1434,6 @@
               </div>
             </div>
 
-            <!-- Row 2: Column 3 Minimum Wrongdoing -->
             <div class="column" style="display: flex; flex-direction: column;">
               <div class="text-area-group" style="margin-top: 0;">
                 <label>Minimum Wrongdoing</label>
@@ -1481,7 +1450,6 @@
               </div>
             </div>
 
-            <!-- Row 2: Column 4 Rationale -->
             <div class="column" style="display: flex; flex-direction: column;">
               <div class="text-area-group" style="margin-top: 0;">
                 <label>Rationale</label>
@@ -1504,12 +1472,9 @@
         <div id="tab-page-2" class="tab-content">
           <h2>Grimoire Ledger</h2>
           
-          <!-- Dynamic Discipline Descriptions Matched from Page 1 -->
           <div id="dynamic-grimoire-disciplines" style="margin-bottom: 25px; border-bottom: 2px solid var(--border-color); padding-bottom: 20px; color: var(--text-dark);">
-            <!-- Populated via JS -->
           </div>
 
-          <!-- Parent Discipline Filter Buttons Left-Aligned to Paths of Sorcery Column -->
           <div id="parent-discipline-filters" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; align-self: flex-start;">
             <button type="button" class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Thaumaturgy')">Thaumaturgy</button>
             <button type="button" class="btn btn-secondary btn-small path-filter-btn" onclick="setParentFilter(this, 'Necromancy')">Necromancy</button>
@@ -1528,9 +1493,7 @@
               </div>
               <button type="button" class="btn btn-secondary btn-small" style="width: 100%; box-sizing: border-box;" onclick="addPathRow('paths-list')">+ Add Path</button>
 
-              <!-- Dynamic Path Cards Container (Confined to Column 1) -->
               <div id="dynamic-grimoire-paths" style="margin-top: 15px; width: 100%; box-sizing: border-box;">
-                <!-- Populated via JS -->
               </div>
             </div>
 
@@ -1640,12 +1603,10 @@
             <div class="text-area-group"><label>Description</label><textarea id="haven-desc" oninput="queueAutoSave()"></textarea></div>
           </div>
 
-          <!-- Bottom divider on page 4 with exact whitespace specifications -->
           <div style="border-bottom: 1px solid var(--border-color); margin-top: 35px; margin-bottom: 35px; width: 100%;"></div>
 
           <h2>Background Ledger</h2>
           <div id="dynamic-page4-backgrounds" class="two-col-grid" style="margin-top: 15px; color: var(--text-dark);">
-            <!-- Populated via JS -->
           </div>
         </div>
 
@@ -1684,7 +1645,6 @@
                   </div>
                 </div>
 
-                <!-- 2:3 Portrait Wrapper with Description Overlay capability -->
                 <div id="image-container" style="position: relative; width: 100%; aspect-ratio: 2/3; max-width: 320px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.4); overflow: hidden;">
                   <textarea id="vis-sketch" style="width: 100%; height: 100%; border: none; background: transparent; resize: none; font-family: inherit; font-size: 0.9rem; padding: 8px; box-sizing: border-box; color: var(--text-dark);" placeholder="Physical description notes..." oninput="queueAutoSave()"></textarea>
                   <img id="vis-image-preview" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; pointer-events: none;" alt="Portrait" onerror="this.style.display='none'; const dBtn = document.getElementById('vis-image-delete'); if(dBtn) dBtn.style.display='none';">
@@ -1750,25 +1710,18 @@ Nothing in this agreement limits our liability to you in the event of death or p
   </div>
 
   <script>
-    /*
-      ================================================================================
-      GOOGLE SHEETS SYNC SYSTEM (Deploy as web app using code below)
-      ================================================================================
-      Replace the API_URL below with your deployed Google Web App URL.
-      If left as "YOUR_DEPLOYED_URL_HERE", the app falls back entirely to LocalStorage.
-    */
     const API_URL = "https://script.google.com/macros/s/AKfycbzn-bldp7w3K8eA45RDxhiarndN4TQaw2_NY5MzkTLDQ-mD0KInj2eSG9at-yvyZPc4Fg/exec";
 
     let activeCharacterId = null;
     let saveTimeout = null;
     let dynamicRowId = 0;
-    let isLoadingSheet = false; // Flag to prevent auto-saves while sheet DOM is initializing
-    let activeParentFilter = null; // Filter state for Paths of Sorcery
-    window.activeImageName = ''; // Track uploaded image filename
-    let isUploadingImage = false; // Lock flag to prevent duplicate uploads
-    const collapsedDisciplines = {}; // Persistent Grimoire minimizes
-    const collapsedBackgrounds = {};  // Persistent Page 4 Background minimizes
-    const collapsedPaths = {};        // Persistent Path Card minimizes
+    let isLoadingSheet = false;
+    let activeParentFilter = null;
+    window.activeImageName = '';
+    let isUploadingImage = false;
+    const collapsedDisciplines = {};
+    const collapsedBackgrounds = {};
+    const collapsedPaths = {};
 
     // Complete Database of Blood Sorcery Paths
     const pathsDatabase = {
@@ -2382,7 +2335,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
     // Official Sourcebook Backgrounds Database
     const backgroundsDatabase = {
       "Allies": {
-        description: "Allies are mortals who support you willingly, without coercion. They are not always available to offer assistance; they have their own concerns as well, but they could provide indirect access to their own Backgrounds such as Contacts, Influence, or Resources. However, nothing is free. If you draw on favors from your friends, they may ask for a favor in return. Allies dots may be pooled among a coterie of characters.",
+        description: "Allies are mortals who support you willingly, without coercion. They are not always available to offer assistance; they have their own concerns as well, but they could provide indirect access to their own Backgrounds such as Contacts, Influence, or Resources.",
         dots: [
           "• One ally of moderate influence and power",
           "•• Two allies, both of moderate power",
@@ -2392,47 +2345,17 @@ Nothing in this agreement limits our liability to you in the event of death or p
         ]
       },
       "Alternate Identity": {
-        description: "You maintain a complete alternate identity including proper documentation. In this day and age, that meant business records, church records, and perhaps legal documents. Every region had its own bureaucracies.",
+        description: "You maintain a complete alternate identity including proper documentation.",
         dots: [
-          "• You are new at this identity game. Sometimes you slip and forget your other persona.",
-          "•• You are firmly grounded in your alternate identity. You are convincing enough to play the part of a doctor, priest, noble, diplomat, or other privileged position.",
-          "••• You have a fair reputation as your alternate persona and get name recognition in the area where you have infiltrated.",
-          "•••• Your alternate identity has respect and trust within your area of infiltration.",
-          "••••• You command respect in your area of infiltration, and you may even have accumulated a bit of influence. You have the trust (or at least the recognition) of many powerful individuals within your area."
-        ]
-      },
-      "Arcane Library": {
-        description: "(Source: Hunters Hunted II) Vampires often devote their entire unlives to research, and build up tremendous libraries over the course of their careers; those who live near locations with long established and well-developed libraries do even better. Vampires who have to research a particular Blood Magic fact in libraries have the difficulty number of research rolls reduced by this Background. Players may opt to pool Background points for a shared library.",
-        dots: [
-          "• Blood magic cast in the library difficulty is reduced by 1.",
-          "•• Blood magic cast in the library difficulty is reduced by 2.",
-          "••• Blood magic cast in the library difficulty is reduced by 3.",
-          "•••• Blood magic cast in the library difficulty is reduced by 4.",
-          "••••• Blood magic cast in the library difficulty is reduced by 5."
-        ]
-      },
-      "Artifact": {
-        description: "(Source: Hunters Hunted II) Artifacts are items strong in supernatural potency. This Background allows you to begin play with such an artifact in your possession. Either it was a family heirloom, or a mentor bequeathed it to you, or you stole it. The Storyteller should create something suitable for you based on the dots in this Background. Talk about what you want with the Storyteller. Truly legendary artifacts (such as Roland’s sword Durandal, or the chalice of Kai Khusrau) are objects of great quests and cannot be purchased with this Trait. Some examples of potential artifacts are presented on p. 157 of Hunters Hunted II. Players may opt to pool Background points for a shared artifact.",
-        dots: [
-          "• A minor artifact.",
-          "•• A useful artifact.",
-          "••• An artifact of significant power.",
-          "•••• A much-sought artifact.",
-          "••••• An artifact of incredible power."
-        ]
-      },
-      "Blasphemous Shrine": {
-        description: "(Source: Rites of Blood) As discussed above, Lector Priests must have desecrated the corpse of someone buried according to traditional ancient Egyptian practice. These corpses are kept as offerings to Set and are the means by which these sorcerers channel his power into the world. As such, they are usually placed in shrines dedicated to Set and adorned with his iconography. Within this Blasphemous Shrine, the Lector Priest can perform powerful Akhu rituals, amplified by the proximity to the source of their power. The more dots in the background, the greater the connection the desecrated corpse has to Set. Mechanically, this background grants a number of bonus dice to the casting of Akhu rituals equal to the number points in Blasphemous Shrine. However, this only applies to rituals cast in the shrine itself. As an optional rule, a Storyteller may insist that a Lector Priest has to have at least one dot of Blasphemous Shrine to represent the desecrated corpse offering to Set, without which they cannot cast Akhu.",
-        dots: [
-          "• +1 Die to Akhu rituals cast in the shrine.",
-          "•• +2 Dice to Akhu rituals cast in the shrine.",
-          "••• +3 Dice to Akhu rituals cast in the shrine.",
-          "•••• +4 Dice to Akhu rituals cast in the shrine.",
-          "••••• +5 Dice to Akhu rituals cast in the shrine."
+          "• You are new at this identity game.",
+          "•• You are firmly grounded in your alternate identity.",
+          "••• You have a fair reputation as your alternate persona.",
+          "•••• Your alternate identity has respect and trust.",
+          "••••• You command respect in your area of infiltration."
         ]
       },
       "Contacts": {
-        description: "Contacts are people you can manipulate or coerce into offering information. Minor contacts are spread throughout the city. Roll your Contacts rating (difficulty 7) and reach one minor contact for each success. However, you still have to convince them to give you the information. Major contacts can give you accurate information in their fields of expertise and each should be described in detail before the game begins.",
+        description: "Contacts are people you can manipulate or coerce into offering information.",
         dots: [
           "• One major contact",
           "•• Two major contacts",
@@ -2441,48 +2364,38 @@ Nothing in this agreement limits our liability to you in the event of death or p
           "••••• Five major contacts"
         ]
       },
-      "Cult": {
-        description: "(Source: Ashen Cults.) You have control of a cult. You may have founded it yourself or usurped it from another. A cult offers different advantages, depending on its makeup, its structure, and what resources it can call upon. This Background give you cult points that allow you to design your own cult, with the Storyteller's approval. Storytellers not using the optional point system for cult creation can simply base the cult's overall usefulness and loyalty on the character's rating in the Background, using the point system as a guideline. Cult traits can be found on page 73 of Ashen Cults.",
-        dots: [
-          "• You have 1 cult point to spend.",
-          "•• You have 2 cult points to spend.",
-          "••• You have 3 cult points to spend.",
-          "•••• You have 4 cult points to spend.",
-          "••••• You have 5 cult points to spend."
-        ]
-      },
       "Domain": {
-        description: "Domain is physical territory your character controls for the purpose of feeding. The local Prince or other Cainite authority acknowledges and supports your claim. You may designate one or more dots to increase the security of the Domain rather than its size. Each dot assigned to security increases the difficulty to intrude into the domain by one, and decreases the difficulty for you to identify and track intruders by one. Each level of Domain reduces the difficulty of hunting checks by one for those allowed to hunt and adds to your starting blood pool. Domain can be used with pooled Background points.",
+        description: "Domain is physical territory your character controls for the purpose of feeding.",
         dots: [
-          "• A single small building, such as a single-family home or a social establishment — enough for a basic haven.",
-          "•• A church, manor, or other large structure — a location with ready (but controllable) access to the outside world.",
-          "••• A city neighborhood — a location or area that offers areas for concealment as well as controlled access.",
-          "•••• A catacomb, a network of tunnels, the enclave of homes on a hill overlooking the city — a place with inherently protective features, such as bridge-only access or vigilant private guards.",
-          "••••• An entire neighborhood, an ethnic ghetto, or a whole village."
+          "• A single small building",
+          "•• A church, manor, or other large structure",
+          "••• A city neighborhood",
+          "•••• A catacomb or network of tunnels",
+          "••••• An entire neighborhood or village"
         ]
       },
       "Fame": {
-        description: "You enjoy widespread recognition in mortal society as an entertainer, scholar, warrior, or even criminal. This gives you privileges when moving in mortal society, but can also attract unwanted attention now that you’re no longer alive. It’s a mixed blessing with prestige on one hand and being recognized at inconvenient times on the other. However, enemies can’t make you disappear without causing a stir. Your Fame facilitates hunting in populated areas – reduce the difficulty of hunting rolls by one for each dot in Fame. Your storyteller may permit you to reduce difficulties of certain Social rolls as well.",
+        description: "You enjoy widespread recognition in mortal society.",
         dots: [
-          "• You’re known to a select subculture — local artists, scholars, or the nobility.",
-          "•• Random people start to recognize your face; you’re a minor celebrity such as a small-time criminal or a local musician.",
-          "••• You have greater renown; perhaps you’re a successful diplomat or an entertainer who regularly performs for the nobility.",
-          "•••• A full-blown celebrity; your name is often recognized by the average person on the road.",
-          "••••• You’re a household word. People name their children after you."
+          "• Known to a select subculture",
+          "•• Minor celebrity",
+          "••• Greater renown",
+          "•••• Full-blown celebrity",
+          "••••• Household word"
         ]
       },
       "Generation": {
-        description: "This Background represents your Generation: the purity of your blood, and your proximity to the First Vampire. A high Generation rating may represent a powerful sire or a decidedly dangerous taste for diablerie. If you don’t take any dots in this Trait, you begin play as a Twelfth Generation vampire.",
+        description: "Represents your proximity to the First Vampire.",
         dots: [
-          "• Eleventh Generation: 12 blood pool, can spend 1 blood point per turn",
-          "•• Tenth Generation: 13 blood pool, can spend 1 blood point per turn",
-          "••• Ninth Generation: 14 blood pool, can spend 2 blood points per turn",
-          "•••• Eighth Generation: 15 blood pool, can spend 3 blood points per turn",
-          "••••• Seventh Generation: 20 blood pool, can spend 4 blood points per turn and possess Traits at 6 dots"
+          "• Eleventh Generation: 12 blood pool, spend 1 blood/turn",
+          "•• Tenth Generation: 13 blood pool, spend 1 blood/turn",
+          "••• Ninth Generation: 14 blood pool, spend 2 blood/turn",
+          "•••• Eighth Generation: 15 blood pool, spend 3 blood/turn",
+          "••••• Seventh Generation: 20 blood pool, spend 4 blood/turn"
         ]
       },
       "Herd": {
-        description: "You have built a group of mortals from whom you can feed without fear. In addition to providing nourishment, your Herd may be useful for minor tasks. However, unlike Allies or Retainers, they are typically not very controllable or skilled. Your Herd rating adds dice to your rolls for hunting. Players may purchase pooled Herd with Background points.",
+        description: "A group of mortals from whom you can feed without fear.",
         dots: [
           "• Three vessels",
           "•• Seven vessels",
@@ -2492,77 +2405,37 @@ Nothing in this agreement limits our liability to you in the event of death or p
         ]
       },
       "Influence": {
-        description: "You have pull in the mortal community through wealth, familial lineage, prestige, politics, blackmail, or supernatural sway. Influence represents the sum of your opinion or policy-swaying power in your community, particularly among law enforcement and bureaucracy. Influence can be used with pooled Background points.",
+        description: "Pull in the mortal community through wealth, lineage, or sway.",
         dots: [
-          "• Moderately influential; a factor in local politics",
-          "•• Well-connected; a force in nearby politics",
-          "••• Position of influence; a factor in regional politics",
-          "•••• Broad personal power; a force in large-scale politics",
-          "••••• Vastly influential; a factor in politics of the known world"
-        ]
-      },
-      "Knowledge Library": {
-        description: "(Source: Library of the Damned) Books are rare and expensive in the medieval period, and the personal possession of books is representative of wealth and culture. A character who possesses this Background owns a small personal library, from which they can obtain knowledge and guidance. For each dot in this Background, choose two Knowledges; whilst working with your library, you may reduce the difficulty of rolls involving these Knowledges by 2. Note that a character must, of course, have time and opportunity to consult their library to gain this benefit.",
-        dots: [
-          "• You have a small collection of literature, and own six books, focusing on a two subjects.",
-          "•• You have collected books over a number of years, and have obtained 15 books, which provide you with information on four subjects.",
-          "••• Acquaintances are impressed by your fine collection of 30 books, which provide you with an insight into six distinct subjects.",
-          "•••• Your dedication to study is supported by an impressive collection of 75 books, with detail on eight particular subjects.",
-          "••••• You possess a truly outstanding personal library, containing at least 150 works, covering all aspects of human knowledge. Other Cainites will come to you, wishing to consult your collection of books."
-        ]
-      },
-      "Martial Training": {
-        description: "(Source: Tome of Secrets) A squire might train 15 or more years for knighthood. Despite popular depictions of knights wildly swinging their swords around, this training is as sophisticated and agile as that associated with fighting methods in other parts of the world. Other soldiers might learn these techniques, but must usually pick them up over the course of a chronicle. To begin with them, one must train from an early age, like a squire or Mongol rider. Martial Training is a set of Backgrounds: one each for Archery, Brawl, Melee, and Ride. Each dot teaches a special maneuver that may be used in combat, similar to the maneuvers in the combat chapter of V20 Dark Ages, but they’re slightly more potent or provide special effects. Note that this chapter only includes a few sample special maneuvers specific to knights; the Storyteller should invent others. Archery special maneuvers exist, but are not normally used by knights. Characters may not possess more dots in a Martial Training Background than they possess in its matched Ability. For example, a character with Brawl 2 may only possess Martial Training (Brawl) 2. Each dot provides a maneuver in the linked Ability. Martial maneuvers can be found on p. 85 of the Tome of Secrets.",
-        dots: [
-          "• One special maneuver",
-          "•• Two special maneuvers",
-          "••• Three special maneuvers",
-          "•••• Four special maneuvers",
-          "••••• Five special maneuvers"
-        ]
-      },
-      "Memento de Morte": {
-        description: "(Source: Lore of the Clans) Death leaves its mark on the world around it. Cold spots, places where the light seems too pale, the colors washed out and faded. Sometimes, something seeps into the items surrounding a death in such a way that it taints them forever. The fainting couch in a Victorian serial killer’s parlor, or the portrait that hung on the wall of his abattoir, for example. The blackened wood floorboards at uncle Vittorio’s estate, reclaimed from a plague ship lit aflame to cleanse its still-living passengers. Books wrapped in the flesh of the monk who inscribed them, carved from his still living body, and bound by him in his last moments of life. But the most common mementos of death are murder weapons. The scalpels of serial killers and the sabers of war criminals. Bludgeons and .38 Bulldogs, nooses and punchbowls. The more death that has drenched the item, the more power it absorbs. This Background gives you one or more of these mementos of death, allowing you to benefit from the ambient energies when using Necromancy. You must have the relic (or relics) with you to receive the bonus. Many necromancers have a special sanctum set aside for their ritual work for this reason.",
-        dots: [
-          "• You have one minor relic. +1 bonus die to Necromancy rolls.",
-          "•• You have a relic of middling power or two minor ones. +2 bonus dice to Necromancy rolls.",
-          "••• You have a few reasonably powerful relics. +3 bonus dice to Necromancy rolls.",
-          "•••• You have a very powerful relic, or a couple of less powerful items. +4 bonus dice to Necromancy rolls.",
-          "••••• You have an incredibly powerful relic, or a couple of powerful items. +5 bonus dice to Necromancy rolls."
+          "• Moderately influential",
+          "•• Well-connected",
+          "••• Regional influence",
+          "•••• Broad personal power",
+          "••••• Vastly influential"
         ]
       },
       "Mentor": {
-        description: "You have a Cainite or group of Cainites who look out for you, offering guidance and aid once in a while. A mentor typically remains aloof, giving useful information or advice but rarely direct aid. If he arrives to pull you from a dangerous situation, you’re likely to lose a dot or more in this Background, or be abandoned as an unworthy protégé.",
+        description: "A Cainite who looks out for you and offers guidance.",
         dots: [
-          "• Mentor is an ancilla of little influence.",
-          "•• Mentor is respected: an elder or highly-decorated veteran.",
-          "••• Mentor is heavily influential, such as a Prince’s advisor.",
-          "•••• Mentor has a great deal of power over the city, such as a Seneschal or Sheriff.",
-          "••••• Mentor is extraordinarily powerful, perhaps even a Prince."
-        ]
-      },
-      "Oubliette": {
-        description: "(Source: Tome of Secrets) Vampires who possess at least three dots in Obtenebration and one Abyss Mysticism ritual can construct an Oubliette within a subterranean structure. The darkness within the Oubliette drains Intelligence from mortals immersed within it, at a rate of one dot per night. This Intelligence is not recoverable. Nightmarish visions constantly beset vampires within the Oubliette, often leading to the swift arrival of Derangements. The player of any vampire immersed in an Oubliette must roll against the character’s current Willpower each night; the character may not recover any temporary Willpower points while within the dark. Failure reduces the current Willpower by two points, inducing a Derangement in the vampire once the rating reaches zero. Willpower then resets, and the procedure begins again until the vampire’s extracted or discovers an exit. Vampires who enter the Oubliette willingly, and those on the Road of the Abyss or Road of Sin, lose one Willpower point per night. The darkness within the Oubliette is unnatural and therefore impossible to see through unless the vampire possesses the Darksight Merit. Entities summoned with Obtenebration or Abyss Mysticism within the Oubliette remain permanently, and cannot be dismissed unless they, or their summoners, are destroyed. Any Cainite who braves and survives 20 consecutive nights within the Oubliette and doesn’t succumb to torpor has the cost of learning Abyss Mysticism rituals reduced by one experience point for the remainder of the year. The greater the Oubliette Background rating, the greater the volume of the underground structure that is filled with foul darkness. Points in Oubliette are bought at character creation, or earned through roleplay.",
-        dots: [
-          "• Coffin or cupboard-sized chamber",
-          "•• Single-room chamber",
-          "••• Dungeon containing up to five rooms",
-          "•••• Multi-level structure, containing up to 15 rooms",
-          "••••• Labyrinthine complex, containing multiple structures"
+          "• Ancilla mentor",
+          "•• Respected elder mentor",
+          "••• Heavily influential mentor",
+          "•••• High authority mentor",
+          "••••• Prince-level mentor"
         ]
       },
       "Resources": {
-        description: "Resources are assets your character controls. These may be gold, investments, property, commercial inventories, or even taxes and tithes. A character with no dots in Resources may have enough clothing and supplies to get by, or she may be destitute and squatting. You receive a basic allowance each month based on your rating, so detail exactly where this money comes from. Players may purchase Resources for their characters with pooled Background points.",
+        description: "Financial assets and investments under your control.",
         dots: [
-          "• Sufficient. You can maintain a typical residence in the style of the working class with stability, even if spending sprees come seldom.",
-          "•• Moderate. You can display yourself as a member in good standing of the merchant class, with the occasional gift and indulgence seemly for a person of even higher station. You can maintain a servant or hire specific help as necessary. A fraction of your resources are available in coin or gold, readily portable property (like jewelry), and other valuables that let you maintain a standard of living at the one-dot level wherever you happen to be, for up to six months.",
-          "••• Comfortable. You are a prominent and established member of your community, with land and an owned dwelling. You likely have more tied up in equity and property than you do in ready coin. You can maintain a one-dot quality of existence wherever you are without difficulty, for as long as you choose.",
-          "•••• Wealthy. You rarely touch gold, as most of your assets exist in tangible forms that are themselves more valuable and stable than coin. You hold more wealth than many of your local peers. When earning your Resources doesn’t enjoy your usual degree of attention, you can maintain a three-dot existence for up to a year, and a two-dot existence indefinitely.",
-          "••••• Extremely Wealthy. You are the model to which others strive to achieve, at least in the popular mind. You have vast and widely distributed assets, perhaps tied to the fates of nations, each with huge staffs and connections to every level of society through a region. You travel with a minimum of three-dot comforts, more with a little effort."
+          "• Sufficient",
+          "•• Moderate",
+          "••• Comfortable",
+          "•••• Wealthy",
+          "••••• Extremely Wealthy"
         ]
       },
       "Retainers": {
-        description: "Retainers are servants, assistants, or loyal and steadfast companions. Many vampires’ servants are ghouls, ghouled animals, or people whom you’ve repeatedly Dominated or completely enthralled. Retainers may be useful, but they’re never flawless or blindly loyal – if you treat them poorly without exercising strict control, they may well turn on you. With Storyteller permission, a player may create a single more competent Retainer by combining points in this Background. Players can spend pooled Background points on Retainers.",
+        description: "Servants, ghouls, or loyal companions.",
         dots: [
           "• One retainer",
           "•• Two retainers",
@@ -2571,43 +2444,28 @@ Nothing in this agreement limits our liability to you in the event of death or p
           "••••• Five retainers"
         ]
       },
-      "Servants": {
-        description: "(Source: Dark Ages Companion) Your character controls a retinue of useful servants. (Your domain might possess servants without this Background, but they do nothing more than keep the place from utterly collapsing, and frequently display disloyalty.) The exact number doesn’t matter; they come and go as estate business demands. Children replace their parents. On the other hand, when your character needs them to perform a specific task or travel, only a limited number can obey, lest the estate fall into disrepair or suffer various calamities. In matters relating to the domain, servants reduce the difficulty of Seneschal and Leadership rolls equal to their dots. Servants need not be limited to a single manor, and might represent ordinary townsfolk, cottagers, and others pledged to the character’s service. Servants are loyal, but not slavishly so, and might disobey their masters if they feel threatened or offended. A Cainite may use servants as vessels for her thirst, but the player must purchase an equal number of dots in the Herd Background to ensure their discretion. Purchasing both Backgrounds together also means servants replace themselves should your character’s attentions cause their deaths, but the most extreme cruelties will never go unanswered. Servants who are not a Herd resist predation, spread rumors, and must be managed accordingly.",
-        dots: [
-          "• You have a few servants to deal with light, routine tasks. They can’t handle emergencies. Some of them attend you part time, working elsewhere to support families. You can call three of them together for a trip or dedicated task.",
-          "•• Your servants can keep a small manor or settlement running smoothly, and even provide comforts for a small number of guests. You can wrangle seven of them to work on some unusual task or travel with you.",
-          "••• Your servants manage all aspects of a large manor, and at least one stands on hand to receive your commands. You might gather as many as 15 to travel or work on an unusual project.",
-          "•••• Your servants could keep a large castle running smoothly. Multiple attendants stand by to anticipate your needs and obey your commands. You can be assured that taking a retinue of 30 on the road wouldn’t bring estate business grinding to a halt.",
-          "••••• A veritable legion stands by to ensure your estate functions. They stand in every room, and to get some privacy you’ll have to send them away. You can take a retinue of 60 servants with you."
-        ]
-      },
-      "Spirit Slaves": {
-        description: "(Source: Lore of the Clans) This trait represents a hold you have over a ghost, or several ghosts. Usually this hold is in the form of catene, or fetters — either something that the ghost valued highly in life, or possibly a random object or place to which the spirito has been attached via a necromantic ritual. Regardless, you have a hold over the spirit and can bully it by threatening its fetter. Alternatively, you might have information about the spirit’s goals and can control it by aiding or impeding it. All Spirit Slaves are assumed to have statistics similar to a recently deceased ghost. However, higher levels of this Background might reflect more powerful spirits at the Storyteller’s discretion.",
-        dots: [
-          "• You have a hold on one weak spirito.",
-          "•• You have influence over two minor ghosts, or one of greater power.",
-          "••• You’re the boss of three lesser ghosts, or fewer who can do more.",
-          "•••• Four ghosts are under your sway, or fewer who are stronger.",
-          "••••• You have mastered five weak ghosts, or fewer who are more talented."
-        ]
-      },
       "Status": {
-        description: "You’ve standing within the local Cainite community. You may derive this standing from your sire’s status and bloodline, the reputation of your coterie, or your own individual deeds. High Status may make you a target for those against your faction. When interacting with local Cainites, you may roll your Status in conjunction with a Social Trait to reflect the positive effects of your prestige. As the lowest of the low, Caitiff characters may not purchase Status during character creation.",
+        description: "Standing within the local Cainite community.",
         dots: [
-          "• Known: a recognized neonate",
-          "•• Respected: an ancilla",
-          "••• Influential: an elder",
-          "•••• Powerful: a widely respected elder",
-          "••••• Luminary: a Prince or other Cainite leader"
+          "• Known neonate",
+          "•• Respected ancilla",
+          "••• Influential elder",
+          "•••• Powerful elder",
+          "••••• Luminary / Leader"
         ]
       }
     };
 
-    /* --- PARENT DISCIPLINE FILTERING ENGINE FOR PATHS --- */
+    /* Safe database fallbacks to eliminate ReferenceError crashes */
+    const safeDisciplineDB = (typeof disciplineDatabase !== 'undefined') ? disciplineDatabase : {};
+    const safeClanDB = (typeof clanDatabase !== 'undefined') ? clanDatabase : {};
+    const safeArchetypesDB = (typeof archetypesDatabase !== 'undefined') ? archetypesDatabase : {};
+    const safeRoadsDB = (typeof roadsDatabase !== 'undefined') ? roadsDatabase : {};
+
+    /* PARENT DISCIPLINE FILTERING */
 
     function setParentFilter(btnEl, disciplineName) {
       const isAlreadyActive = btnEl.classList.contains('active');
-      
       document.querySelectorAll('.path-filter-btn').forEach(btn => btn.classList.remove('active'));
 
       if (isAlreadyActive) {
@@ -2646,7 +2504,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
       });
     }
 
-    /* --- DYNAMIC PATH ROW & PATH CARDS SYSTEM --- */
+    /* DYNAMIC PATH ROW & PATH CARDS SYSTEM */
 
     function addPathRow(targetListId, initialName = '', initialVal = 0, initialDesc = '', initialPowers = '') {
       const list = document.getElementById(targetListId);
@@ -2880,7 +2738,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
       activeDisciplines.sort((a, b) => a.name.localeCompare(b.name));
 
       activeDisciplines.forEach(item => {
-        const entry = disciplineDatabase[item.name];
+        const entry = safeDisciplineDB[item.name];
         if (!entry) return;
 
         const isCollapsed = !!collapsedDisciplines[item.name];
@@ -3141,7 +2999,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
       localStorage.setItem('v20_da_characters_index', JSON.stringify(list));
     }
 
-    /* --- DASHBOARD RENDER & ACTIONS --- */
+    /* DASHBOARD RENDER & ACTIONS */
 
     function renderDashboardGrid(list) {
       const listContainer = document.getElementById('character-list');
@@ -3678,14 +3536,14 @@ Nothing in this agreement limits our liability to you in the event of death or p
       }
 
       if (val) {
-        const entry = clanDatabase[val];
+        const entry = safeClanDB[val];
         if (entry) {
           const weaknessTxt = document.getElementById('clan-weakness');
           if (weaknessTxt) {
             weaknessTxt.value = entry.weakness || '';
           }
           const list = document.getElementById('disciplines-list');
-          if (list) {
+          if (list && entry.disciplines) {
             entry.disciplines.forEach(discName => {
               addDynamicRow('disciplines-list', 'discipline', discName, 0);
             });
@@ -3730,7 +3588,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
       }
 
       if (val) {
-        const entry = archetypesDatabase[val];
+        const entry = safeArchetypesDB[val];
         if (entry) {
           if (notesLeft) {
             notesLeft.value = entry.willpower || '';
@@ -3774,7 +3632,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
       }
 
       if (val) {
-        const entry = archetypesDatabase[val];
+        const entry = safeArchetypesDB[val];
         if (entry) {
           if (notesRight) {
             notesRight.value = entry.description || '';
@@ -3837,8 +3695,8 @@ Nothing in this agreement limits our liability to you in the event of death or p
         if (ratEl) ratEl.value = '';
       }
 
-      if (selectedVal && roadsDatabase[selectedVal]) {
-        const data = roadsDatabase[selectedVal];
+      if (selectedVal && safeRoadsDB[selectedVal]) {
+        const data = safeRoadsDB[selectedVal];
 
         if (altNameEl) altNameEl.value = data.altName || '';
         if (ethicsEl) ethicsEl.value = data.ethics ? data.ethics.join('\n') : '';
@@ -5212,6 +5070,7 @@ Nothing in this agreement limits our liability to you in the event of death or p
         const imgPreview = document.getElementById('vis-image-preview');
         const delBtn = document.getElementById('vis-image-delete');
         if (imgPreview && delBtn) {
+          /* Checks for valid imageName and image data before trying to load preview */
           if (vis.imageName && vis.image && typeof vis.image === 'string' && vis.image.trim() !== '') {
             imgPreview.src = vis.image;
             imgPreview.style.display = 'block';
