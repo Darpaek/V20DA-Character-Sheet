@@ -4031,6 +4031,24 @@ Nothing in this agreement limits our liability to you in the event of death or p
       queueAutoSave();
     }
 
+    function normalizeArray(val) {
+      if (!val) return [];
+      if (Array.isArray(val)) return val;
+      if (typeof val === 'string') {
+        try {
+          const parsed = JSON.parse(val);
+          if (Array.isArray(parsed)) return parsed;
+          if (parsed && typeof parsed === 'object') return Object.values(parsed);
+        } catch (e) {
+          return [];
+        }
+      }
+      if (typeof val === 'object') {
+        return Object.values(val);
+      }
+      return [];
+    }
+
     function updateDisciplineOverlay(selectEl) {
       const container = selectEl.closest('.discipline-select-container');
       if (!container) return;
@@ -4052,7 +4070,8 @@ Nothing in this agreement limits our liability to you in the event of death or p
       if (!val) {
         overlay.innerHTML = `<span style="color: #8c7e6e; pointer-events: none; font-family: inherit; font-size: 0.9rem; font-style: italic;">Select Discipline...</span>`;
       } else if (standardDisciplines.includes(val)) {
-        overlay.innerHTML = `<a href="#" onclick="navigateToDiscipline('${val}'); return false;" style="color: var(--accent-red); text-decoration: underline; pointer-events: auto; font-weight: bold; font-family: inherit; font-size: 0.9rem; z-index: 2;">${val}</a>`;
+        const safeVal = val.replace(/'/g, "\\'");
+        overlay.innerHTML = `<a href="#" onclick="navigateToDiscipline('${safeVal}'); return false;" style="color: var(--accent-red); text-decoration: underline; pointer-events: auto; font-weight: bold; font-family: inherit; font-size: 0.9rem; z-index: 2;">${val}</a>`;
       } else {
         overlay.innerHTML = `<span style="color: var(--text-dark); pointer-events: none; font-family: inherit; font-size: 0.9rem;">${val}</span>`;
       }
@@ -4086,6 +4105,8 @@ Nothing in this agreement limits our liability to you in the event of death or p
       queueAutoSave();
     }
 
+    /* --- Custom Background Popup & Link Overlays --- */
+
     function updateBackgroundOverlay(selectEl) {
       const container = selectEl.closest('.background-select-container');
       if (!container) return;
@@ -4104,7 +4125,8 @@ Nothing in this agreement limits our liability to you in the event of death or p
       if (!val) {
         overlay.innerHTML = `<span style="color: #8c7e6e; pointer-events: none; font-family: inherit; font-size: 0.9rem; font-style: italic;">Select Background...</span>`;
       } else if (standardBackgrounds.includes(val)) {
-        overlay.innerHTML = `<a href="#" onclick="navigateToBackground('${val}'); return false;" style="color: var(--accent-red); text-decoration: underline; pointer-events: auto; font-weight: bold; font-family: inherit; font-size: 0.9rem; z-index: 2;">${val}</a>`;
+        const safeVal = val.replace(/'/g, "\\'");
+        overlay.innerHTML = `<a href="#" onclick="navigateToBackground('${safeVal}'); return false;" style="color: var(--accent-red); text-decoration: underline; pointer-events: auto; font-weight: bold; font-family: inherit; font-size: 0.9rem; z-index: 2;">${val}</a>`;
       } else {
         overlay.innerHTML = `<span style="color: var(--text-dark); pointer-events: none; font-family: inherit; font-size: 0.9rem;">${val}</span>`;
       }
@@ -4815,17 +4837,19 @@ Nothing in this agreement limits our liability to you in the event of death or p
       if (customSkillsList) customSkillsList.innerHTML = '';
       if (customKnowledgesList) customKnowledgesList.innerHTML = '';
 
-      if (data.customAbilities) {
-        data.customAbilities.forEach(item => {
-          if (item.type === 'talent') {
-            addCustomAbilityRow('custom-talents-list', 'talent', item.name, item.val);
-          } else if (item.type === 'skill') {
-            addCustomAbilityRow('custom-skills-list', 'skill', item.name, item.val);
-          } else if (item.type === 'knowledge') {
-            addCustomAbilityRow('custom-knowledges-list', 'knowledge', item.name, item.val);
-          }
-        });
-      }
+      const customAbilities = normalizeArray(data.customAbilities);
+      customAbilities.forEach(item => {
+        if (!item) return;
+        const name = item.name || '';
+        const val = parseInt(item.val || item.rating || item.dots || 0) || 0;
+        if (item.type === 'talent') {
+          addCustomAbilityRow('custom-talents-list', 'talent', name, val);
+        } else if (item.type === 'skill') {
+          addCustomAbilityRow('custom-skills-list', 'skill', name, val);
+        } else if (item.type === 'knowledge') {
+          addCustomAbilityRow('custom-knowledges-list', 'knowledge', name, val);
+        }
+      });
 
       const virtues = data.virtues || {};
       document.getElementById('virtue-1-type').value = virtues.virtue_1_type || 'Conscience';
@@ -4848,42 +4872,66 @@ Nothing in this agreement limits our liability to you in the event of death or p
         renderDots(v3);
       }
 
+      // Disciplines & Backgrounds
       const discList = document.getElementById('disciplines-list');
       if (discList) discList.innerHTML = '';
-      if (data.disciplines && data.disciplines.length > 0) {
-        data.disciplines.forEach(d => addDynamicRow('disciplines-list', 'discipline', d.name, d.rating));
+      const disciplines = normalizeArray(data.disciplines);
+      if (disciplines.length > 0) {
+        disciplines.forEach(d => {
+          if (!d) return;
+          const name = typeof d === 'string' ? d : (d.name || d.discipline || d.trait || '');
+          const rating = typeof d === 'object' ? (d.rating !== undefined ? d.rating : (d.val !== undefined ? d.val : (d.value !== undefined ? d.value : (d.dots !== undefined ? d.dots : 0)))) : 0;
+          addDynamicRow('disciplines-list', 'discipline', name, parseInt(rating) || 0);
+        });
       } else {
         addDynamicRow('disciplines-list', 'discipline');
       }
 
       const bgList = document.getElementById('backgrounds-list');
       if (bgList) bgList.innerHTML = '';
-      if (data.backgrounds && data.backgrounds.length > 0) {
-        data.backgrounds.forEach(b => addDynamicRow('backgrounds-list', 'background', b.name, b.rating));
+      const backgrounds = normalizeArray(data.backgrounds);
+      if (backgrounds.length > 0) {
+        backgrounds.forEach(b => {
+          if (!b) return;
+          const name = typeof b === 'string' ? b : (b.name || b.background || b.trait || '');
+          const rating = typeof b === 'object' ? (b.rating !== undefined ? b.rating : (b.val !== undefined ? b.val : (b.value !== undefined ? b.value : (b.dots !== undefined ? b.dots : 0)))) : 0;
+          addDynamicRow('backgrounds-list', 'background', name, parseInt(rating) || 0);
+        });
       } else {
         addDynamicRow('backgrounds-list', 'background');
       }
 
       const meritsList = document.getElementById('merits-list');
       if (meritsList) meritsList.innerHTML = '';
-      if (data.merits) data.merits.forEach(m => addCustomRow('merits-list', 'merit', m.name, m.type, m.val, m.desc || ''));
+      normalizeArray(data.merits).forEach(m => {
+        if (m) addCustomRow('merits-list', 'merit', m.name || '', m.type || '', m.val || m.cost || '', m.desc || '');
+      });
 
       const flawsList = document.getElementById('flaws-list');
       if (flawsList) flawsList.innerHTML = '';
-      if (data.flaws) data.flaws.forEach(f => addCustomRow('flaws-list', 'flaw', f.name, f.type, f.val, f.desc || ''));
+      normalizeArray(data.flaws).forEach(f => {
+        if (f) addCustomRow('flaws-list', 'flaw', f.name || '', f.type || '', f.val || f.bonus || '', f.desc || '');
+      });
 
       const otList = document.getElementById('other-traits-list');
       if (otList) otList.innerHTML = '';
-      if (data.otherTraits) data.otherTraits.forEach(t => addOtherTraitRow('other-traits-list', t.name, t.val));
+      normalizeArray(data.otherTraits).forEach(t => {
+        if (t) addOtherTraitRow('other-traits-list', t.name || '', parseInt(t.val || t.rating || 0) || 0);
+      });
 
       const ritList = document.getElementById('rituals-list');
       if (ritList) ritList.innerHTML = '';
-      if (data.rituals) data.rituals.forEach(r => addRitualRow('rituals-list', r.name, r.level, r.desc || ''));
+      normalizeArray(data.rituals).forEach(r => {
+        if (r) addRitualRow('rituals-list', r.name || '', r.level || 1, r.desc || '');
+      });
 
       const pathList = document.getElementById('paths-list');
       if (pathList) pathList.innerHTML = '';
-      if (data.paths && data.paths.length > 0) {
-        data.paths.forEach(p => addPathRow('paths-list', p.name, p.val, p.desc || '', p.powers || ''));
+      const paths = normalizeArray(data.paths);
+      if (paths.length > 0) {
+        paths.forEach(p => {
+          if (p) addPathRow('paths-list', p.name || '', parseInt(p.val || p.rating || 0) || 0, p.desc || '', p.powers || '');
+        });
       } else {
         addPathRow('paths-list');
       }
@@ -4893,14 +4941,16 @@ Nothing in this agreement limits our liability to you in the event of death or p
 
       const derList = document.getElementById('derangements-list');
       if (derList) derList.innerHTML = '';
-      if (data.derangements) data.derangements.forEach(d => addDerangementRow('derangements-list', d.name));
+      normalizeArray(data.derangements).forEach(d => {
+        if (d) addDerangementRow('derangements-list', typeof d === 'string' ? d : (d.name || ''));
+      });
 
       const combatBody = document.querySelector('#combat-attacks-table tbody');
       if (combatBody) {
         combatBody.innerHTML = '';
-        if (data.combatAttacks) {
-          data.combatAttacks.forEach(a => addCombatAttackRow(a.weapon, a.diff, a.dmg, a.range, a.rate, a.clip, a.conceal));
-        }
+        normalizeArray(data.combatAttacks).forEach(a => {
+          if (a) addCombatAttackRow(a.weapon || '', a.diff || '', a.dmg || '', a.range || '', a.rate || '', a.clip || '', a.conceal || '');
+        });
       }
 
       const mechanics = data.mechanics || {};
